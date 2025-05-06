@@ -35,15 +35,14 @@
             font-family: 'Share Tech Mono', monospace;
             color: #e0e0ff;
             margin: 0;
-            overflow: hidden;
-            height: 100vh;
         }
         .canvas {
             position: relative;
             width: 100vw;
             height: 100vh;
+            min-height: 1200px;
             background: #000;
-            overflow: hidden;
+            overflow-y: auto;
         }
         .grid {
             position: absolute;
@@ -182,7 +181,7 @@
         </div>
         <div class="flex items-center">
             <div class="w-3 h-3 rounded-full mr-2 bg-green-500"></div>
-            <span class="text-sm"> Tweet this
+            <span class="text-sm">Connected</span>
         </div>
     </div>
     <div class="canvas">
@@ -198,51 +197,51 @@
             <h3 class="text-sm font-bold">Initialize System</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="log_data" style="left: 350px; top: 100px;">
+        <div class="block" data-id="log_data" style="left: 50px; top: 180px;">
             <h3 class="text-sm font-bold">Log Data</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="read_sensor_data" style="left: 650px; top: 100px;">
+        <div class="block" data-id="read_sensor_data" style="left: 50px; top: 260px;">
             <h3 class="text-sm font-bold">Read Sensor Data</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="calibrate_sensor" style="left: 50px; top: 250px;">
+        <div class="block" data-id="calibrate_sensor" style="left: 50px; top: 340px;">
             <h3 class="text-sm font-bold">Calibrate Sensor</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="fuse_sensor_data" style="left: 350px; top: 250px;">
+        <div class="block" data-id="fuse_sensor_data" style="left: 50px; top: 420px;">
             <h3 class="text-sm font-bold">Fuse Sensor Data</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="set_control_targets" style="left: 650px; top: 250px;">
+        <div class="block" data-id="set_control_targets" style="left: 50px; top: 500px;">
             <h3 class="text-sm font-bold">Set Control Targets</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="compute_pid_control" style="left: 50px; top: 400px;">
+        <div class="block" data-id="compute_pid_control" style="left: 50px; top: 580px;">
             <h3 class="text-sm font-bold">Compute PID Control</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="auto_tune_pid" style="left: 350px; top: 400px;">
+        <div class="block" data-id="auto_tune_pid" style="left: 50px; top: 660px;">
             <h3 class="text-sm font-bold">Auto-Tune PID</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="drive_motors" style="left: 650px; top: 400px;">
+        <div class="block" data-id="drive_motors" style="left: 50px; top: 740px;">
             <h3 class="text-sm font-bold">Drive Motors</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="calibrate_motor_trim" style="left: 50px; top: 550px;">
+        <div class="block" data-id="calibrate_motor_trim" style="left: 50px; top: 820px;">
             <h3 class="text-sm font-bold">Calibrate Motor Trim</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="handle_communication" style="left: 350px; top: 550px;">
+        <div class="block" data-id="handle_communication" style="left: 50px; top: 900px;">
             <h3 class="text-sm font-bold">Handle Communication</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="monitor_battery" style="left: 650px; top: 550px;">
+        <div class="block" data-id="monitor_battery" style="left: 50px; top: 980px;">
             <h3 class="text-sm font-bold">Monitor Battery</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="run_main_loop" style="left: 350px; top: 700px;">
+        <div class="block" data-id="run_main_loop" style="left: 50px; top: 1060px;">
             <h3 class="text-sm font-bold">Run Main Loop</h3>
             <p class="text-xs">Status: Active</p>
         </div>
@@ -440,7 +439,6 @@ void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
         float cost = compute_cost(sensor, dt);
         if (cost < best_cost || (random() % 1000 / 1000.0) < exp(-(cost - best_cost) / temp)) {
             best_cost = cost;
-            best_
             best_pids[0] = roll_pid; best_pids[1] = pitch_pid;
             best_pids[2] = yaw_pid; best_pids[3] = height_pid;
             logger->log("Accepted: Cost=%.2f, PID=[(%.2f,%.2f,%.2f), ...]", best_cost,
