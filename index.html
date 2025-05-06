@@ -119,9 +119,8 @@
             border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 20px;
-            width: 80%;
-            max-width: 600px;
-            max-height: 80vh; /* Increased height */
+            width: 50vw; /* Half of viewport width */
+            height: 50vh; /* Half of viewport height */
             color: var(--primary);
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
             position: relative;
@@ -142,7 +141,7 @@
         }
         .modal-section textarea {
             width: 100%;
-            height: 300px; /* Increased textarea height for easier code editing */
+            height: 80%; /* Adjusted to fit within modal height */
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary);
             color: var(--primary);
@@ -235,6 +234,7 @@
         let lastTapTime = 0;
         let lastTappedBlock = null;
         let tapTimeout = null;
+        let isDragging = false;
 
         const blockData = {
             logger: {
@@ -288,6 +288,10 @@
                         interact.modifiers.snap({ targets: [interact.snappers.grid({ x: 10, y: 10 })], range: Infinity, relativePoints: [{ x: 0, y: 0 }] })
                     ],
                     listeners: {
+                        start: (event) => {
+                            isDragging = true;
+                            event.target.classList.add('active');
+                        },
                         move: (event) => {
                             const target = event.target;
                             const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
@@ -297,8 +301,8 @@
                             target.setAttribute('data-y', y);
                             updateArrows();
                         },
-                        start: (event) => event.target.classList.add('active'),
                         end: (event) => {
+                            isDragging = false;
                             event.target.classList.remove('active');
                             updateArrows();
                         }
@@ -391,13 +395,17 @@
         }
 
         function handleInteraction(block, isTouch) {
+            if (isDragging) return; // Prevent modal opening during drag
+
             const currentTime = new Date().getTime();
             if (isTouch) {
                 if (currentTime - lastTapTime < 300 && lastTappedBlock === block) {
                     clearTimeout(tapTimeout);
                     toggleBlockSelection(block);
                 } else {
-                    tapTimeout = setTimeout(() => showModal(block), 300);
+                    tapTimeout = setTimeout(() => {
+                        if (!isDragging) showModal(block);
+                    }, 300);
                 }
                 lastTapTime = currentTime;
                 lastTappedBlock = block;
