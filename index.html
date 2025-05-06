@@ -17,7 +17,6 @@
         .text-xs { font-size: 0.75rem; }
         .font-bold { font-weight: 700; }
         .rounded { border-radius: 0.25rem; }
-        .mt-2 { margin-top: 0.5rem; }
         .mr-2 { margin-right: 0.5rem; }
         .w-3 { width: 0.75rem; }
         .h-3 { height: 0.75rem; }
@@ -25,7 +24,6 @@
         .bg-green-500 { background-color: #10b981; }
         .fixed { position: fixed; }
         .z-50 { z-index: 50; }
-        .hidden { display: none; }
 
         :root {
             --primary: #00f0ff;
@@ -87,72 +85,6 @@
             border-color: #ffff00;
             box-shadow: 0 0 20px rgba(255, 255, 0, 0.7);
         }
-        .glass-window {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 80vh;
-            background: rgba(0, 240, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 2px solid var(--primary);
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
-            color: var(--primary);
-            padding: 20px;
-            z-index: 400;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .code-section {
-            flex: 1;
-            margin-bottom: 20px;
-        }
-        .math-section {
-            flex: 1;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--primary);
-            border-radius: 5px;
-            overflow-y: auto;
-        }
-        .glass-window textarea {
-            width: 100%;
-            height: 100%;
-            font-size: 12px;
-            font-family: 'Share Tech Mono', monospace;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 10px;
-            resize: none;
-            outline: none;
-        }
-        .math-equation {
-            font-family: 'Times New Roman', Times, serif;
-            color: #fff;
-            margin: 10px 0;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.2);
-            border-left: 3px solid var(--secondary);
-        }
-        .close-button {
-            background: rgba(255, 62, 127, 0.2);
-            border: 1px solid var(--secondary);
-            color: var(--secondary);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 12px;
-            cursor: pointer;
-            float: right;
-            margin-bottom: 10px;
-        }
-        .close-button:hover {
-            background: rgba(255, 62, 127, 0.3);
-        }
         .header {
             position: fixed;
             top: 0;
@@ -168,18 +100,80 @@
             overflow: visible;
             transform-box: fill-box;
         }
-        .section-title {
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: rgba(0, 240, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh; /* Increased height */
+            color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            margin: 0 0 10px;
+            font-size: 1.25rem;
+        }
+        .modal-section {
+            flex: 1;
+            padding: 10px;
+        }
+        .modal-section:first-child {
+            border-right: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        .modal-section textarea {
+            width: 100%;
+            height: 300px; /* Increased textarea height for easier code editing */
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 10px;
+            resize: none;
+            border-radius: 4px;
+        }
+        .modal-section .equations {
+            font-size: 0.875rem;
+            color: var(--primary);
+        }
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.2s;
+        }
+        .close-modal:hover {
             color: var(--secondary);
-            font-size: 14px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid var(--primary);
-            padding-bottom: 4px;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/interactjs@1.10.27/dist/interact.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </head>
 <body>
     <div class="header p-4 flex justify-between items-center">
@@ -222,118 +216,95 @@
             <p class="text-xs">Status: Active</p>
         </div>
     </div>
-    <div class="glass-window hidden" id="codeWindow">
-        <button class="close-button" id="closeButton">Close</button>
-        <div class="section-title">EDITABLE CODE</div>
-        <div class="code-section">
-            <textarea id="codeTextarea" spellcheck="false"></textarea>
+    <div class="modal" id="blockModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <div class="modal-section">
+                <h3 id="modalTitle"></h3>
+                <textarea id="modalCode"></textarea>
+            </div>
+            <div class="modal-section">
+                <h3>Equations</h3>
+                <div class="equations" id="modalEquations"></div>
+            </div>
         </div>
-        <div class="section-title">MATHEMATICAL EQUATIONS</div>
-        <div class="math-section" id="mathContent"></div>
     </div>
 
     <script>
-        const moduleData = {
-            logger: {
-                code: `float calculate_average(float readings[], int count) {
-    float sum = 0;
-    for (int i = 0; i < count; i++) {
-        sum += readings[i];
-    }
-    return sum / count;
-}`,
-                math: `
-                    <div class="math-equation">\\[ \\text{Average} = \\frac{\\sum_{i=1}^{n} x_i}{n} \\]</div>
-                    <div class="math-equation">\\[ x_i = \\text{individual reading}, n = \\text{number of readings} \\]</div>
-                `
-            },
-            sensor: {
-                code: `float get_roll(float ax, float ay, float az) {
-    float roll = atan2(ay, sqrt(ax * ax + az * az)) * 57.2958;
-    return roll;
-}`,
-                math: `
-                    <div class="math-equation">\\[ \\text{Roll} = \\arctan\\left(\\frac{a_y}{\\sqrt{a_x^2 + a_z^2}\\right) \\times \\frac{180}{\\pi} \\]</div>
-                `
-            },
-            control: {
-                code: `float pid_update(float target, float current, float dt) {
-    float kp = 1.2, ki =|^0.05, kd = 0.25;
-    float error = target - current;
-    static float integral = 0;
-    integral += error * dt;
-    float derivative = (error - prev_error) / dt;
-    float output = kp * error + ki * integral + kd * derivative;
-    prev_error = error;
-    return output;
-}
-static float prev_error = 0;`,
-                math: `
-                    <div class="math-equation">\\[ u(t) = K_p e(t) + K_i \\int_0^t e(\\tau) d\\tau + K_d \\frac{de(t)}{dt} \\]</div>
-                    <div class="math-equation">\\[ e(t) = \\text{target} - \\text{current} \\]</div>
-                `
-            },
-            motor: {
-                code: `void set_motor_speeds(float roll, float pitch, float yaw, float throttle) {
-    float m1 = throttle - pitch + roll + yaw;
-    float m2 = throttle + pitch - roll - yaw;
-    float m3 = throttle - pitch - roll + yaw;
-    float m4 = throttle + pitch + roll - yaw;
-}`,
-                math: `
-                    <div class="math-equation">\\[ \\begin{cases}
-                    M_1 = T - P + R + Y \\\\
-                    M_2 = T + P - R - Y \\\\
-                    M_3 = T - P - R + Y \\\\
-                    M_4 = T + P + R - Y
-                    \\end{cases} \\]</div>
-                    <div class="math-equation">\\[ T = \\text{Throttle}, P = \\text{Pitch}, R = \\text{Roll}, Y = \\text{Yaw} \\]</div>
-                `
-            },
-            communication: {
-                code: `void send_telemetry(float roll, float pitch, float yaw, float battery) {
-    int roll_int = roll * 10;
-    int pitch_int = pitch * 10;
-    int yaw_int = yaw * 10;
-    int battery_int = battery;
-}`,
-                math: `
-                    <div class="math-equation">\\[ \\text{Scaled Value} = \\text{Raw Value} \\times 10 \\]</div>
-                    <div class="math-equation">\\[ \\text{Example: } 45.67 \\times 10 = 456 \\text{ (integer)} \\]</div>
-                `
-            }
-        };
-
-        let isInitializing = true;
         let selectedBlocks = [];
         let lastTapTime = 0;
         let lastTappedBlock = null;
         let tapTimeout = null;
 
-        interact('.block')
-            .draggable({
-                inertia: false,
-                modifiers: [
-                    interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }),
-                    interact.modifiers.snap({ targets: [interact.snappers.grid({ x: 10, y: 10 })], range: Infinity, relativePoints: [{ x: 0, y: 0 }] })
-                ],
-                listeners: {
-                    move: (event) => {
-                        const target = event.target;
-                        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-                        target.style.transform = `translate(${x}px, ${y}px)`;
-                        target.setAttribute('data-x', x);
-                        target.setAttribute('data-y', y);
-                        updateArrows();
-                    },
-                    start: (event) => event.target.classList.add('active'),
-                    end: (event) => {
-                        event.target.classList.remove('active');
-                        updateArrows();
+        const blockData = {
+            logger: {
+                code: `function logData(data) {
+    console.log(\`[${new Date().toISOString()}] \${data}\`);
+    // Store data in buffer
+    buffer.push(data);
+}`,
+                equations: `\\[ \\text{Buffer Size} = n \\times \\text{Data Size} \\]
+\\[ t = \\frac{\\text{Buffer Size}}{\\text{Bandwidth}} \\]`
+            },
+            sensor: {
+                code: `function readSensor() {
+    const value = analogRead(pin);
+    return filter(value, 0.1);
+}`,
+                equations: `\\[ y_t = \\alpha x_t + (1 - \\alpha) y_{t-1} \\]
+\\[ \\text{where } \\alpha = 0.1 \\]`
+            },
+            control: {
+                code: `function controlLoop(error) {
+    const kp = 0.5, ki = 0.1, kd = 0.05;
+    return pid(error, kp, ki, kd);
+}`,
+                equations: `\\[ u(t) = K_p e(t) + K_i \\int e(t) dt + K_d \\frac{de(t)}{dt} \\]`
+            },
+            motor: {
+                code: `function setMotorSpeed(speed) {
+    pwm.write(speed * 255);
+    monitorCurrent();
+}`,
+                equations: `\\[ P = V \\times I \\]
+\\[ \\omega = \\frac{V}{K_t} \\]`
+            },
+            communication: {
+                code: `function sendPacket(data) {
+    const packet = encode(data);
+    transmit(packet);
+}`,
+                equations: `\\[ \\text{BER} = \\frac{\\text{Errors}}{\\text{Total Bits}} \\]
+\\[ S = \\frac{P_s}{N_0} \\]`
+            }
+        };
+
+        function setupInteract() {
+            interact('.block')
+                .draggable({
+                    inertia: false,
+                    modifiers: [
+                        interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }),
+                        interact.modifiers.snap({ targets: [interact.snappers.grid({ x: 10, y: 10 })], range: Infinity, relativePoints: [{ x: 0, y: 0 }] })
+                    ],
+                    listeners: {
+                        move: (event) => {
+                            const target = event.target;
+                            const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                            target.style.transform = `translate(${x}px, ${y}px)`;
+                            target.setAttribute('data-x', x);
+                            target.setAttribute('data-y', y);
+                            updateArrows();
+                        },
+                        start: (event) => event.target.classList.add('active'),
+                        end: (event) => {
+                            event.target.classList.remove('active');
+                            updateArrows();
+                        }
                     }
-                }
-            });
+                });
+        }
 
         function updateArrows() {
             const svg = document.querySelector('.arrow');
@@ -378,19 +349,46 @@ static float prev_error = 0;`,
             }
         }
 
-        document.querySelectorAll('.block').forEach(block => {
-            block.addEventListener('click', (event) => {
-                event.preventDefault();
-                if (isInitializing) return;
-                handleInteraction(block, false);
+        function showModal(block) {
+            const modal = document.getElementById('blockModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalCode = document.getElementById('modalCode');
+            const modalEquations = document.getElementById('modalEquations');
+            const blockTitle = block.querySelector('h3').textContent;
+            const blockId = block.getAttribute('data-id');
+
+            modalTitle.textContent = blockTitle;
+            modalCode.value = blockData[blockId].code;
+            modalEquations.innerHTML = blockData[blockId].equations;
+            modal.style.display = 'flex';
+
+            // Trigger MathJax to render equations
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, modalEquations]);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('blockModal');
+            modal.style.display = 'none';
+        }
+
+        function setupBlockListeners() {
+            document.querySelectorAll('.block').forEach(block => {
+                block.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    handleInteraction(block, false);
+                });
+
+                block.addEventListener('touchstart', (event) => {
+                    event.preventDefault();
+                    handleInteraction(block, true);
+                });
             });
 
-            block.addEventListener('touchstart', (event) => {
-                event.preventDefault();
-                if (isInitializing) return;
-                handleInteraction(block, true);
+            document.querySelector('.close-modal').addEventListener('click', closeModal);
+            document.getElementById('blockModal').addEventListener('click', (event) => {
+                if (event.target === event.currentTarget) closeModal();
             });
-        });
+        }
 
         function handleInteraction(block, isTouch) {
             const currentTime = new Date().getTime();
@@ -399,12 +397,12 @@ static float prev_error = 0;`,
                     clearTimeout(tapTimeout);
                     toggleBlockSelection(block);
                 } else {
-                    tapTimeout = setTimeout(() => openCodeWindow(block.dataset.id), 300);
+                    tapTimeout = setTimeout(() => showModal(block), 300);
                 }
                 lastTapTime = currentTime;
                 lastTappedBlock = block;
             } else {
-                openCodeWindow(block.dataset.id);
+                showModal(block);
             }
         }
 
@@ -420,27 +418,11 @@ static float prev_error = 0;`,
             updateArrows();
         }
 
-        document.getElementById('closeButton').addEventListener('click', closeCodeWindow);
-
-        function openCodeWindow(moduleId) {
-            if (isInitializing) return;
-            const data = moduleData[moduleId];
-            if (!data) return;
-
-            document.getElementById('codeTextarea').value = data.code;
-            document.getElementById('mathContent').innerHTML = data.math;
-            document.getElementById('codeWindow').classList.remove('hidden');
-
-            if (window.MathJax) MathJax.typesetPromise();
-        }
-
-        function closeCodeWindow() {
-            document.getElementById('codeWindow').classList.add('hidden');
-        }
-
+        // Initialize
         window.addEventListener('load', () => {
             setTimeout(() => {
-                isInitializing = false;
+                setupInteract();
+                setupBlockListeners();
             }, 1000);
         });
     </script>
