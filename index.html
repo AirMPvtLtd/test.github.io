@@ -3,944 +3,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OncoPredict AI - Cancer Risk Prediction</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>AiRM Fateh Nano Drone: Math Learning Platform</title>
     <style>
+        *, ::before, ::after { box-sizing: border-box; }
+        body { margin: 0; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .p-4 { padding: 1rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .font-bold { font-weight: 700; }
+        .rounded { border-radius: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .w-3 { width: 0.75rem; }
+        .h-3 { height: 0.75rem; }
+        .rounded-full { border-radius: 9999px; }
+        .bg-green-500 { background-color: #10b981; }
+        .fixed { position: fixed; }
+        .z-50 { z-index: 50; }
+        .hidden { display: none; }
+
         :root {
             --primary: #00f0ff;
-            --secondary: #0088ff;
-            --dark: #0a192f;
-            --light: #ccd6f6;
-            --danger: #ff2d75;
+            --secondary: #ff3e7f;
+            --dark: #0a0a1a;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
         body {
-            background-color: var(--dark);
-            color: var(--light);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* Navbar Styles */
-        nav {
-            background: rgba(10, 25, 47, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem 5%;
-            position: fixed;
-            width: 100%;
-            z-index: 100;
-            border-bottom: 1px solid rgba(100, 255, 255, 0.1);
-        }
-        
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .logo-circle {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-        }
-        
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .nav-link {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary);
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            bottom: -5px;
-            left: 0;
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        /* Hero Section */
-        .hero {
+            background: #000;
+            font-family: 'Share Tech Mono', monospace;
+            color: #e0e0ff;
+            margin: 0;
+            overflow: hidden;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
+        }
+        .canvas {
             position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
             overflow: hidden;
         }
-        
-        .hero-content {
-            max-width: 600px;
-            z-index: 2;
-        }
-        
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-        
-        .hero-title span {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-        
-        .cta-button {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            border: none;
-            padding: 0.8rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
-        }
-        
-        .hero-bg {
+        .grid {
             position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50%;
-            height: 80%;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, rgba(0, 136, 255, 0) 70%);
-            z-index: 1;
-        }
-        
-        .dna-animation {
-            position: absolute;
-            right: 10%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 400px;
-            height: 400px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,10 L55,20 L45,20 Z M50,90 L55,80 L45,80 Z M50,50 L55,60 L45,60 Z" fill="none" stroke="%2300f0ff" stroke-width="0.5"/></svg>') center/contain no-repeat;
-            opacity: 0.3;
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            0% { transform: translateY(-50%) rotate(0deg); }
-            100% { transform: translateY(-50%) rotate(360deg); }
-        }
-        
-        /* Prediction Form Section */
-        .prediction-section {
-            padding: 8rem 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            text-align: center;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .prediction-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 3rem;
-        }
-        
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            flex: 1;
-        }
-        
-        .step:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            top: 25px;
-            left: 60%;
-            width: 80%;
-            height: 2px;
-            background: rgba(100, 255, 255, 0.3);
-        }
-        
-        .step-number {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(100, 255, 255, 0.1);
-            border: 2px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .step.active .step-number {
-            background: var(--primary);
-            color: var(--dark);
-            box-shadow: 0 0 15px var(--primary);
-        }
-        
-        .step-title {
-            font-weight: 600;
-        }
-        
-        .form-container {
-            background: rgba(10, 25, 47, 0.7);
-            border: 1px solid rgba(100, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .form-step {
-            display: none;
-        }
-        
-        .form-step.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            background: rgba(100, 255, 255, 0.05);
-            border: 1px solid rgba(100, 255, 255, 0.2);
-            border-radius: 8px;
-            color: var(--light);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-        
-        .file-upload {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-        
-        .file-upload-btn {
-            width: 100%;
-            padding: 1.5rem;
-            background: rgba(100, 255, 255, 0.05);
-            border: 2px dashed rgba(100, 255, 255, 0.3);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .file-upload-btn:hover {
-            border-color: var(--primary);
-            background: rgba(0, 240, 255, 0.1);
-        }
-        
-        .file-upload-input {
-            position: absolute;
-            left: 0;
             top: 0;
-            opacity: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            cursor: pointer;
+            background-image: linear-gradient(to right, rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+            background-size: 10px 10px;
+            pointer-events: none;
         }
-        
-        .upload-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-        }
-        
-        .btn {
-            padding: 0.8rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-        
-        .btn-prev {
-            background: transparent;
-            color: var(--light);
-            border: 1px solid rgba(100, 255, 255, 0.3);
-        }
-        
-        .btn-prev:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-next {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-        }
-        
-        .btn-next:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.3);
-        }
-        
-        /* Results Section */
-        .results-container {
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .risk-meter {
-            width: 200px;
-            height: 200px;
-            margin: 2rem auto;
-            position: relative;
-        }
-        
-        .risk-value {
+        .block {
             position: absolute;
+            width: 250px;
+            height: 100px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            color: var(--primary);
+            padding: 10px;
+            cursor: move;
+            transition: transform 0.2s ease;
+            user-select: none;
+            touch-action: manipulation;
+            pointer-events: auto;
+        }
+        .block:hover {
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
+        }
+        .block.active {
+            z-index: 100;
+            border-color: var(--secondary);
+            box-shadow: 0 0 25px rgba(255, 62, 127, 0.7);
+        }
+        .block.selected {
+            border-color: #ffff00;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.7);
+        }
+        .glass-window {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 3rem;
-            font-weight: 700;
-        }
-        
-        .risk-label {
-            margin-top: 1rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .risk-low {
-            color: #2ecc71;
-        }
-        
-        .risk-medium {
-            color: #f39c12;
-        }
-        
-        .risk-high {
-            color: var(--danger);
-        }
-        
-        .recommendations {
-            margin-top: 2rem;
-            text-align: left;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            border-radius: 10px;
-        }
-        
-        .recommendations h3 {
-            margin-bottom: 1rem;
+            width: 600px;
+            height: 80vh;
+            background: rgba(0, 240, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
             color: var(--primary);
-        }
-        
-        /* Dashboard Section */
-        .dashboard {
-            padding: 8rem 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .stat-card {
-            background: rgba(10, 25, 47, 0.7);
-            border: 1px solid rgba(100, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            border-color: rgba(100, 255, 255, 0.3);
-        }
-        
-        .stat-title {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .chart-container {
-            background: rgba(10, 25, 47, 0.7);
-            border: 1px solid rgba(100, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .history-list {
-            background: rgba(10, 25, 47, 0.7);
-            border: 1px solid rgba(100, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.5rem;
-        }
-        
-        .history-item {
+            padding: 20px;
+            z-index: 400;
+            overflow-y: auto;
             display: flex;
-            justify-content: space-between;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(100, 255, 255, 0.1);
+            flex-direction: column;
         }
-        
-        .history-item:last-child {
-            border-bottom: none;
+        .code-section {
+            flex: 1;
+            margin-bottom: 20px;
         }
-        
-        .history-date {
-            opacity: 0.7;
+        .math-section {
+            flex: 1;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            overflow-y: auto;
         }
-        
-        .history-risk {
-            font-weight: 600;
-        }
-        
-        /* Footer */
-        footer {
-            background: rgba(10, 15, 30, 0.8);
-            padding: 3rem 5%;
-            text-align: center;
-            border-top: 1px solid rgba(100, 255, 255, 0.1);
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .footer-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .footer-link {
-            color: var(--light);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-link:hover {
+        .glass-window textarea {
+            width: 100%;
+            height: 100%;
+            font-size: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
             color: var(--primary);
+            padding: 10px;
+            resize: none;
+            outline: none;
         }
-        
-        .footer-copyright {
-            opacity: 0.7;
-            font-size: 0.9rem;
+        .math-equation {
+            font-family: 'Times New Roman', Times, serif;
+            color: #fff;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 3px solid var(--secondary);
         }
-        
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .prediction-steps {
-                flex-direction: column;
-                gap: 2rem;
-            }
-            
-            .step:not(:last-child)::after {
-                display: none;
-            }
-            
-            .dna-animation {
-                display: none;
-            }
-            
-            .hero-content {
-                max-width: 100%;
-                text-align: center;
-            }
-            
-            .hero-bg {
-                width: 100%;
-                height: 50%;
-                top: auto;
-                bottom: 0;
-                transform: none;
-            }
+        .close-button {
+            background: rgba(255, 62, 127, 0.2);
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            float: right;
+            margin-bottom: 10px;
+        }
+        .close-button:hover {
+            background: rgba(255, 62, 127, 0.3);
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .arrow {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+            overflow: visible;
+            transform-box: fill-box;
+        }
+        .section-title {
+            color: var(--secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 4px;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/interactjs@1.10.27/dist/interact.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="navbar">
-            <div class="logo">
-                <div class="logo-circle"></div>
-                <div class="logo-text">OncoPredict AI</div>
-            </div>
-            <div class="nav-links">
-                <a href="#home" class="nav-link">Home</a>
-                <a href="#predict" class="nav-link">Predict</a>
-                <a href="#dashboard" class="nav-link">Dashboard</a>
-                <a href="#about" class="nav-link">About</a>
-            </div>
+    <div class="header p-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl" style="color: var(--primary);">AiRM FATEH NANO DRONE</h1>
+            <h2 class="text-lg" style="color: var(--secondary);">MATH LEARNING PLATFORM</h2>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1 class="hero-title">Early Detection <span>Saves Lives</span></h1>
-            <p class="hero-subtitle">Upload your medical reports and get AI-powered cancer risk analysis in seconds. Our advanced algorithms help identify potential risks with 95% accuracy.</p>
-            <button class="cta-button" onclick="location.href='#predict'">Get Started</button>
+        <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full mr-2 bg-green-500"></div>
+            <span class="text-sm">Connected</span>
         </div>
-        <div class="hero-bg"></div>
-        <div class="dna-animation"></div>
-    </section>
-
-    <!-- Prediction Section -->
-    <section class="prediction-section" id="predict">
-        <h2 class="section-title">Cancer Risk Prediction</h2>
-        
-        <div class="prediction-steps">
-            <div class="step active" id="step1-indicator">
-                <div class="step-number">1</div>
-                <div class="step-title">Patient Details</div>
-            </div>
-            <div class="step" id="step2-indicator">
-                <div class="step-number">2</div>
-                <div class="step-title">Upload Reports</div>
-            </div>
-            <div class="step" id="step3-indicator">
-                <div class="step-number">3</div>
-                <div class="step-title">Results</div>
-            </div>
+    </div>
+    <div class="canvas">
+        <div class="grid"></div>
+        <svg class="arrow" width="100%" height="100%">
+            <defs>
+                <marker id="arrowhead" markerWidth="15" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 15 5, 0 10" fill="#ffff00" />
+                </marker>
+            </defs>
+        </svg>
+        <div class="block" data-id="logger" style="left: 50px; top: 100px;">
+            <h3 class="text-sm font-bold">Logger</h3>
+            <p class="text-xs">Status: Active</p>
         </div>
-        
-        <div class="form-container">
-            <!-- Step 1: Patient Details -->
-            <div class="form-step active" id="step1">
-                <div class="form-group">
-                    <label for="name" class="form-label">Full Name</label>
-                    <input type="text" id="name" class="form-input" placeholder="Enter your full name">
-                </div>
-                <div class="form-group">
-                    <label for="age" class="form-label">Age</label>
-                    <input type="number" id="age" class="form-input" placeholder="Enter your age">
-                </div>
-                <div class="form-group">
-                    <label for="gender" class="form-label">Gender</label>
-                    <select id="gender" class="form-input">
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-prev" disabled>Previous</button>
-                    <button class="btn btn-next" onclick="nextStep(1)">Next</button>
-                </div>
-            </div>
-            
-            <!-- Step 2: Upload Reports -->
-            <div class="form-step" id="step2">
-                <div class="form-group">
-                    <label class="form-label">Upload Medical Reports</label>
-                    <div class="file-upload">
-                        <label class="file-upload-btn">
-                            <div class="upload-icon">📁</div>
-                            <div>Drag & drop your files here or click to browse</div>
-                            <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.5rem;">Supported formats: JPG, PNG, PDF, DICOM</div>
-                            <input type="file" class="file-upload-input" multiple>
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="symptoms" class="form-label">Additional Symptoms (Optional)</label>
-                    <textarea id="symptoms" class="form-input" rows="4" placeholder="Describe any symptoms you're experiencing..."></textarea>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-prev" onclick="prevStep(2)">Previous</button>
-                    <button class="btn btn-next" onclick="analyzeReports()">Analyze</button>
-                </div>
-            </div>
-            
-            <!-- Step 3: Results -->
-            <div class="form-step" id="step3">
-                <div class="results-container">
-                    <h3>Your Cancer Risk Analysis</h3>
-                    
-                    <div class="risk-meter">
-                        <canvas id="riskChart"></canvas>
-                        <div class="risk-value" id="risk-value">0%</div>
-                    </div>
-                    
-                    <div class="risk-label" id="risk-label">Low Risk</div>
-                    
-                    <div class="recommendations">
-                        <h3>Recommendations</h3>
-                        <p id="recommendation-text">Based on our analysis, your risk of cancer is low. However, we recommend regular check-ups and maintaining a healthy lifestyle.</p>
-                        <ul id="recommendation-list" style="margin-top: 1rem; padding-left: 1.5rem;">
-                            <li>Schedule an annual physical examination</li>
-                            <li>Maintain a balanced diet with plenty of fruits and vegetables</li>
-                            <li>Exercise regularly (at least 30 minutes per day)</li>
-                        </ul>
-                    </div>
-                    
-                    <button class="btn btn-next" style="margin-top: 2rem;" onclick="location.href='#dashboard'">View Dashboard</button>
-                </div>
-            </div>
+        <div class="block" data-id="sensor" style="left: 350px; top: 100px;">
+            <h3 class="text-sm font-bold">Sensor</h3>
+            <p class="text-xs">Status: Active</p>
         </div>
-    </section>
-
-    <!-- Dashboard Section -->
-    <section class="dashboard" id="dashboard">
-        <h2 class="section-title">Your Health Dashboard</h2>
-        
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-title">Cancer Risk Score</div>
-                <div class="stat-value" id="dashboard-risk">15%</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Last Checkup</div>
-                <div class="stat-value" id="last-checkup">2 weeks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Risk Trend</div>
-                <div class="stat-value" id="risk-trend">↓ 5%</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Doctor Consultations</div>
-                <div class="stat-value" id="consultations">3</div>
-            </div>
+        <div class="block" data-id="control" style="left: 650px; top: 100px;">
+            <h3 class="text-sm font-bold">Control</h3>
+            <p class="text-xs">Status: Active</p>
         </div>
-        
-        <div class="chart-container">
-            <canvas id="trendChart"></canvas>
+        <div class="block" data-id="motor" style="left: 200px; top: 350px;">
+            <h3 class="text-sm font-bold">Motor</h3>
+            <p class="text-xs">Status: Active</p>
         </div>
-        
-        <div class="history-list">
-            <h3 style="margin-bottom: 1.5rem;">Previous Reports</h3>
-            <div class="history-item">
-                <div class="history-date">Today</div>
-                <div class="history-risk risk-low">Low Risk (15%)</div>
-            </div>
-            <div class="history-item">
-                <div class="history-date">3 months ago</div>
-                <div class="history-risk risk-low">Low Risk (20%)</div>
-            </div>
-            <div class="history-item">
-                <div class="history-date">6 months ago</div>
-                <div class="history-risk risk-medium">Medium Risk (35%)</div>
-            </div>
-            <div class="history-item">
-                <div class="history-date">1 year ago</div>
-                <div class="history-risk risk-medium">Medium Risk (42%)</div>
-            </div>
+        <div class="block" data-id="communication" style="left: 500px; top: 350px;">
+            <h3 class="text-sm font-bold">Communication</h3>
+            <p class="text-xs">Status: Active</p>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">OncoPredict AI</div>
-            <div class="footer-links">
-                <a href="#home" class="footer-link">Home</a>
-                <a href="#predict" class="footer-link">Predict</a>
-                <a href="#dashboard" class="footer-link">Dashboard</a>
-                <a href="#about" class="footer-link">About</a>
-                <a href="#contact" class="footer-link">Contact</a>
-            </div>
-            <div class="footer-copyright">© 2023 OncoPredict AI. All rights reserved.</div>
+    </div>
+    <div class="glass-window hidden" id="codeWindow">
+        <button class="close-button" id="closeButton">Close</button>
+        <div class="section-title">EDITABLE CODE</div>
+        <div class="code-section">
+            <textarea id="codeTextarea" spellcheck="false"></textarea>
         </div>
-    </footer>
+        <div class="section-title">MATHEMATICAL EQUATIONS</div>
+        <div class="math-section" id="mathContent"></div>
+    </div>
 
     <script>
-        // Form Navigation
-        function nextStep(currentStep) {
-            document.querySelector(`#step${currentStep}`).classList.remove('active');
-            document.querySelector(`#step${currentStep}-indicator`).classList.remove('active');
-            
-            document.querySelector(`#step${currentStep+1}`).classList.add('active');
-            document.querySelector(`#step${currentStep+1}-indicator`).classList.add('active');
-        }
-        
-        function prevStep(currentStep) {
-            document.querySelector(`#step${currentStep}`).classList.remove('active');
-            document.querySelector(`#step${currentStep}-indicator`).classList.remove('active');
-            
-            document.querySelector(`#step${currentStep-1}`).classList.add('active');
-            document.querySelector(`#step${currentStep-1}-indicator`).classList.add('active');
-        }
-        
-        // Analyze Reports - Simulate AI Processing
-        function analyzeReports() {
-            // Show loading state
-            const btn = document.querySelector('#step2 .btn-next');
-            btn.disabled = true;
-            btn.textContent = 'Analyzing...';
-            
-            // Simulate API call
-            setTimeout(() => {
-                nextStep(2);
-                showResults();
-            }, 2000);
-        }
-        
-        // Show Results
-        function showResults() {
-            // Generate random risk percentage (for demo)
-            const riskPercent = Math.floor(Math.random() * 100);
-            document.getElementById('risk-value').textContent = `${riskPercent}%`;
-            
-            // Set risk level
-            let riskLabel = '';
-            let riskClass = '';
-            let recommendation = '';
-            
-            if (riskPercent < 30) {
-                riskLabel = 'Low Risk';
-                riskClass = 'risk-low';
-                recommendation = 'Based on our analysis, your risk of cancer is low. However, we recommend regular check-ups and maintaining a healthy lifestyle.';
-            } else if (riskPercent < 70) {
-                riskLabel = 'Medium Risk';
-                riskClass = 'risk-medium';
-                recommendation = 'Our analysis indicates a moderate risk of cancer. We strongly recommend consulting with a specialist and scheduling additional tests.';
-            } else {
-                riskLabel = 'High Risk';
-                riskClass = 'risk-high';
-                recommendation = 'Our analysis shows a high risk of cancer. Please consult with an oncologist immediately for further evaluation and treatment options.';
+        const moduleData = {
+            logger: {
+                code: `float calculate_average(float readings[], int count) {
+    float sum = 0;
+    for (int i = 0; i < count; i++) {
+        sum += readings[i];
+    }
+    return sum / count;
+}`,
+                math: `
+                    <div class="math-equation">\\[ \\text{Average} = \\frac{\\sum_{i=1}^{n} x_i}{n} \\]</div>
+                    <div class="math-equation">\\[ x_i = \\text{individual reading}, n = \\text{number of readings} \\]</div>
+                `
+            },
+            sensor: {
+                code: `float get_roll(float ax, float ay, float az) {
+    float roll = atan2(ay, sqrt(ax * ax + az * az)) * 57.2958;
+    return roll;
+}`,
+                math: `
+                    <div class="math-equation">\\[ \\text{Roll} = \\arctan\\left(\\frac{a_y}{\\sqrt{a_x^2 + a_z^2}\\right) \\times \\frac{180}{\\pi} \\]</div>
+                `
+            },
+            control: {
+                code: `float pid_update(float target, float current, float dt) {
+    float kp = 1.2, ki =|^0.05, kd = 0.25;
+    float error = target - current;
+    static float integral = 0;
+    integral += error * dt;
+    float derivative = (error - prev_error) / dt;
+    float output = kp * error + ki * integral + kd * derivative;
+    prev_error = error;
+    return output;
+}
+static float prev_error = 0;`,
+                math: `
+                    <div class="math-equation">\\[ u(t) = K_p e(t) + K_i \\int_0^t e(\\tau) d\\tau + K_d \\frac{de(t)}{dt} \\]</div>
+                    <div class="math-equation">\\[ e(t) = \\text{target} - \\text{current} \\]</div>
+                `
+            },
+            motor: {
+                code: `void set_motor_speeds(float roll, float pitch, float yaw, float throttle) {
+    float m1 = throttle - pitch + roll + yaw;
+    float m2 = throttle + pitch - roll - yaw;
+    float m3 = throttle - pitch - roll + yaw;
+    float m4 = throttle + pitch + roll - yaw;
+}`,
+                math: `
+                    <div class="math-equation">\\[ \\begin{cases}
+                    M_1 = T - P + R + Y \\\\
+                    M_2 = T + P - R - Y \\\\
+                    M_3 = T - P - R + Y \\\\
+                    M_4 = T + P + R - Y
+                    \\end{cases} \\]</div>
+                    <div class="math-equation">\\[ T = \\text{Throttle}, P = \\text{Pitch}, R = \\text{Roll}, Y = \\text{Yaw} \\]</div>
+                `
+            },
+            communication: {
+                code: `void send_telemetry(float roll, float pitch, float yaw, float battery) {
+    int roll_int = roll * 10;
+    int pitch_int = pitch * 10;
+    int yaw_int = yaw * 10;
+    int battery_int = battery;
+}`,
+                math: `
+                    <div class="math-equation">\\[ \\text{Scaled Value} = \\text{Raw Value} \\times 10 \\]</div>
+                    <div class="math-equation">\\[ \\text{Example: } 45.67 \\times 10 = 456 \\text{ (integer)} \\]</div>
+                `
             }
-            
-            document.getElementById('risk-label').textContent = riskLabel;
-            document.getElementById('risk-label').className = `risk-label ${riskClass}`;
-            document.getElementById('recommendation-text').textContent = recommendation;
-            
-            // Update chart
-            updateRiskChart(riskPercent);
-            
-            // Update dashboard stats
-            document.getElementById('dashboard-risk').textContent = `${riskPercent}%`;
-        }
-        
-        // Risk Chart
-        function updateRiskChart(percent) {
-            const ctx = document.getElementById('riskChart').getContext('2d');
-            
-            if (window.riskChart) {
-                window.riskChart.destroy();
-            }
-            
-            window.riskChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Risk', ''],
-                    datasets: [{
-                        data: [percent, 100 - percent],
-                        backgroundColor: [
-                            getRiskColor(percent),
-                            'rgba(100, 255, 255, 0.1)'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    cutout: '70%',
-                    rotation: -90,
-                    circumference: 180,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            enabled: false
-                        }
-                    }
-                }
-            });
-        }
-        
-        function getRiskColor(percent) {
-            if (percent < 30) return '#2ecc71';
-            if (percent < 70) return '#f39c12';
-            return '#ff2d75';
-        }
-        
-        // Trend Chart
-        function initTrendChart() {
-            const ctx = document.getElementById('trendChart').getContext('2d');
-            
-            window.trendChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Cancer Risk %',
-                        data: [42, 38, 35, 32, 30, 28, 25, 22, 20, 18, 16, 15],
-                        borderColor: '#00f0ff',
-                        backgroundColor: 'rgba(0, 240, 255, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+        };
+
+        let isInitializing = true;
+        let selectedBlocks = [];
+        let lastTapTime = 0;
+        let lastTappedBlock = null;
+        let tapTimeout = null;
+
+        interact('.block')
+            .draggable({
+                inertia: false,
+                modifiers: [
+                    interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }),
+                    interact.modifiers.snap({ targets: [interact.snappers.grid({ x: 10, y: 10 })], range: Infinity, relativePoints: [{ x: 0, y: 0 }] })
+                ],
+                listeners: {
+                    move: (event) => {
+                        const target = event.target;
+                        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
+                        updateArrows();
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(100, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#ccd6f6'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(100, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#ccd6f6'
-                            }
-                        }
+                    start: (event) => event.target.classList.add('active'),
+                    end: (event) => {
+                        event.target.classList.remove('active');
+                        updateArrows();
                     }
                 }
             });
+
+        function updateArrows() {
+            const svg = document.querySelector('.arrow');
+            while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
+
+            for (let i = 0; i < selectedBlocks.length - 1; i++) {
+                const block1 = selectedBlocks[i];
+                const block2 = selectedBlocks[i + 1];
+                const rect1 = block1.getBoundingClientRect();
+                const rect2 = block2.getBoundingClientRect();
+                const canvasRect = document.querySelector('.canvas').getBoundingClientRect();
+
+                const left1 = rect1.left - canvasRect.left;
+                const right1 = rect1.right - canvasRect.left;
+                const top1 = rect1.top - canvasRect.top;
+                const bottom1 = rect1.bottom - canvasRect.top;
+                const left2 = rect2.left - canvasRect.left;
+                const right2 = rect2.right - canvasRect.left;
+                const top2 = rect2.top - canvasRect.top;
+                const bottom2 = rect2.bottom - canvasRect.top;
+
+                const distances = [
+                    { x1: right1, y1: top1 + rect1.height / 2, x2: left2, y2: top2 + rect2.height / 2, dist: Math.abs(right1 - left2) },
+                    { x1: left1, y1: top1 + rect1.height / 2, x2: right2, y2: top2 + rect2.height / 2, dist: Math.abs(left1 - right2) },
+                    { x1: left1 + rect1.width / 2, y1: bottom1, x2: left2 + rect2.width / 2, y2: top2, dist: Math.abs(bottom1 - top2) },
+                    { x1: left1 + rect1.width / 2, y1: top1, x2: left2 + rect2.width / 2, y2: bottom2, dist: Math.abs(top1 - bottom2) }
+                ];
+
+                const { x1, y1, x2, y2 } = distances.reduce((min, curr) => curr.dist < min.dist ? curr : min, distances[0]);
+
+                if (x1 !== x2 || y1 !== y2) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1);
+                    line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2);
+                    line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#ffff00');
+                    line.setAttribute('stroke-width', '2');
+                    line.setAttribute('marker-end', 'url(#arrowhead)');
+                    svg.appendChild(line);
+                }
+            }
         }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            initTrendChart();
+
+        document.querySelectorAll('.block').forEach(block => {
+            block.addEventListener('click', (event) => {
+                event.preventDefault();
+                if (isInitializing) return;
+                handleInteraction(block, false);
+            });
+
+            block.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                if (isInitializing) return;
+                handleInteraction(block, true);
+            });
+        });
+
+        function handleInteraction(block, isTouch) {
+            const currentTime = new Date().getTime();
+            if (isTouch) {
+                if (currentTime - lastTapTime < 300 && lastTappedBlock === block) {
+                    clearTimeout(tapTimeout);
+                    toggleBlockSelection(block);
+                } else {
+                    tapTimeout = setTimeout(() => openCodeWindow(block.dataset.id), 300);
+                }
+                lastTapTime = currentTime;
+                lastTappedBlock = block;
+            } else {
+                openCodeWindow(block.dataset.id);
+            }
+        }
+
+        function toggleBlockSelection(block) {
+            const index = selectedBlocks.indexOf(block);
+            if (index !== -1) {
+                selectedBlocks.splice(index, 1);
+                block.classList.remove('selected');
+            } else {
+                selectedBlocks.push(block);
+                block.classList.add('selected');
+            }
+            updateArrows();
+        }
+
+        document.getElementById('closeButton').addEventListener('click', closeCodeWindow);
+
+        function openCodeWindow(moduleId) {
+            if (isInitializing) return;
+            const data = moduleData[moduleId];
+            if (!data) return;
+
+            document.getElementById('codeTextarea').value = data.code;
+            document.getElementById('mathContent').innerHTML = data.math;
+            document.getElementById('codeWindow').classList.remove('hidden');
+
+            if (window.MathJax) MathJax.typesetPromise();
+        }
+
+        function closeCodeWindow() {
+            document.getElementById('codeWindow').classList.add('hidden');
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                isInitializing = false;
+            }, 1000);
         });
     </script>
 </body>
