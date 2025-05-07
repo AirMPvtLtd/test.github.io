@@ -169,7 +169,7 @@
         .close-modal:hover {
             color: var(--secondary);
         }
-        #buildButton, #controlsButton, #challengesButton, #connectButton {
+        #buildButton, #controlsButton, #challengesButton, #connectButton, #tutorialButton {
             position: fixed;
             right: 20px;
             background: transparent;
@@ -199,7 +199,11 @@
             top: calc(50% + 180px);
             transform: translateY(-50%);
         }
-        #buildButton:hover, #controlsButton:hover, #challengesButton:hover, #connectButton:hover {
+        #tutorialButton {
+            top: calc(50% + 240px);
+            transform: translateY(-50%);
+        }
+        #buildButton:hover, #controlsButton:hover, #challengesButton:hover, #connectButton:hover, #tutorialButton:hover {
             background: rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
@@ -326,6 +330,7 @@
     <button id="controlsButton">Controls</button>
     <button id="challengesButton">Challenges</button>
     <button id="connectButton">Connect</button>
+    <button id="tutorialButton">Tutorial</button>
     <div id="buildStatus">
         <span id="statusMessage"></span>
         <button id="deepDiveButton">Deep Dive</button>
@@ -390,8 +395,89 @@
                 <input type="text" id="droneId" placeholder="Enter Drone ID" style="width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px; margin-bottom: 10px;">
                 <label class="text-sm">Password:</label>
                 <input type="password" id="dronePassword" placeholder="Enter Password" style="width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px; margin-bottom: 10px;">
-                <button id="connectDroneButton" style="margin-top: 10px;">Connect</button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="connectDroneButton" style="margin-top: 10px;">Connect</button>
+                    <button id="uploadCodeButton" style="margin-top: 10px;">Upload</button>
+                </div>
                 <p class="text-sm" id="droneStatus" style="margin-top: 10px;">Status: Disconnected</p>
+                <progress id="uploadProgress" value="0" max="100" style="width: 100%; margin-top: 10px; background: rgba(0, 0, 0, 0.5); color: var(--primary);"></progress>
+                <p class="text-sm" id="uploadStatus" style="margin-top: 10px;">Upload Status: None</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="tutorialModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <h3>Tutorial: How to Use the AiRM Fateh Nano Drone Platform</h3>
+            <div class="modal-section" style="padding: 10px;">
+                <h4>Welcome</h4>
+                <p class="text-sm">This platform is designed to teach math and coding through drone programming for grades 6-12. Follow this guide to learn how to use each feature.</p>
+
+                <h4>1. Understanding the Interface</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Canvas:</strong> The main area displays blocks representing drone functions (e.g., Initialize System, Drive Motors).</li>
+                    <li><strong>Header:</strong> Shows the platform title and connection status (green for connected, red for disconnected).</li>
+                    <li><strong>Right-Side Buttons:</strong> Control the workflow: Build, Controls, Challenges, Connect, Tutorial.</li>
+                </ul>
+
+                <h4>2. Interacting with Blocks</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Drag Blocks:</strong> Click and drag blocks to reposition them on the canvas, snapping to a 10x10 grid.</li>
+                    <li><strong>View Details:</strong> Click a block to open a modal showing its code and related math equations.</li>
+                    <li><strong>Select Blocks:</strong> Double-tap (touch) or double-click to select blocks, connecting them with yellow arrows to visualize workflow.</li>
+                </ul>
+
+                <h4>3. Building Code</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Build Button:</strong> Click "Build" to compile code from all blocks into a single program.</li>
+                    <li><strong>Status:</strong> A status bar at the top shows "Successfully Built" or "Build Failed". If it fails, click "Deep Dive" to view error logs in a new window.</li>
+                </ul>
+
+                <h4>4. Controlling the Drone</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Controls Button:</strong> Opens a modal for basic flight controls (Grades 6-8).</li>
+                    <li><strong>Commands:</strong> Use buttons for Hover, Forward, Rotate Left, Rotate Right.</li>
+                    <li><strong>Speed:</strong> Adjust the throttle slider (0-100%) to set motor speed.</li>
+                    <li><strong>Note:</strong> Requires a connected drone to send commands.</li>
+                </ul>
+
+                <h4>5. Completing Coding Challenges</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Challenges Button:</strong> Opens a modal with coding challenges (Grades 8-12).</li>
+                    <li><strong>Beginner Challenge:</strong> Adjust motor speed (0-100) using <code>set_speed(speed)</code>. Enter a speed and click "Run Challenge".</li>
+                    <li><strong>Advanced Challenge:</strong> Stabilize the drone by setting roll and pitch (-45 to 45) using <code>adjust_angle(roll, pitch)</code>.</li>
+                    <li><strong>Output:</strong> Results are shown in the status bar, e.g., motor speeds or stability score.</li>
+                </ul>
+
+                <h4>6. Connecting to the Drone</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Connect Button:</strong> Opens a modal to connect to the drone.</li>
+                    <li><strong>Inputs:</strong> Enter a Drone ID and Password (minimum 8 characters).</li>
+                    <li><strong>Connect:</strong> Click "Connect" to establish a WiFi connection. The status blinks "Connected" or "Disconnected" for 5 seconds.</li>
+                    <li><strong>Header Indicator:</strong> Green dot indicates connected, red indicates disconnected.</li>
+                </ul>
+
+                <h4>7. Uploading Code</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Upload Button:</strong> In the Connect modal, click "Upload" to send compiled code to the drone.</li>
+                    <li><strong>Requirements:</strong> Must have a successful build and be connected.</li>
+                    <li><strong>Progress:</strong> A progress bar shows upload progress (0-100% over 5 seconds).</li>
+                    <li><strong>Status:</strong> Blinks "Upload Complete" or "Upload Failed" for 5 seconds.</li>
+                </ul>
+
+                <h4>8. Using the Tutorial</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li><strong>Tutorial Button:</strong> You’re here! This modal provides a guide to all features.</li>
+                    <li><strong>Navigation:</strong> Scroll to read all sections. Click the "×" to close.</li>
+                </ul>
+
+                <h4>Tips</h4>
+                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
+                    <li>Start with the "Build" button to compile code, then connect to the drone.</li>
+                    <li>Use "Controls" for simple flight or "Challenges" for coding practice.</li>
+                    <li>Check the status bar for feedback on actions.</li>
+                    <li>Revisit this tutorial anytime by clicking "Tutorial".</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -404,6 +490,8 @@
         let isDragging = false;
         let errorLog = '';
         let isConnected = false;
+        let isBuilt = false;
+        let mainCpp = '';
 
         const blockData = {
             initialize_system: {
@@ -863,6 +951,11 @@ void DroneSystem::main_task(void* arg) {
             modal.style.display = 'flex';
         }
 
+        function showTutorialModal() {
+            const modal = document.getElementById('tutorialModal');
+            modal.style.display = 'flex';
+        }
+
         function showBuildStatus(message, isError = false) {
             const buildStatus = document.getElementById('buildStatus');
             const statusMessage = document.getElementById('statusMessage');
@@ -882,7 +975,7 @@ void DroneSystem::main_task(void* arg) {
         }
 
         function handleBuild() {
-            let mainCpp = '#include <Arduino.h>\n#include <esp_log.h>\n\n';
+            mainCpp = '#include <Arduino.h>\n#include <esp_log.h>\n\n';
             for (const [blockId, data] of Object.entries(blockData)) {
                 if (blockId !== 'challenges') {
                     mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
@@ -895,9 +988,11 @@ void DroneSystem::main_task(void* arg) {
 
             const isSuccess = Math.random() < 0.7;
             if (isSuccess) {
-                showBuildStatus('Successfully Built');
+                isBuilt = true;
                 errorLog = '';
+                showBuildStatus('Successfully Built');
             } else {
+                isBuilt = false;
                 errorLog = `Build Error Log:\n` +
                            `Error: Syntax error in block 'Compute PID Control'\n` +
                            `Line 5: Undefined reference to 'roll_pid'\n` +
@@ -1000,10 +1095,13 @@ void DroneSystem::main_task(void* arg) {
             if (droneId === '' || password.length < 8) {
                 showBuildStatus('Invalid Drone ID or Password (minimum 8 characters)', true);
                 droneStatus.textContent = 'Status: Invalid Credentials';
+                droneStatus.style.animation = 'blink 1s infinite';
+                setTimeout(() => {
+                    droneStatus.style.animation = 'none';
+                }, 5000);
                 return;
             }
 
-            // Simulate connection attempt (70% success rate for demo)
             const isSuccess = Math.random() < 0.7;
             if (isSuccess) {
                 isConnected = true;
@@ -1023,12 +1121,60 @@ void DroneSystem::main_task(void* arg) {
                 showBuildStatus('Connection Failed', true);
             }
 
-            // Stop blinking after 5 seconds
             setTimeout(() => {
                 droneStatus.style.animation = 'none';
             }, 5000);
+        }
 
-            // TODO: Integrate actual WiFi connection logic (e.g., UDP handshake with drone)
+        function handleUpload() {
+            const uploadProgress = document.getElementById('uploadProgress');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const droneId = document.getElementById('droneId').value.trim();
+
+            if (!isConnected) {
+                showBuildStatus('Drone not connected', true);
+                uploadStatus.textContent = 'Upload Status: Not Connected';
+                uploadStatus.style.animation = 'blink 1s infinite';
+                setTimeout(() => {
+                    uploadStatus.style.animation = 'none';
+                }, 5000);
+                return;
+            }
+
+            if (!isBuilt) {
+                showBuildStatus('No successful build available', true);
+                uploadStatus.textContent = 'Upload Status: No Build';
+                uploadStatus.style.animation = 'blink 1s infinite';
+                setTimeout(() => {
+                    uploadStatus.style.animation = 'none';
+                }, 5000);
+                return;
+            }
+
+            uploadProgress.value = 0;
+            uploadStatus.textContent = 'Upload Status: Uploading';
+            uploadStatus.style.animation = 'blink 1s infinite';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                uploadProgress.value = progress;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    const isSuccess = Math.random() < 0.7;
+                    if (isSuccess) {
+                        uploadStatus.textContent = 'Upload Status: Upload Complete';
+                        showBuildStatus(`Code uploaded to Drone ${droneId}`);
+                    } else {
+                        uploadStatus.textContent = 'Upload Status: Upload Failed';
+                        showBuildStatus('Upload Failed', true);
+                    }
+                    uploadStatus.style.animation = 'blink 1s infinite';
+                    setTimeout(() => {
+                        uploadStatus.style.animation = 'none';
+                    }, 5000);
+                }
+            }, 100);
         }
 
         function setupControlListeners() {
@@ -1051,6 +1197,7 @@ void DroneSystem::main_task(void* arg) {
 
         function setupConnectListeners() {
             document.getElementById('connectDroneButton').addEventListener('click', handleConnect);
+            document.getElementById('uploadCodeButton').addEventListener('click', handleUpload);
         }
 
         function setupBlockListeners() {
@@ -1089,10 +1236,15 @@ void DroneSystem::main_task(void* arg) {
                 if (event.target === event.currentTarget) closeModal('connectModal');
             });
 
+            document.getElementById('tutorialModal').addEventListener('click', (event) => {
+                if (event.target === event.currentTarget) closeModal('tutorialModal');
+            });
+
             document.getElementById('buildButton').addEventListener('click', handleBuild);
             document.getElementById('controlsButton').addEventListener('click', showControlsModal);
             document.getElementById('challengesButton').addEventListener('click', showChallengesModal);
             document.getElementById('connectButton').addEventListener('click', showConnectModal);
+            document.getElementById('tutorialButton').addEventListener('click', showTutorialModal);
             document.getElementById('deepDiveButton').addEventListener('click', showDeepDive);
         }
 
@@ -1136,13 +1288,24 @@ void DroneSystem::main_task(void* arg) {
                 setupChallengeListeners();
                 setupConnectListeners();
 
-                // Define blinking animation
                 const styleSheet = document.createElement('style');
                 styleSheet.textContent = `
                     @keyframes blink {
                         0% { opacity: 1; }
                         50% { opacity: 0; }
                         100% { opacity: 1; }
+                    }
+                    progress::-webkit-progress-bar {
+                        background: rgba(0, 0, 0, 0.5);
+                        border-radius: 4px;
+                    }
+                    progress::-webkit-progress-value {
+                        background: var(--primary);
+                        border-radius: 4px;
+                    }
+                    progress::-moz-progress-bar {
+                        background: var(--primary);
+                        border-radius: 4px;
                     }
                 `;
                 document.head.appendChild(styleSheet);
