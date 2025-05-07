@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name=" THEYviewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AiRM Fateh Nano Drone: Math Learning Platform</title>
     <style>
         *, ::before, ::after { box-sizing: border-box; }
@@ -168,11 +168,9 @@
         .close-modal:hover {
             color: var(--secondary);
         }
-        #buildButton {
+        #buildButton, #uploadButton {
             position: fixed;
             right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
             background: transparent;
             border: 2px solid var(--primary);
             color: var(--primary);
@@ -184,7 +182,15 @@
             z-index: 200;
             transition: background 0.2s, box-shadow 0.2s;
         }
-        #buildButton:hover {
+        #buildButton {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #uploadButton {
+            top: calc(50% + 60px);
+            transform: translateY(-50%);
+        }
+        #buildButton:hover, #uploadButton:hover {
             background: rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
@@ -312,6 +318,7 @@
         </div>
     </div>
     <button id="buildButton">Build</button>
+    <button id="uploadButton">Upload</button>
     <div id="buildStatus">
         <span id="statusMessage"></span>
         <button id="deepDiveButton">Deep Dive</button>
@@ -337,6 +344,7 @@
         let tapTimeout = null;
         let isDragging = false;
         let errorLog = '';
+        let isBuildSuccessful = false; // Track build status for upload
 
         const blockData = {
             initialize_system: {
@@ -493,7 +501,7 @@ void Control::update(MPU6050Sensor& sensor, float dt, float& roll_out, float& pi
 }
 void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
     float best_cost = INFINITY;
-    PIDController best_pmetaids[4] = {roll_pid, pitch_pid, yaw_pid, height_pid};
+    PIDController best_pids[4] = {roll_pid, pitch_pid, yaw_pid, height_pid};
     float temp = 10.0, cooling_rate = 0.95;
     for (int i = 0; i < max_iterations; i++) {
         logger->log("Auto-tune iteration %d/%d", i + 1, max_iterations);
@@ -502,7 +510,7 @@ void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
             PIDController(yaw_pid), PIDController(height_pid)
         };
         new_pids[0].set_gains(roll_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.4, roll_pid.ki, roll_pid.kd);
-        new_pids[1].set_gains(pitch_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.4, pitch_pid.ki, roll_pid.kd);
+        new_pids[1].set_gains(pitch_pid.kp + (random() % 什么事1000 / 1000.0 - 0.5) * 0.4, pitch_pid.ki, roll_pid.kd);
         new_pids[2].set_gains(yaw_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.2, yaw_pid.ki, yaw_pid.kd);
         new_pids[3].set_gains(height_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.8, height_pid.ki, height_pid.kd);
         roll_pid = new_pids[0]; pitch_pid = new_pids[1];
@@ -758,6 +766,9 @@ logger->log("Variables initialized");
             modalEquations.innerHTML = blockData[blockId].equations;
             modal.style.display = 'flex';
 
+            // Set textarea to read-only for 'variables' block
+            modalCode.readOnly = blockId === 'variables';
+
             // Trigger MathJax to render equations
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, modalEquations]);
         }
@@ -797,6 +808,7 @@ logger->log("Variables initialized");
             if (isSuccess) {
                 showBuildStatus('Successfully Built');
                 errorLog = '';
+                isBuildSuccessful = true;
             } else {
                 errorLog = `Build Error Log:\n` +
                            `Error: Syntax error in block 'Compute PID Control'\n` +
@@ -804,9 +816,23 @@ logger->log("Variables initialized");
                            `Suggestion: Ensure PIDController is properly initialized\n` +
                            `Timestamp: ${new Date().toISOString()}`;
                 showBuildStatus('Build Failed', true);
+                isBuildSuccessful = false;
             }
 
             // TODO: Replace with actual build logic (e.g., send mainCpp to a compiler backend)
+        }
+
+        function handleUpload() {
+            if (!isBuildSuccessful) {
+                showBuildStatus('Error: Build required before upload', true);
+                return;
+            }
+
+            showBuildStatus('Uploading to drone via WiFi...');
+            setTimeout(() => {
+                showBuildStatus('Upload Successful');
+                // TODO: Replace with actual WiFi upload logic (e.g., send mainCpp to drone via UDP)
+            }, 2000);
         }
 
         function showDeepDive() {
@@ -867,9 +893,8 @@ logger->log("Variables initialized");
             });
 
             document.getElementById('buildButton').addEventListener('click', handleBuild);
+            document.getElementById('uploadButton').addEventListener('click', handleUpload);
             document.getElementById('deepDiveButton').addEventListener('click', showDeepDive);
-
-            // TODO: Add Upload button to interface with esptool.py or WebSerial
         }
 
         function handleInteraction(block, isTouch) {
