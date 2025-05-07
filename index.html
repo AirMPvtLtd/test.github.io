@@ -168,7 +168,7 @@
         .close-modal:hover {
             color: var(--secondary);
         }
-        #buildButton, #controlsButton {
+        #buildButton, #controlsButton, #challengesButton {
             position: fixed;
             right: 20px;
             background: transparent;
@@ -190,7 +190,11 @@
             top: calc(50% + 60px);
             transform: translateY(-50%);
         }
-        #buildButton:hover, #controlsButton:hover {
+        #challengesButton {
+            top: calc(50% + 120px);
+            transform: translateY(-50%);
+        }
+        #buildButton:hover, #controlsButton:hover, #challengesButton:hover {
             background: rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
@@ -315,6 +319,7 @@
     </div>
     <button id="buildButton">Build</button>
     <button id="controlsButton">Controls</button>
+    <button id="challengesButton">Challenges</button>
     <div id="buildStatus">
         <span id="statusMessage"></span>
         <button id="deepDiveButton">Deep Dive</button>
@@ -344,6 +349,30 @@
             </div>
             <label class="text-sm">Speed: <span id="throttleValue">0</span>%</label>
             <input type="range" id="throttleSlider" min="0" max="100" value="0">
+        </div>
+    </div>
+    <div class="modal" id="challengesModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <h3>Coding Challenges (Grades 8-12)</h3>
+            <div class="modal-section">
+                <h4>Beginner (Grades 8-10): Adjust Motor Speed</h4>
+                <p class="text-xs">Use <code>set_speed(speed)</code> to set all motors to the same speed (0 to 100).</p>
+                <label class="text-sm">Speed (0-100):</label>
+                <input type="number" id="beginnerSpeed" min="0" max="100" value="50" style="width: 100px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px;">
+                <textarea id="beginnerCode" style="height: 100px; margin-top: 10px;">set_speed(speed);</textarea>
+                <button id="runBeginnerChallenge" style="margin-top: 10px;">Run Challenge</button>
+            </div>
+            <div class="modal-section">
+                <h4>Advanced (Grades 11-12): Stabilize Drone</h4>
+                <p class="text-xs">Use <code>adjust_angle(roll, pitch)</code> to stabilize the drone (roll, pitch: -45 to 45).</p>
+                <label class="text-sm">Roll (-45 to 45):</label>
+                <input type="number" id="advancedRoll" min="-45" max="45" value="0" style="width: 100px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px;">
+                <label class="text-sm">Pitch (-45 to 45):</label>
+                <input type="number" id="advancedPitch" min="-45" max="45" value="0" style="width: 100px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px;">
+                <textarea id="advancedCode" style="height: 100px; margin-top: 10px;">adjust_angle(roll, pitch);</textarea>
+                <button id="runAdvancedChallenge" style="margin-top: 10px;">Run Challenge</button>
+            </div>
         </div>
     </div>
 
@@ -395,7 +424,7 @@
     gy = gyro_y / 131.0 - gyro_offsets[1];
     gz = gyro_z / 131.0 - gyro_offsets[2];
 }`,
-                equations: `\\[ a_x = \\frac{\\text{Raw Accel}_x}{16284} - a_{x0} \\]
+                equations: `\\[ a_x = \\frac{\\text{Raw Accel}_x}{16384} - a_{x0} \\]
 \\[ g_x = \\frac{\\text{Raw Gyro}_x}{131} - g_{x0} \\]`
             },
             calibrate_sensor: {
@@ -576,7 +605,7 @@ void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
     trim[2] = pos_y * 100;
     trim[3] = pos_x * 100;
     for (int i = 0; i < 4; i++) trim[i] = std::max(std::min(trim[i], 1000.0f), -1000.0f);
-    logger->log("Trim: [%.0f, %.0f, %.0f, %.0f]", trim[0], trim[1], trim[2], trim[3]);
+    logger->log("Trim: [%.0f, %.0f, %.0f, %.0f]", trim[0], trim[1], trim[ faculdade2], trim[3]);
 }`,
                 equations: `\\[ v_x = v_x + a_x \\cdot g \\cdot \\Delta t \\cdot 0.99 \\]
 \\[ p_x = p_x + v_x \\cdot \\Delta t \\]`
@@ -679,6 +708,27 @@ void DroneSystem::main_task(void* arg) {
 }`,
                 equations: `\\[ T_{\\text{loop}} = \\Delta t = 0.01 \\text{s} \\]
 \\[ m_i = T + u_{\\text{pitch}} + u_{\\text{roll}} + u_{\\text{yaw}} \\]`
+            },
+            challenges: {
+                set_speed: {
+                    code: `void DroneSystem::set_speed(float speed) {
+    speed = std::max(std::min(speed, 100.0f), 0.0f);
+    float motor_speed = speed * 65535 / 100;
+    motor.set_speeds(motor_speed, motor_speed, motor_speed, motor_speed);
+    logger->log("Set motor speed: %.2f%%", speed);
+}`,
+                    equations: `\\[ m_i = \\frac{\\text{speed} \\cdot 65535}{100} \\]`
+                },
+                adjust_angle: {
+                    code: `void DroneSystem::adjust_angle(float roll, float pitch) {
+    roll = std::max(std::min(roll, 45.0f), -45.0f);
+    pitch = std::max(std::min(pitch, 45.0f), -45.0f);
+    control.set_targets(pitch, roll, 0.0f, 0.5f);
+    logger->log("Adjusted angles: Roll=%.2f, Pitch=%.2f", roll, pitch);
+}`,
+                    equations: `\\[ \\theta_{\\text{roll}} = \\max(\\min(\\text{roll}, 45), -45) \\]
+\\[ \\theta_{\\text{pitch}} = \\max(\\min(\\text{pitch}, 45), -45) \\]`
+                }
             }
         };
 
@@ -769,7 +819,6 @@ void DroneSystem::main_task(void* arg) {
             modalEquations.innerHTML = blockData[blockId].equations;
             modal.style.display = 'flex';
 
-            // Trigger MathJax to render equations
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, modalEquations]);
         }
 
@@ -780,6 +829,11 @@ void DroneSystem::main_task(void* arg) {
 
         function showControlsModal() {
             const modal = document.getElementById('controlsModal');
+            modal.style.display = 'flex';
+        }
+
+        function showChallengesModal() {
+            const modal = document.getElementById('challengesModal');
             modal.style.display = 'flex';
         }
 
@@ -802,13 +856,17 @@ void DroneSystem::main_task(void* arg) {
         }
 
         function handleBuild() {
-            // Simulate build process by concatenating blockData code
             let mainCpp = '#include <Arduino.h>\n#include <esp_log.h>\n\n';
             for (const [blockId, data] of Object.entries(blockData)) {
-                mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
+                if (blockId !== 'challenges') {
+                    mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
+                } else {
+                    for (const [challengeId, challengeData] of Object.entries(data)) {
+                        mainCpp += `// Challenge: ${challengeId}\n${challengeData.code}\n\n`;
+                    }
+                }
             }
 
-            // Simulate build success or failure (70% success rate for demo)
             const isSuccess = Math.random() < 0.7;
             if (isSuccess) {
                 showBuildStatus('Successfully Built');
@@ -821,8 +879,6 @@ void DroneSystem::main_task(void* arg) {
                            `Timestamp: ${new Date().toISOString()}`;
                 showBuildStatus('Build Failed', true);
             }
-
-            // TODO: Replace with actual build logic (e.g., send mainCpp to a compiler backend)
         }
 
         function showDeepDive() {
@@ -865,10 +921,45 @@ void DroneSystem::main_task(void* arg) {
         }
 
         function sendCommand(command) {
-            // Simulate sending command to drone
             console.log(`Sending command: ${command}`);
             showBuildStatus(`Command: ${command}`);
-            // TODO: Integrate with actual drone communication (e.g., UDP commands)
+        }
+
+        function runBeginnerChallenge() {
+            const speedInput = document.getElementById('beginnerSpeed').value;
+            const code = document.getElementById('beginnerCode').value;
+            const speed = parseFloat(speedInput);
+
+            if (isNaN(speed) || speed < 0 || speed > 100) {
+                showBuildStatus('Invalid speed value (0-100 required)', true);
+                return;
+            }
+
+            // Simulate drone response
+            const simulatedResponse = `Drone set to speed: ${speed}%\n` +
+                                     `Motor speeds: [${speed * 65535 / 100}, ${speed * 65535 / 100}, ${speed * 65535 / 100}, ${speed * 65535 / 100}]`;
+            showBuildStatus('Beginner Challenge: ' + simulatedResponse);
+            sendCommand(`set_speed:${speed}`);
+        }
+
+        function runAdvancedChallenge() {
+            const rollInput = document.getElementById('advancedRoll').value;
+            const pitchInput = document.getElementById('advancedPitch').value;
+            const code = document.getElementById('advancedCode').value;
+            const roll = parseFloat(rollInput);
+            const pitch = parseFloat(pitchInput);
+
+            if (isNaN(roll) || roll < -45 || roll > 45 || isNaN(pitch) || pitch < -45 || pitch > 45) {
+                showBuildStatus('Invalid roll/pitch values (-45 to 45 required)', true);
+                return;
+            }
+
+            // Simulate drone response
+            const stabilityScore = Math.abs(roll) + Math.abs(pitch); // Simplified stability metric
+            const simulatedResponse = `Drone stabilized: Roll=${roll}, Pitch=${pitch}\n` +
+                                     `Stability Score: ${stabilityScore.toFixed(2)} (lower is better)`;
+            showBuildStatus('Advanced Challenge: ' + simulatedResponse);
+            sendCommand(`adjust_angle:${roll},${pitch}`);
         }
 
         function setupControlListeners() {
@@ -882,6 +973,11 @@ void DroneSystem::main_task(void* arg) {
                 throttleValue.textContent = throttleSlider.value;
                 sendCommand(`set_throttle:${throttleSlider.value / 100}`);
             });
+        }
+
+        function setupChallengeListeners() {
+            document.getElementById('runBeginnerChallenge').addEventListener('click', runBeginnerChallenge);
+            document.getElementById('runAdvancedChallenge').addEventListener('click', runAdvancedChallenge);
         }
 
         function setupBlockListeners() {
@@ -912,11 +1008,14 @@ void DroneSystem::main_task(void* arg) {
                 if (event.target === event.currentTarget) closeModal('controlsModal');
             });
 
+            document.getElementById('challengesModal').addEventListener('click', (event) => {
+                if (event.target === event.currentTarget) closeModal('challengesModal');
+            });
+
             document.getElementById('buildButton').addEventListener('click', handleBuild);
             document.getElementById('controlsButton').addEventListener('click', showControlsModal);
+            document.getElementById('challengesButton').addEventListener('click', showChallengesModal);
             document.getElementById('deepDiveButton').addEventListener('click', showDeepDive);
-
-            // TODO: Add Upload button to interface with esptool.py or WebSerial
         }
 
         function handleInteraction(block, isTouch) {
@@ -951,12 +1050,12 @@ void DroneSystem::main_task(void* arg) {
             updateArrows();
         }
 
-        // Initialize
         window.addEventListener('load', () => {
             setTimeout(() => {
                 setupInteract();
                 setupBlockListeners();
                 setupControlListeners();
+                setupChallengeListeners();
             }, 1000);
         });
     </script>
