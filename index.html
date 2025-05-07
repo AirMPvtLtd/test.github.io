@@ -29,6 +29,8 @@
             --primary: #00f0ff;
             --secondary: #ff3e7f;
             --dark: #0a0a1a;
+            --warning: #ffff00;
+            --error: #ef4444;
         }
         body {
             background: #000;
@@ -38,11 +40,12 @@
         }
         .canvas {
             position: relative;
-            width: 100vw;
+            width: calc(100vw - 250px);
             height: 100vh;
             min-height: 1200px;
             background: #000;
             overflow-y: auto;
+            margin-left: 250px;
         }
         .grid {
             position: absolute;
@@ -81,8 +84,14 @@
             box-shadow: 0 0 25px rgba(255, 62, 127, 0.7);
         }
         .block.selected {
-            border-color: #ffff00;
+            border-color: var(--warning);
             box-shadow: 0 0 20px rgba(255, 255, 0, 0.7);
+        }
+        .block.valid-connection {
+            border-color: #10b981;
+        }
+        .block.invalid-connection {
+            border-color: var(--error);
         }
         .header {
             position: fixed;
@@ -118,13 +127,13 @@
             border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 20px;
-            width: 50vw;
-            height: 50vh;
+            width: 70vw;
+            height: 80vh;
             color: var(--primary);
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
             position: relative;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             overflow-y: auto;
         }
         .modal-content h3 {
@@ -134,13 +143,18 @@
         .modal-section {
             flex: 1;
             padding: 10px;
+            margin-bottom: 10px;
         }
-        .modal-section:first-child {
-            border-right: 1px solid rgba(0, 240, 255, 0.3);
+        .modal-section.read-only {
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0.7;
+        }
+        .modal-section.editable {
+            background: rgba(0, 240, 255, 0.2);
         }
         .modal-section textarea {
             width: 100%;
-            height: 80%;
+            height: 150px;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--primary);
             color: var(--primary);
@@ -153,6 +167,39 @@
         .modal-section .equations {
             font-size: 0.875rem;
             color: var(--primary);
+            margin-top: 10px;
+        }
+        .modal-section .variable-inputs {
+            margin-top: 10px;
+        }
+        .modal-section .variable-inputs label {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.875rem;
+        }
+        .modal-section .variable-inputs input[type="range"],
+        .modal-section .variable-inputs input[type="number"] {
+            width: 100%;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .modal-section button {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .modal-section button:hover {
+            background: rgba(0, 240, 255, 0.2);
         }
         .close-modal {
             position: absolute;
@@ -168,7 +215,7 @@
         .close-modal:hover {
             color: var(--secondary);
         }
-        #buildButton, #uploadButton {
+        #buildButton, #uploadButton, #resetButton, #toggleTutorialButton {
             position: fixed;
             right: 20px;
             background: transparent;
@@ -190,15 +237,23 @@
             top: calc(50% + 60px);
             transform: translateY(-50%);
         }
-        #buildButton:hover, #uploadButton:hover {
+        #resetButton {
+            top: calc(50% + 120px);
+            transform: translateY(-50%);
+        }
+        #toggleTutorialButton {
+            top: calc(50% + 180px);
+            transform: translateY(-50%);
+        }
+        #buildButton:hover, #uploadButton:hover, #resetButton:hover, #toggleTutorialButton:hover {
             background: rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
         #buildStatus {
             position: fixed;
-            top: 60px;
-            left: 0;
-            width: 100%;
+            top: 80px;
+            left: 250px;
+            width: calc(100% - 250px);
             background: rgba(0, 0, 0, 0.7);
             color: #10b981;
             font-family: 'Share Tech Mono', monospace;
@@ -210,7 +265,7 @@
             transition: opacity 0.5s ease-in-out;
         }
         #buildStatus.error {
-            color: #ef4444;
+            color: var(--error);
         }
         #buildStatus.show {
             opacity: 1;
@@ -218,22 +273,172 @@
         #buildStatus.fade-out {
             opacity: 0;
         }
-        #deepDiveButton {
+        #progressBar {
+            position: fixed;
+            top: calc(50% + 240px);
+            right: 20px;
+            width: 200px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 200;
+        }
+        #progressBar div {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        #logPanel {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            max-height: 200px;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 200;
             display: none;
-            margin: 10px auto;
+        }
+        #logPanel button {
             background: transparent;
             border: 2px solid var(--primary);
             color: var(--primary);
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1rem;
-            padding: 8px 16px;
-            border-radius: 8px;
+            font-size: 0.875rem;
+            padding: 5px 10px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s, box-shadow 0.2s;
+            margin-left: 10px;
         }
-        #deepDiveButton:hover {
+        #logPanel button:hover {
             background: rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+        }
+        #flowchartSidebar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 80px);
+            background: rgba(0, 0, 0, 0.8);
+            border-right: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 150;
+        }
+        #flowchartSidebar h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+        }
+        #flowchartSidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        #flowchartSidebar li {
+            margin: 5px 0;
+            padding: 5px;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 4px;
+        }
+        #variablesDashboard {
+            position: fixed;
+            top: 80px;
+            right: 0;
+            width: 300px;
+            height: calc(100vh - 80px);
+            background: rgba(0, 0, 0, 0.8);
+            border-left: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 150;
+        }
+        #variablesDashboard h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+        }
+        #variablesDashboard label {
+            display: block;
+            margin: 5px 0;
+        }
+        #variablesDashboard input[type="range"],
+        #variablesDashboard input[type="number"] {
+            width: 100%;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px;
+            border-radius: 4px;
+        }
+        #tutorialPanel {
+            position: fixed;
+            top: 80px;
+            right: 300px;
+            width: 300px;
+            max-height: calc(100vh - 80px);
+            background: rgba(0, 0, 0, 0.8);
+            border-left: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 150;
+            display: none;
+        }
+        #tutorialPanel h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+        }
+        #tutorialPanel button {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.875rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #tutorialPanel button:hover {
+            background: rgba(0, 240, 255, 0.2);
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--primary);
+            text-align: center;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            padding: 5px;
+            position: absolute;
+            z-index: 400;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -264,74 +469,123 @@
             <h3 class="text-sm font-bold">Initialize System</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="log_data" style="left: 50px; top: 180px;">
+        <div class="block" data-id="log_data" style="left: 50px; top: 220px;">
             <h3 class="text-sm font-bold">Log Data</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="read_sensor_data" style="left: 50px; top: 260px;">
+        <div class="block" data-id="read_sensor_data" style="left: 50px; top: 340px;">
             <h3 class="text-sm font-bold">Read Sensor Data</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="calibrate_sensor" style="left: 50px; top: 340px;">
+        <div class="block" data-id="calibrate_sensor" style="left: 50px; top: 460px;">
             <h3 class="text-sm font-bold">Calibrate Sensor</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="fuse_sensor_data" style="left: 50px; top: 420px;">
+        <div class="block" data-id="fuse_sensor_data" style="left: 50px; top: 580px;">
             <h3 class="text-sm font-bold">Fuse Sensor Data</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="set_control_targets" style="left: 50px; top: 500px;">
+        <div class="block" data-id="set_control_targets" style="left: 50px; top: 700px;">
             <h3 class="text-sm font-bold">Set Control Targets</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="compute_pid_control" style="left: 50px; top: 580px;">
+        <div class="block" data-id="compute_pid_control" style="left: 50px; top: 820px;">
             <h3 class="text-sm font-bold">Compute PID Control</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="auto_tune_pid" style="left: 50px; top: 660px;">
+        <div class="block" data-id="auto_tune_pid" style="left: 50px; top: 940px;">
             <h3 class="text-sm font-bold">Auto-Tune PID</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="drive_motors" style="left: 50px; top: 740px;">
+        <div class="block" data-id="drive_motors" style="left: 50px; top: 1060px;">
             <h3 class="text-sm font-bold">Drive Motors</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="calibrate_motor_trim" style="left: 50px; top: 820px;">
+        <div class="block" data-id="calibrate_motor_trim" style="left: 50px; top: 1180px;">
             <h3 class="text-sm font-bold">Calibrate Motor Trim</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="handle_communication" style="left: 50px; top: 900px;">
+        <div class="block" data-id="handle_communication" style="left: 50px; top: 1300px;">
             <h3 class="text-sm font-bold">Handle Communication</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="monitor_battery" style="left: 50px; top: 980px;">
+        <div class="block" data-id="monitor_battery" style="left: 50px; top: 1420px;">
             <h3 class="text-sm font-bold">Monitor Battery</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="run_main_loop" style="left: 50px; top: 1060px;">
+        <div class="block" data-id="run_main_loop" style="left: 50px; top: 1540px;">
             <h3 class="text-sm font-bold">Run Main Loop</h3>
             <p class="text-xs">Status: Active</p>
         </div>
-        <div class="block" data-id="variables" style="left: 50px; top: 1140px;">
-            <h3 class="text-sm font-bold">Variables</h3>
-            <p class="text-xs">Status: Active</p>
+    </div>
+    <div id="flowchartSidebar">
+        <h3>Flowchart</h3>
+        <ul id="flowchartList"></ul>
+    </div>
+    <div id="variablesDashboard">
+        <h3>Variables Dashboard</h3>
+        <div>
+            <label>PID Gains (Roll kp): <span class="tooltip">?<span class="tooltiptext">Proportional gain for roll PID control</span></span></label>
+            <input type="range" id="roll_kp" min="0.5" max="2.0" step="0.1" value="1.2">
+            <input type="number" id="roll_kp_num" min="0.5" max="2.0" step="0.1" value="1.2">
         </div>
+        <div>
+            <label>PID Gains (Roll ki): <span class="tooltip">?<span class="tooltiptext">Integral gain for roll PID control</span></span></label>
+            <input type="range" id="roll_ki" min="0.01" max="0.1" step="0.01" value="0.05">
+            <input type="number" id="roll_ki_num" min="0.01" max="0.1" step="0.01" value="0.05">
+        </div>
+        <div>
+            <label>Kalman Q: <span class="tooltip">?<span class="tooltiptext">Process noise covariance for Kalman filter</span></span></label>
+            <input type="range" id="kalman_q" min="0.0001" max="0.01" step="0.0001" value="0.001">
+            <input type="number" id="kalman_q_num" min="0.0001" max="0.01" step="0.0001" value="0.001">
+        </div>
+        <div>
+            <label>Loop Time (DT): <span class="tooltip">?<span class="tooltiptext">Control loop period in seconds</span></span></label>
+            <input type="range" id="dt" min="0.005" max="0.02" step="0.001" value="0.01">
+            <input type="number" id="dt_num" min="0.005" max="0.02" step="0.001" value="0.01">
+        </div>
+    </div>
+    <div id="tutorialPanel">
+        <h3>Tutorial: PID Tuning</h3>
+        <p>Step 1: Open the "Compute PID Control" block.</p>
+        <p>Step 2: Adjust <code>kp</code> using the sliders (0.5–2.0).</p>
+        <p>Step 3: Add an <code>if-else</code> condition, e.g., <code>if (error > 10) output *= 0.5;</code></p>
+        <p>Step 4: Click "Test" to see the PID output.</p>
+        <p>Step 5: Build and upload to the drone.</p>
+        <button id="nextTutorial">Next Tutorial</button>
     </div>
     <button id="buildButton">Build</button>
     <button id="uploadButton">Upload</button>
+    <button id="resetButton">Reset</button>
+    <button id="toggleTutorialButton">Toggle Tutorial</button>
     <div id="buildStatus">
         <span id="statusMessage"></span>
         <button id="deepDiveButton">Deep Dive</button>
     </div>
+    <div id="progressBar"><div></div></div>
+    <div id="logPanel">
+        <pre id="logContent"></pre>
+        <button id="downloadLog">Download Log</button>
+    </div>
     <div class="modal" id="blockModal">
         <div class="modal-content">
             <button class="close-modal">×</button>
-            <div class="modal-section">
-                <h3 id="modalTitle"></h3>
-                <textarea id="modalCode"></textarea>
+            <h3 id="modalTitle"></h3>
+            <div class="modal-section read-only">
+                <h4>Core Code (Read-Only)</h4>
+                <textarea id="modalCoreCode" readonly></textarea>
+            </div>
+            <div class="modal-section editable">
+                <h4>Editable Code <span class="tooltip">?<span class="tooltiptext">Add if-else conditions or adjust values here</span></span></h4>
+                <textarea id="modalEditableCode"></textarea>
+                <div class="variable-inputs">
+                    <label>Key Variables:</label>
+                    <div id="modalVariableInputs"></div>
+                </div>
+                <button id="testButton">Test</button>
             </div>
             <div class="modal-section">
-                <h3>Equations</h3>
+                <h4>Equations</h4>
                 <div class="equations" id="modalEquations"></div>
             </div>
         </div>
@@ -339,38 +593,47 @@
 
     <script>
         let selectedBlocks = [];
+        let connections = [];
         let lastTapTime = 0;
         let lastTappedBlock = null;
         let tapTimeout = null;
         let isDragging = false;
         let errorLog = '';
-        let isBuildSuccessful = false; // Track build status for upload
-
-        const blockData = {
+        let isBuildSuccessful = false;
+        let variables = {
+            roll_kp: 1.2,
+            roll_ki: 0.05,
+            kalman_q: 0.001,
+            dt: 0.01
+        };
+        const defaultBlockData = {
             initialize_system: {
-                code: `void DroneSystem::init() {
+                coreCode: `void DroneSystem::init() {
     logger.init();
     sensor.init();
     motor.init();
     comm.init();
     adc1_config_width(ADC_WIDTH_BIT_12);
     adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN_DB_11);
-    logger.log("System initialized");
 }`,
+                editableCode: `    logger.log("System initialized");`,
                 equations: `\\[ \\text{System State} = f(\\text{Hardware Config}, \\text{Software Init}) \\]
-\\[ \\text{ADC Resolution} = 2^{12} = 4096 \\]`
+\\[ \\text{ADC Resolution} = 2^{12} = 4096 \\]`,
+                variables: []
             },
             log_data: {
-                code: `void Logger::log(const char* format, ...) {
+                coreCode: `void Logger::log(const char* format, ...) {
     va_list args;
     va_start(args, format);
     esp_log_write(ESP_LOG_INFO, "Drone", format, args);
     va_end(args);
 }`,
-                equations: `\\[ \\text{Log Output} = \\text{Format}(\\text{Timestamp}, \\text{Data}) \\]`
+                editableCode: ``,
+                equations: `\\[ \\text{Log Output} = \\text{Format}(\\text{Timestamp}, \\text{Data}) \\]`,
+                variables: []
             },
             read_sensor_data: {
-                code: `void MPU6050Sensor::read_raw(float& ax, float& ay, float& az, float& gx, float& gy, float& gz) {
+                coreCode: `void MPU6050Sensor::read_raw(float& ax, float& ay, float& az, float& gx, float& gy, float& gz) {
     uint8_t buffer[14];
     i2c_master_write_read_device(I2C_NUM_0, MPU6050_ADDR, (uint8_t[]){0x3B}, 1, buffer, 14, portMAX_DELAY);
     int16_t accel_x = (buffer[0] << 8) | buffer[1];
@@ -379,18 +642,19 @@
     int16_t gyro_x = (buffer[8] << 8) | buffer[9];
     int16_t gyro_y = (buffer[10] << 8) | buffer[11];
     int16_t gyro_z = (buffer[12] << 8) | buffer[13];
-    ax = accel_x / 16384.0 - accel_offsets[0];
+`,
+                editableCode: `    ax = accel_x / 16384.0 - accel_offsets[0];
     ay = accel_y / 16384.0 - accel_offsets[1];
     az = accel_z / 16384.0 - accel_offsets[2];
     gx = gyro_x / 131.0 - gyro_offsets[0];
     gy = gyro_y / 131.0 - gyro_offsets[1];
-    gz = gyro_z / 131.0 - gyro_offsets[2];
-}`,
+    gz = gyro_z / 131.0 - gyro_offsets[2];`,
                 equations: `\\[ a_x = \\frac{\\text{Raw Accel}_x}{16384} - a_{x0} \\]
-\\[ g_x = \\frac{\\text{Raw Gyro}_x}{131} - g_{x0} \\]`
+\\[ g_x = \\frac{\\text{Raw Gyro}_x}{131} - g_{x0} \\]`,
+                variables: []
             },
             calibrate_sensor: {
-                code: `void MPU6050Sensor::calibrate(int samples) {
+                coreCode: `void MPU6050Sensor::calibrate(int samples) {
     logger->log("Calibrating MPU6050...");
     float accel_sums[3] = {0}, gyro_sums[3] = {0};
     for (int i = 0; i < samples; i++) {
@@ -400,20 +664,21 @@
         gyro_sums[0] += gx; gyro_sums[1] += gy; gyro_sums[2] += gz;
         vTaskDelay(1 / portTICK_PERIOD_MS);
     }
-    for (int i = 0; i < 3; i++) {
+`,
+                editableCode: `    for (int i = 0; i < 3; i++) {
         accel_offsets[i] = accel_sums[i] / samples;
         gyro_offsets[i] = gyro_sums[i] / samples;
     }
     accel_offsets[2] -= 1.0;
     logger->log("Calibration done: Accel offsets [%.3f, %.3f, %.3f], Gyro offsets [%.3f, %.3f, %.3f]",
                 accel_offsets[0], accel_offsets[1], accel_offsets[2],
-                gyro_offsets[0], gyro_offsets[1], gyro_offsets[2]);
-}`,
+                gyro_offsets[0], gyro_offsets[1], gyro_offsets[2]);`,
                 equations: `\\[ a_{x0} = \\frac{1}{N} \\sum_{i=1}^N a_{xi} \\]
-\\[ a_{z0} = \\frac{1}{N} \\sum_{i=1}^N a_{zi} - g \\]`
+\\[ a_{z0} = \\frac{1}{N} \\sum_{i=1}^N a_{zi} - g \\]`,
+                variables: []
             },
             fuse_sensor_data: {
-                code: `void MPU6050Sensor::update(float dt) {
+                coreCode: `void MPU6050Sensor::update(float dt) {
     float ax, ay, az, gx, gy, gz;
     read_raw(ax, ay, az, gx, gy, gz);
     float accel_roll = atan2(ay, sqrt(ax*ax + az*az)) * 180 / M_PI;
@@ -423,57 +688,44 @@
     angles[2] += gz * dt;
     angles[0] = std::max(std::min(angles[0], 90.0f), -90.0f);
     angles[1] = std::max(std::min(angles[1], 90.0f), -90.0f);
-    if (fabs(gx) > 250 || fabs(gy) > 250 || fabs(gz) > 250) {
+`,
+                editableCode: `    if (fabs(gx) > 250 || fabs(gy) > 250 || fabs(gz) > 250) {
         logger->log("Gyro saturation detected");
-    }
-}
-float MPU6050Sensor::kalman_filter(float accel_angle, float gyro_rate, float prev_angle, float dt) {
-    float predicted_angle = prev_angle + gyro_rate * dt;
-    float predicted_variance = kalman_q;
-    float kalman_gain = predicted_variance / (predicted_variance + kalman_r);
-    float angle = predicted_angle + kalman_gain * (accel_angle - predicted_angle);
-    return angle;
-}`,
+    }`,
                 equations: `\\[ \\hat{x}_k = \\hat{x}_{k|k-1} + K_k (z_k - \\hat{x}_{k|k-1}) \\]
-\\[ K_k = \\frac{P_{k|k-1}}{P_{k|k-1} + R} \\]`
+\\[ K_k = \\frac{P_{k|k-1}}{P_{k|k-1} + R} \\]`,
+                variables: ['kalman_q', 'dt']
             },
             set_control_targets: {
-                code: `void Control::set_targets(float pitch, float roll, float yaw, float height) {
+                coreCode: `void Control::set_targets(float pitch, float roll, float yaw, float height) {
     targets[0] = std::max(std::min(pitch, 45.0f), -45.0f);
     targets[1] = std::max(std::min(roll, 45.0f), -45.0f);
     targets[2] = yaw;
     targets[3] = std::max(std::min(height, 2.0f), 0.0f);
-    logger->log("Targets set: P=%.1f, R=%.1f, Y=%.1f, H=%.1f", pitch, roll, yaw, height);
-}`,
+`,
+                editableCode: `    logger->log("Targets set: P=%.1f, R=%.1f, Y=%.1f, H=%.1f", pitch, roll, yaw, height);`,
                 equations: `\\[ \\theta_{\\text{target}} = \\max(\\min(\\theta, 45), -45) \\]
-\\[ h_{\\text{target}} = \\max(\\min(h, 2), 0) \\]`
+\\[ h_{\\text{target}} = \\max(\\min(h, 2), 0) \\]`,
+                variables: []
             },
             compute_pid_control: {
-                code: `float PIDController::update(float target, float current, float gyro_rate, float dt) {
+                coreCode: `float PIDController::update(float target, float current, float gyro_rate, float dt) {
     float error = target - current;
     integral += error * dt;
     integral = std::max(std::min(integral, 100.0f), -100.0f);
     float derivative = (error - prev_error) / dt;
-    float output = kp * error + ki * integral + kd * derivative;
+`,
+                editableCode: `    float output = kp * error + ki * integral + kd * derivative;
+    // Student: Add if-else conditions here, e.g., if (error > 10) output *= 0.5;
     prev_error = error;
     return std::max(std::min(output, 100.0f), -100.0f);
-}
-void Control::update(MPU6050Sensor& sensor, float dt, float& roll_out, float& pitch_out, float& yaw_out, float& height_out) {
-    float roll, pitch, yaw;
-    sensor.get_angles(roll, pitch, yaw);
-    float ax, ay, az, gx, gy, gz;
-    sensor.read_raw(ax, ay, az, gx, gy, gz);
-    roll_out = roll_pid.update(targets[1], roll, gx, dt);
-    pitch_out = pitch_pid.update(targets[0], pitch, gy, dt);
-    yaw_out = yaw_pid.update(targets[2], yaw, gz, dt);
-    height_out = height_pid.update(targets[3], 0, 0, dt);
-    logger->log("PID: R=%.2f, P=%.2f, Y=%.2f, H=%.2f", roll_out, pitch_out, yaw_out, height_out);
 }`,
                 equations: `\\[ u(t) = K_p e(t) + K_i \\int e(t) dt + K_d \\frac{de(t)}{dt} \\]
-\\[ e(t) = \\text{Target} - \\text{Current} \\]`
+\\[ e(t) = \\text{Target} - \\text{Current} \\]`,
+                variables: ['roll_kp', 'roll_ki', 'dt']
             },
             auto_tune_pid: {
-                code: `float Control::compute_cost(MPU6050Sensor& sensor, float dt, float duration) {
+                coreCode: `float Control::compute_cost(MPU6050Sensor& sensor, float dt, float duration) {
     float throttle = 30;
     float angle_errors[1000];
     int error_count = 0;
@@ -490,49 +742,21 @@ void Control::update(MPU6050Sensor& sensor, float dt, float& roll_out, float& pi
         angle_errors[error_count++] = fabs(roll - targets[1]) + fabs(pitch - targets[0]) + fabs(yaw - targets[2]);
         vTaskDelay((int)(dt * 1000) / portTICK_PERIOD_MS);
     }
-    float variance = 0;
+`,
+                editableCode: `    float variance = 0;
     float mean = 0;
     for (int i = 0; i < error_count; i++) mean += angle_errors[i];
     mean /= error_count;
     for (int i = 0; i < error_count; i++) variance += (angle_errors[i] - mean) * (angle_errors[i] - mean);
     variance /= error_count;
     logger->log("Auto-tune cost: %.2f", variance);
-    return variance;
-}
-void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
-    float best_cost = INFINITY;
-    PIDController best_pids[4] = {roll_pid, pitch_pid, yaw_pid, height_pid};
-    float temp = 10.0, cooling_rate = 0.95;
-    for (int i = 0; i < max_iterations; i++) {
-        logger->log("Auto-tune iteration %d/%d", i + 1, max_iterations);
-        PIDController new_pids[4] = {
-            PIDController(roll_pid), PIDController(pitch_pid),
-            PIDController(yaw_pid), PIDController(height_pid)
-        };
-        new_pids[0].set_gains(roll_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.4, roll_pid.ki, roll_pid.kd);
-        new_pids[1].set_gains(pitch_pid.kp + (random() % 什么事1000 / 1000.0 - 0.5) * 0.4, pitch_pid.ki, roll_pid.kd);
-        new_pids[2].set_gains(yaw_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.2, yaw_pid.ki, yaw_pid.kd);
-        new_pids[3].set_gains(height_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.8, height_pid.ki, height_pid.kd);
-        roll_pid = new_pids[0]; pitch_pid = new_pids[1];
-        yaw_pid = new_pids[2]; height_pid = new_pids[3];
-        float cost = compute_cost(sensor, dt);
-        if (cost < best_cost || (random() % 1000 / 1000.0) < exp(-(cost - best_cost) / temp)) {
-            best_cost = cost;
-            best_pids[0] = roll_pid; best_pids[1] = pitch_pid;
-            best_pids[2] = yaw_pid; best_pids[3] = height_pid;
-            logger->log("Accepted: Cost=%.2f, PID=[(%.2f,%.2f,%.2f), ...]", best_cost,
-                        roll_pid.kp, roll_pid.ki, roll_pid.kd);
-        }
-        temp *= cooling_rate;
-    }
-    roll_pid = best_pids[0]; pitch_pid = best_pids[1];
-    yaw_pid = best_pids[2]; height_pid = best_pids[3];
-}`,
+    return variance;`,
                 equations: `\\[ J = \\frac{1}{N} \\sum_{i=1}^N (\\theta_i - \\theta_{\\text{target}})^2 \\]
-\\[ P(\\text{accept}) = e^{-\\frac{\\Delta J}{T}} \\]`
+\\[ P(\\text{accept}) = e^{-\\frac{\\Delta J}{T}} \\]`,
+                variables: ['dt']
             },
             drive_motors: {
-                code: `void MotorDriver::set_speeds(float m1, float m2, float m3, float m4) {
+                coreCode: `void MotorDriver::set_speeds(float m1, float m2, float m3, float m4) {
     motor_speeds[0] = std::max(std::min(m1 + trim[0], 65535.0f), 0.0f);
     motor_speeds[1] = std::max(std::min(m2 + trim[1], 65535.0f), 0.0f);
     motor_speeds[2] = std::max(std::min(m3 + trim[2], 65535.0f), 0.0f);
@@ -540,13 +764,14 @@ void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
     for (int i = 0; i < 4; i++) {
         pwm_set_duty(motor_pins[i], (uint16_t)motor_speeds[i]);
     }
-    logger->log("Motor speeds: [%.0f, %.0f, %.0f, %.0f]", motor_speeds[0], motor_speeds[1], motor_speeds[2], motor_speeds[3]);
-}`,
+`,
+                editableCode: `    logger->log("Motor speeds: [%.0f, %.0f, %.0f, %.0f]", motor_speeds[0], motor_speeds[1], motor_speeds[2], motor_speeds[3]);`,
                 equations: `\\[ m_i = T + u_{\\text{pitch}} + u_{\\text{roll}} + u_{\\text{yaw}} + t_i \\]
-\\[ m_i = \\max(\\min(m_i, 65535), 0) \\]`
+\\[ m_i = \\max(\\min(m_i, 65535), 0) \\]`,
+                variables: []
             },
             calibrate_motor_trim: {
-                code: `void MotorDriver::calibrate_trim(MPU6050Sensor& sensor, float dt, float duration) {
+                coreCode: `void MotorDriver::calibrate_trim(MPU6050Sensor& sensor, float dt, float duration) {
     logger->log("Calibrating motor trim...");
     float base_throttle = 65535 * 0.25;
     set_speeds(base_throttle, base_throttle, base_throttle, base_throttle);
@@ -562,55 +787,30 @@ void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
         vTaskDelay((int)(dt * 1000) / portTICK_PERIOD_MS);
     }
     set_speeds(0, 0, 0, 0);
-    trim[0] = -pos_y * 100;
+`,
+                editableCode: `    trim[0] = -pos_y * 100;
     trim[1] = -pos_x * 100;
     trim[2] = pos_y * 100;
     trim[3] = pos_x * 100;
     for (int i = 0; i < 4; i++) trim[i] = std::max(std::min(trim[i], 1000.0f), -1000.0f);
-    logger->log("Trim: [%.0f, %.0f, %.0f, %.0f]", trim[0], trim[1], trim[2], trim[3]);
-}`,
+    logger->log("Trim: [%.0f, %.0f, %.0f, %.0f]", trim[0], trim[1], trim[2], trim[3]);`,
                 equations: `\\[ v_x = v_x + a_x \\cdot g \\cdot \\Delta t \\cdot 0.99 \\]
-\\[ p_x = p_x + v_x \\cdot \\Delta t \\]`
+\\[ p_x = p_x + v_x \\cdot \\Delta t \\]`,
+                variables: ['dt']
             },
             handle_communication: {
-                code: `void Communication::init() {
+                coreCode: `void Communication::init() {
     wifi_init_softap();
     udp = udp_new();
     udp_bind(udp, IPADDR_ANY, UDP_PORT);
     udp_recv(udp, udp_callback, this);
-    logger->log("Wi-Fi and UDP initialized");
-}
-void Communication::parse_command(const char* data, struct udp_pcb* upcb, const ip_addr_t* addr, u16_t port) {
-    if (strstr(data, "arm")) {
-        is_armed = true;
-        logger->log("Drone armed");
-    } else if (strstr(data, "disarm")) {
-        is_armed = false;
-        logger->log("Drone disarmed");
-    } else if (strstr(data, "autotune")) {
-        logger->log("Auto-tune requested");
-    } else if (strstr(data, "set_pid:")) {
-        float kp, ki, kd;
-        sscanf(data, "set_pid:%f,%f,%f", &kp, &ki, &kd);
-        logger->log("Set PID: kp=%.2f, ki=%.2f, kd=%.2f", kp, ki, kd);
-    }
-    struct pbuf* p = pbuf_alloc(PBUF_TRANSPORT, 64, PBUF_RAM);
-    snprintf((char*)p->payload, 64, "ack:%s\\n", data);
-    udp_sendto(upcb, p, addr, port);
-    pbuf_free(p);
-}
-void Communication::send_telemetry(float roll, float pitch, float yaw, float height, float battery) {
-    struct pbuf* p = pbuf_alloc(PBUF_TRANSPORT, 128, PBUF_RAM);
-    snprintf((char*)p->payload, 128, "R:%.1f,P:%.1f,Y:%.1f,H:%.2f,B:%.0f\\n",
-             roll, pitch, yaw, height, battery);
-    udp_sendto(udp, p, IPADDR_BROADCAST, UDP_PORT + 1);
-    pbuf_free(p);
-}`,
-                equations: `\\[ \\text{Packet Size} = \\sum \\text{Data Fields} \\]
-\\[ \\text{BER} = \\frac{\\text{Errors}}{\\text{Total Bits}} \\]`
+`,
+                editableCode: `    logger->log("Wi-Fi and UDP initialized");`,
+                equations: `\\[ \\text{Network State} = f(\\text{WiFi Config}, \\text{UDP Bind}) \\]`,
+                variables: []
             },
             monitor_battery: {
-                code: `float DroneSystem::read_battery() {
+                coreCode: `float DroneSystem::read_battery() {
     uint32_t adc_reading = 0;
     for (int i = 0; i < 10; i++) {
         adc_reading += adc1_get_raw(ADC_CHANNEL);
@@ -618,13 +818,14 @@ void Communication::send_telemetry(float roll, float pitch, float yaw, float hei
     }
     adc_reading /= 10;
     battery_voltage = (adc_reading / 4095.0) * 3.3 * 2;
-    return std::max(std::min((battery_voltage - 3.0) / (4.2 - 3.0) * 100, 100.0f), 0.0f);
-}`,
-                equations: `\\[ V_{\\text{batt}} = \\frac{\\text{ADC}}{4095} \\cdot 3.3 \\cdot 2 \\]
-\\[ \\text{Battery %} = \\frac{V_{\\text{batt}} - 3.0}{4.2 - 3.0} \\cdot 100 \\]`
+`,
+                editableCode: `    return std::max(std::min((battery_voltage - 3.0) / (4.2 - 3.0) * 100, 100.0f), 0.0f);`,
+                equations: `\\[ V_{\\text{battery}} = \\frac{\\text{ADC Reading}}{4095} \\cdot 3.3 \\cdot 2 \\]
+\\[ \\text{Percentage} = \\frac{V_{\\text{battery}} - 3.0}{4.2 - 3.0} \\cdot 100 \\]`,
+                variables: []
             },
             run_main_loop: {
-                code: `void DroneSystem::update() {
+                coreCode: `void DroneSystem::update() {
     sensor.update(DT);
     float roll, pitch, yaw;
     sensor.get_angles(roll, pitch, yaw);
@@ -647,295 +848,366 @@ void Communication::send_telemetry(float roll, float pitch, float yaw, float hei
     } else {
         motor.set_speeds(0, 0, 0, 0);
     }
-}
-void DroneSystem::main_task(void* arg) {
-    DroneSystem* system = (DroneSystem*)arg;
-    system->init();
-    while (true) {
-        system->update();
-        vTaskDelay((int)(DT * 1000) / portTICK_PERIOD_MS);
-    }
 }`,
-                equations: `\\[ T_{\\text{loop}} = \\Delta t = 0.01 \\text{s} \\]
-\\[ m_i = T + u_{\\text{pitch}} + u_{\\text{roll}} + u_{\\text{yaw}} \\]`
-            },
-            variables: {
-                code: `// Global variables for drone firmware
-float accel_offsets[3] = {0.0f, 0.0f, 0.0f}; // Accelerometer offsets
-float gyro_offsets[3] = {0.0f, 0.0f, 0.0f};  // Gyroscope offsets
-float motor_trims[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // Motor trim values
-float pid_gains[4][3] = {{0.5f, 0.05f, 0.1f}, // Roll PID: kp, ki, kd
-                         {0.5f, 0.05f, 0.1f}, // Pitch PID
-                         {0.3f, 0.03f, 0.05f}, // Yaw PID
-                         {0.8f, 0.1f, 0.2f}}; // Height PID
-float battery_voltage = 4.2f; // Initial battery voltage
-float throttle = 0.0f;       // Throttle input
-bool is_armed = false;       // Arming state
-const float DT = 0.01f;      // Loop time step (s)
-logger->log("Variables initialized");
-`,
-                equations: `\\[ \\text{accel_offsets} = [a_{x0}, a_{y0}, a_{z0}] \\]
-\\[ \\text{pid_gains}_i = [K_p, K_i, K_d] \\]`
+                editableCode: ``,
+                equations: `\\[ m_1 = T + u_h - u_p + u_r + u_y \\]
+\\[ \\text{Telemetry} = f(\\theta, h, V_{\\text{battery}}) \\]`,
+                variables: ['dt']
             }
         };
+        let blockData = JSON.parse(JSON.stringify(defaultBlockData));
 
-        function setupInteract() {
-            interact('.block')
-                .draggable({
-                    inertia: false,
-                    modifiers: [
-                        interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }),
-                        interact.modifiers.snap({ targets: [interact.snappers.grid({ x: 10, y: 10 })], range: Infinity, relativePoints: [{ x: 0, y: 0 }] })
-                    ],
-                    listeners: {
-                        start: (event) => {
-                            isDragging = true;
-                            event.target.classList.add('active');
-                        },
-                        move: (event) => {
-                            const target = event.target;
-                            const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-                            target.style.transform = `translate(${x}px, ${y}px)`;
-                            target.setAttribute('data-x', x);
-                            target.setAttribute('data-y', y);
-                            updateArrows();
-                        },
-                        end: (event) => {
-                            isDragging = false;
-                            event.target.classList.remove('active');
-                            updateArrows();
-                        }
-                    }
-                });
+        function updateFlowchart() {
+            const list = document.getElementById('flowchartList');
+            list.innerHTML = '';
+            connections.forEach(conn => {
+                const li = document.createElement('li');
+                li.textContent = `${conn.from} → ${conn.to}`;
+                list.appendChild(li);
+            });
         }
+
+        function validateConnection(fromId, toId) {
+            const validConnections = {
+                initialize_system: ['log_data', 'read_sensor_data'],
+                read_sensor_data: ['calibrate_sensor', 'fuse_sensor_data'],
+                calibrate_sensor: ['fuse_sensor_data'],
+                fuse_sensor_data: ['set_control_targets', 'compute_pid_control'],
+                set_control_targets: ['compute_pid_control'],
+                compute_pid_control: ['auto_tune_pid', 'drive_motors'],
+                auto_tune_pid: ['compute_pid_control', 'drive_motors'],
+                drive_motors: ['calibrate_motor_trim', 'run_main_loop'],
+                calibrate_motor_trim: ['run_main_loop'],
+                handle_communication: ['run_main_loop'],
+                monitor_battery: ['run_main_loop'],
+                run_main_loop: []
+            };
+            return validConnections[fromId]?.includes(toId);
+        }
+
+        function updateProgress(percentage) {
+            const progress = document.querySelector('#progressBar div');
+            progress.style.width = `${percentage}%`;
+        }
+
+        function updateLog(message) {
+            errorLog += `${message}\n`;
+            const logContent = document.getElementById('logContent');
+            logContent.textContent = errorLog;
+            const logPanel = document.getElementById('logPanel');
+            logPanel.style.display = 'block';
+        }
+
+        function showModal(blockId) {
+            const modal = document.getElementById('blockModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalCoreCode = document.getElementById('modalCoreCode');
+            const modalEditableCode = document.getElementById('modalEditableCode');
+            const modalEquations = document.getElementById('modalEquations');
+            const modalVariableInputs = document.getElementById('modalVariableInputs');
+
+            modalTitle.textContent = blockId.replace(/_/g, ' ').toUpperCase();
+            modalCoreCode.value = blockData[blockId].coreCode;
+            modalEditableCode.value = blockData[blockId].editableCode;
+            modalEquations.innerHTML = blockData[blockId].equations;
+
+            modalVariableInputs.innerHTML = '';
+            blockData[blockId].variables.forEach(varName => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label>${varName}: <span class="tooltip">?<span class="tooltiptext">${varName} variable</span></span></label>
+                    <input type="range" id="${varName}_modal" min="${varName === 'roll_kp' ? 0.5 : varName === 'roll_ki' ? 0.01 : varName === 'kalman_q' ? 0.0001 : 0.005}"
+                           max="${varName === 'roll_kp' ? 2.0 : varName === 'roll_ki' ? 0.1 : varName === 'kalman_q' ? 0.01 : 0.02}"
+                           step="${varName === 'roll_kp' ? 0.1 : varName === 'roll_ki' ? 0.01 : varName === 'kalman_q' ? 0.0001 : 0.001}"
+                           value="${variables[varName]}">
+                    <input type="number" id="${varName}_modal_num" min="${varName === 'roll_kp' ? 0.5 : varName === 'roll_ki' ? 0.01 : varName === 'kalman_q' ? 0.0001 : 0.005}"
+                           max="${varName === 'roll_kp' ? 2.0 : varName === 'roll_ki' ? 0.1 : varName === 'kalman_q' ? 0.01 : 0.02}"
+                           step="${varName === 'roll_kp' ? 0.1 : varName === 'roll_ki' ? 0.01 : varName === 'kalman_q' ? 0.0001 : 0.001}"
+                           value="${variables[varName]}">
+                `;
+                modalVariableInputs.appendChild(div);
+                const range = div.querySelector(`#${varName}_modal`);
+                const number = div.querySelector(`#${varName}_modal_num`);
+                range.addEventListener('input', () => {
+                    variables[varName] = parseFloat(range.value);
+                    number.value = range.value;
+                    syncVariables(varName, range.value);
+                    validateVariable(varName, range.value);
+                });
+                number.addEventListener('input', () => {
+                    variables[varName] = parseFloat(number.value);
+                    range.value = number.value;
+                    syncVariables(varName, number.value);
+                    validateVariable(varName, number.value);
+                });
+            });
+
+            modal.style.display = 'flex';
+            setTimeout(() => MathJax.Hub.Queue(['Typeset', MathJax.Hub, modalEquations]), 0);
+        }
+
+        function syncVariables(varName, value) {
+            const dashboardRange = document.getElementById(varName);
+            const dashboardNumber = document.getElementById(`${varName}_num`);
+            if (dashboardRange) dashboardRange.value = value;
+            if (dashboardNumber) dashboardNumber.value = value;
+        }
+
+        function validateVariable(varName, value) {
+            const limits = {
+                roll_kp: { min: 0.5, max: 2.0, warning: 'High kp may cause instability' },
+                roll_ki: { min: 0.01, max: 0.1, warning: 'High ki may cause oscillations' },
+                kalman_q: { min: 0.0001, max: 0.01, warning: 'High Q may overtrust gyro' },
+                dt: { min: 0.005, max: 0.02, warning: 'High DT may reduce control rate' }
+            };
+            const limit = limits[varName];
+            if (value > limit.max) {
+                updateLog(`Warning: ${varName} = ${value} exceeds ${limit.max}. ${limit.warning}`);
+            }
+        }
+
+        function handleTest(blockId) {
+            const code = blockData[blockId].editableCode;
+            let output = '';
+            if (blockId === 'compute_pid_control') {
+                const kp = variables.roll_kp;
+                const ki = variables.roll_ki;
+                const error = 10; // Mock input
+                const integral = 5; // Mock input
+                const derivative = 2; // Mock input
+                output = `Mock PID Output: ${kp * error + ki * integral + 0.25 * derivative}`;
+            } else {
+                output = `Test Result: Code executed successfully`;
+            }
+            updateLog(output);
+        }
+
+        function handleReset() {
+            blockData = JSON.parse(JSON.stringify(defaultBlockData));
+            variables = { roll_kp: 1.2, roll_ki: 0.05, kalman_q: 0.001, dt: 0.01 };
+            connections = [];
+            updateFlowchart();
+            syncVariables('roll_kp', 1.2);
+            syncVariables('roll_ki', 0.05);
+            syncVariables('kalman_q', 0.001);
+            syncVariables('dt', 0.01);
+            document.querySelectorAll('.block').forEach(block => {
+                block.classList.remove('valid-connection', 'invalid-connection');
+            });
+            updateLog('Reset to default settings');
+        }
+
+        interact('.block').draggable({
+            listeners: {
+                start(event) {
+                    isDragging = true;
+                    event.target.classList.add('active');
+                },
+                move(event) {
+                    const target = event.target;
+                    const x = (parseFloat(target.style.left) || 0) + event.dx;
+                    const y = (parseFloat(target.style.top) || 0) + event.dy;
+                    target.style.left = `${x}px`;
+                    target.style.top = `${y}px`;
+                    updateArrows();
+                },
+                end(event) {
+                    isDragging = false;
+                    event.target.classList.remove('active');
+                }
+            }
+        }).on('tap', function (event) {
+            const currentTime = new Date().getTime();
+            const block = event.currentTarget;
+            if (lastTappedBlock === block && currentTime - lastTapTime < 300) {
+                clearTimeout(tapTimeout);
+                showModal(block.dataset.id);
+            } else {
+                lastTappedBlock = block;
+                lastTapTime = currentTime;
+                block.classList.add('selected');
+                selectedBlocks.push(block.dataset.id);
+                if (selectedBlocks.length === 2) {
+                    const [fromId, toId] = selectedBlocks;
+                    if (validateConnection(fromId, toId)) {
+                        connections.push({ from: fromId, to: toId });
+                        document.querySelector(`[data-id="${fromId}"]`).classList.add('valid-connection');
+                        document.querySelector(`[data-id="${toId}"]`).classList.add('valid-connection');
+                        updateArrows();
+                        updateFlowchart();
+                    } else {
+                        updateLog(`Invalid connection: ${fromId} → ${toId}`);
+                        document.querySelector(`[data-id="${fromId}"]`).classList.add('invalid-connection');
+                        document.querySelector(`[data-id="${toId}"]`).classList.add('invalid-connection');
+                    }
+                    selectedBlocks = [];
+                    document.querySelectorAll('.block').forEach(b => b.classList.remove('selected'));
+                }
+                tapTimeout = setTimeout(() => {
+                    selectedBlocks = [];
+                    document.querySelectorAll('.block').forEach(b => b.classList.remove('selected'));
+                }, 2000);
+            }
+            event.preventDefault();
+        });
 
         function updateArrows() {
             const svg = document.querySelector('.arrow');
-            while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
-
-            for (let i = 0; i < selectedBlocks.length - 1; i++) {
-                const block1 = selectedBlocks[i];
-                const block2 = selectedBlocks[i + 1];
-                const rect1 = block1.getBoundingClientRect();
-                const rect2 = block2.getBoundingClientRect();
-                const canvasRect = document.querySelector('.canvas').getBoundingClientRect();
-
-                const left1 = rect1.left - canvasRect.left;
-                const right1 = rect1.right - canvasRect.left;
-                const top1 = rect1.top - canvasRect.top;
-                const bottom1 = rect1.bottom - canvasRect.top;
-                const left2 = rect2.left - canvasRect.left;
-                const right2 = rect2.right - canvasRect.left;
-                const top2 = rect2.top - canvasRect.top;
-                const bottom2 = rect2.bottom - canvasRect.top;
-
-                const distances = [
-                    { x1: right1, y1: top1 + rect1.height / 2, x2: left2, y2: top2 + rect2.height / 2, dist: Math.abs(right1 - left2) },
-                    { x1: left1, y1: top1 + rect1.height / 2, x2: right2, y2: top2 + rect2.height / 2, dist: Math.abs(left1 - right2) },
-                    { x1: left1 + rect1.width / 2, y1: bottom1, x2: left2 + rect2.width / 2, y2: top2, dist: Math.abs(bottom1 - top2) },
-                    { x1: left1 + rect1.width / 2, y1: top1, x2: left2 + rect2.width / 2, y2: bottom2, dist: Math.abs(top1 - bottom2) }
-                ];
-
-                const { x1, y1, x2, y2 } = distances.reduce((min, curr) => curr.dist < min.dist ? curr : min, distances[0]);
-
-                if (x1 !== x2 || y1 !== y2) {
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('x1', x1);
-                    line.setAttribute('y1', y1);
-                    line.setAttribute('x2', x2);
-                    line.setAttribute('y2', y2);
-                    line.setAttribute('stroke', '#ffff00');
-                    line.setAttribute('stroke-width', '2');
-                    line.setAttribute('marker-end', 'url(#arrowhead)');
-                    svg.appendChild(line);
+            svg.innerHTML = '<defs><marker id="arrowhead" markerWidth="15" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth"><polygon points="0 0, 15 5, 0 10" fill="#ffff00" /></marker></defs>';
+            connections.forEach(conn => {
+                const fromBlock = document.querySelector(`[data-id="${conn.from}"]`);
+                const toBlock = document.querySelector(`[data-id="${conn.to}"]`);
+                if (fromBlock && toBlock) {
+                    const fromRect = fromBlock.getBoundingClientRect();
+                    const toRect = toBlock.getBoundingClientRect();
+                    const canvasRect = document.querySelector('.canvas').getBoundingClientRect();
+                    const x1 = fromRect.left + fromRect.width - canvasRect.left;
+                    const y1 = fromRect.top + fromRect.height / 2 - canvasRect.top;
+                    const x2 = toRect.left - canvasRect.left;
+                    const y2 = toRect.top + toRect.height / 2 - canvasRect.top;
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', `M${x1},${y1} C${x1 + 50},${y1} ${x2 - 50},${y2} ${x2},${y2}`);
+                    path.setAttribute('stroke', '#ffff00');
+                    path.setAttribute('stroke-width', '2');
+                    path.setAttribute('fill', 'none');
+                    path.setAttribute('marker-end', 'url(#arrowhead)');
+                    svg.appendChild(path);
                 }
+            });
+        }
+
+        document.getElementById('blockModal').addEventListener('click', (event) => {
+            if (event.target.classList.contains('close-modal')) {
+                document.getElementById('blockModal').style.display = 'none';
+                const blockId = document.getElementById('modalTitle').textContent.toLowerCase().replace(/ /g, '_');
+                blockData[blockId].editableCode = document.getElementById('modalEditableCode').value;
             }
-        }
+        });
 
-        function showModal(block) {
-            const modal = document.getElementById('blockModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalCode = document.getElementById('modalCode');
-            const modalEquations = document.getElementById('modalEquations');
-            const blockTitle = block.querySelector('h3').textContent;
-            const blockId = block.getAttribute('data-id');
+        document.getElementById('testButton').addEventListener('click', () => {
+            const blockId = document.getElementById('modalTitle').textContent.toLowerCase().replace(/ /g, '_');
+            handleTest(blockId);
+        });
 
-            modalTitle.textContent = blockTitle;
-            modalCode.value = blockData[blockId].code;
-            modalEquations.innerHTML = blockData[blockId].equations;
-            modal.style.display = 'flex';
+        document.getElementById('buildButton').addEventListener('click', () => {
+            errorLog = '';
+            document.getElementById('logPanel').style.display = 'none';
+            if (!connections.some(conn => conn.from === 'initialize_system')) {
+                updateLog('Error: Initialize System block is required');
+                showStatus('Build Failed', true);
+                return;
+            }
+            updateProgress(0);
+            let buildSuccess = true;
+            Object.keys(blockData).forEach(blockId => {
+                const code = blockData[blockId].coreCode + blockData[blockId].editableCode;
+                if (code.includes('undefined') || code.includes('syntax error')) {
+                    updateLog(`Error in ${blockId}: Invalid code detected`);
+                    buildSuccess = false;
+                }
+            });
+            if (buildSuccess) {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    updateProgress(progress);
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        showStatus('Build Successful: Ready to Upload');
+                        isBuildSuccessful = true;
+                    }
+                }, 200);
+            } else {
+                showStatus('Build Failed', true);
+                isBuildSuccessful = false;
+            }
+        });
 
-            // Set textarea to read-only for 'variables' block
-            modalCode.readOnly = blockId === 'variables';
+        document.getElementById('uploadButton').addEventListener('click', () => {
+            if (!isBuildSuccessful) {
+                showStatus('Upload Failed: Build required', true);
+                return;
+            }
+            updateProgress(0);
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                updateProgress(progress);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showStatus('Upload Successful');
+                }
+            }, 200);
+        });
 
-            // Trigger MathJax to render equations
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub, modalEquations]);
-        }
+        document.getElementById('resetButton').addEventListener('click', handleReset);
 
-        function closeModal() {
-            const modal = document.getElementById('blockModal');
-            modal.style.display = 'none';
-        }
+        document.getElementById('downloadLog').addEventListener('click', () => {
+            const blob = new Blob([errorLog], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'build_log.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
 
-        function showBuildStatus(message, isError = false) {
-            const buildStatus = document.getElementById('buildStatus');
+        document.getElementById('toggleTutorialButton').addEventListener('click', () => {
+            const tutorialPanel = document.getElementById('tutorialPanel');
+            tutorialPanel.style.display = tutorialPanel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('nextTutorial').addEventListener('click', () => {
+            const tutorialPanel = document.getElementById('tutorialPanel');
+            tutorialPanel.innerHTML = `
+                <h3>Tutorial: Kalman Filter Tuning</h3>
+                <p>Step 1: Open the "Fuse Sensor Data" block.</p>
+                <p>Step 2: Adjust <code>kalman_q</code> using the sliders (0.0001–0.01).</p>
+                <p>Step 3: Add a condition, e.g., <code>if (gx > 200) log("High gyro rate");</code></p>
+                <p>Step 4: Click "Test" to see the filter output.</p>
+                <p>Step 5: Build and upload to the drone.</p>
+                <button id="nextTutorial">Next Tutorial</button>
+            `;
+            document.getElementById('nextTutorial').addEventListener('click', () => {
+                tutorialPanel.innerHTML = `
+                    <h3>Tutorial: Complete</h3>
+                    <p>You've completed the tutorials! Experiment with other blocks.</p>
+                `;
+            });
+        });
+
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('buildStatus');
             const statusMessage = document.getElementById('statusMessage');
-            const deepDiveButton = document.getElementById('deepDiveButton');
-
             statusMessage.textContent = message;
-            buildStatus.classList.toggle('error', isError);
-            deepDiveButton.style.display = isError ? 'block' : 'none';
-            buildStatus.classList.add('show');
-
+            status.classList.toggle('error', isError);
+            status.classList.add('show');
             setTimeout(() => {
-                buildStatus.classList.add('fade-out');
+                status.classList.add('fade-out');
                 setTimeout(() => {
-                    buildStatus.classList.remove('show', 'fade-out');
+                    status.classList.remove('show', 'fade-out');
                 }, 500);
             }, 3000);
         }
 
-        function handleBuild() {
-            // Simulate build process by concatenating blockData code
-            let mainCpp = '#include <Arduino.h>\n#include <esp_log.h>\n\n';
-            for (const [blockId, data] of Object.entries(blockData)) {
-                mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
-            }
-
-            // Simulate build success or failure (70% success rate for demo)
-            const isSuccess = Math.random() < 0.7;
-            if (isSuccess) {
-                showBuildStatus('Successfully Built');
-                errorLog = '';
-                isBuildSuccessful = true;
-            } else {
-                errorLog = `Build Error Log:\n` +
-                           `Error: Syntax error in block 'Compute PID Control'\n` +
-                           `Line 5: Undefined reference to 'roll_pid'\n` +
-                           `Suggestion: Ensure PIDController is properly initialized\n` +
-                           `Timestamp: ${new Date().toISOString()}`;
-                showBuildStatus('Build Failed', true);
-                isBuildSuccessful = false;
-            }
-
-            // TODO: Replace with actual build logic (e.g., send mainCpp to a compiler backend)
-        }
-
-        function handleUpload() {
-            if (!isBuildSuccessful) {
-                showBuildStatus('Error: Build required before upload', true);
-                return;
-            }
-
-            showBuildStatus('Uploading to drone via WiFi...');
-            setTimeout(() => {
-                showBuildStatus('Upload Successful');
-                // TODO: Replace with actual WiFi upload logic (e.g., send mainCpp to drone via UDP)
-            }, 2000);
-        }
-
-        function showDeepDive() {
-            const errorWindow = window.open('', '_blank');
-            errorWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Build Error Details</title>
-                    <style>
-                        body {
-                            background: #000;
-                            font-family: 'Share Tech Mono', monospace;
-                            color: #00f0ff;
-                            margin: 20px;
-                        }
-                        h1 {
-                            font-size: 1.5rem;
-                            color: #00f0ff;
-                        }
-                        pre {
-                            background: rgba(0, 240, 255, 0.1);
-                            border: 1px solid #00f0ff;
-                            padding: 15px;
-                            border-radius: 8px;
-                            white-space: pre-wrap;
-                            font-size: 0.875rem;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Build Error Details</h1>
-                    <pre>${errorLog}</pre>
-                </body>
-                </html>
-            `);
-            errorWindow.document.close();
-        }
-
-        function setupBlockListeners() {
-            document.querySelectorAll('.block').forEach(block => {
-                block.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    handleInteraction(block, false);
-                });
-
-                block.addEventListener('touchstart', (event) => {
-                    event.preventDefault();
-                    handleInteraction(block, true);
-                });
+        ['roll_kp', 'roll_ki', 'kalman_q', 'dt'].forEach(varName => {
+            const range = document.getElementById(varName);
+            const number = document.getElementById(`${varName}_num`);
+            range.addEventListener('input', () => {
+                variables[varName] = parseFloat(range.value);
+                number.value = range.value;
+                validateVariable(varName, range.value);
             });
-
-            document.querySelector('.close-modal').addEventListener('click', closeModal);
-            document.getElementById('blockModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal();
+            number.addEventListener('input', () => {
+                variables[varName] = parseFloat(number.value);
+                range.value = number.value;
+                validateVariable(varName, number.value);
             });
-
-            document.getElementById('buildButton').addEventListener('click', handleBuild);
-            document.getElementById('uploadButton').addEventListener('click', handleUpload);
-            document.getElementById('deepDiveButton').addEventListener('click', showDeepDive);
-        }
-
-        function handleInteraction(block, isTouch) {
-            if (isDragging) return;
-
-            const currentTime = new Date().getTime();
-            if (isTouch) {
-                if (currentTime - lastTapTime < 300 && lastTappedBlock === block) {
-                    clearTimeout(tapTimeout);
-                    toggleBlockSelection(block);
-                } else {
-                    tapTimeout = setTimeout(() => {
-                        if (!isDragging) showModal(block);
-                    }, 300);
-                }
-                lastTapTime = currentTime;
-                lastTappedBlock = block;
-            } else {
-                showModal(block);
-            }
-        }
-
-        function toggleBlockSelection(block) {
-            const index = selectedBlocks.indexOf(block);
-            if (index !== -1) {
-                selectedBlocks.splice(index, 1);
-                block.classList.remove('selected');
-            } else {
-                selectedBlocks.push(block);
-                block.classList.add('selected');
-            }
-            updateArrows();
-        }
-
-        // Initialize
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                setupInteract();
-                setupBlockListeners();
-            }, 1000);
         });
+
+        window.addEventListener('resize', updateArrows);
+        updateArrows();
+        updateFlowchart();
     </script>
 </body>
 </html>
