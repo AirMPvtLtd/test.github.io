@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name=" THEYviewport" content="width=device-width, initial-scale=1.0">
     <title>AiRM Fateh Nano Drone: Math Learning Platform</title>
     <style>
         *, ::before, ::after { box-sizing: border-box; }
@@ -306,6 +306,10 @@
             <h3 class="text-sm font-bold">Run Main Loop</h3>
             <p class="text-xs">Status: Active</p>
         </div>
+        <div class="block" data-id="variables" style="left: 50px; top: 1140px;">
+            <h3 class="text-sm font-bold">Variables</h3>
+            <p class="text-xs">Status: Active</p>
+        </div>
     </div>
     <button id="buildButton">Build</button>
     <div id="buildStatus">
@@ -489,7 +493,7 @@ void Control::update(MPU6050Sensor& sensor, float dt, float& roll_out, float& pi
 }
 void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
     float best_cost = INFINITY;
-    PIDController best_pids[4] = {roll_pid, pitch_pid, yaw_pid, height_pid};
+    PIDController best_pmetaids[4] = {roll_pid, pitch_pid, yaw_pid, height_pid};
     float temp = 10.0, cooling_rate = 0.95;
     for (int i = 0; i < max_iterations; i++) {
         logger->log("Auto-tune iteration %d/%d", i + 1, max_iterations);
@@ -646,6 +650,24 @@ void DroneSystem::main_task(void* arg) {
 }`,
                 equations: `\\[ T_{\\text{loop}} = \\Delta t = 0.01 \\text{s} \\]
 \\[ m_i = T + u_{\\text{pitch}} + u_{\\text{roll}} + u_{\\text{yaw}} \\]`
+            },
+            variables: {
+                code: `// Global variables for drone firmware
+float accel_offsets[3] = {0.0f, 0.0f, 0.0f}; // Accelerometer offsets
+float gyro_offsets[3] = {0.0f, 0.0f, 0.0f};  // Gyroscope offsets
+float motor_trims[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // Motor trim values
+float pid_gains[4][3] = {{0.5f, 0.05f, 0.1f}, // Roll PID: kp, ki, kd
+                         {0.5f, 0.05f, 0.1f}, // Pitch PID
+                         {0.3f, 0.03f, 0.05f}, // Yaw PID
+                         {0.8f, 0.1f, 0.2f}}; // Height PID
+float battery_voltage = 4.2f; // Initial battery voltage
+float throttle = 0.0f;       // Throttle input
+bool is_armed = false;       // Arming state
+const float DT = 0.01f;      // Loop time step (s)
+logger->log("Variables initialized");
+`,
+                equations: `\\[ \\text{accel_offsets} = [a_{x0}, a_{y0}, a_{z0}] \\]
+\\[ \\text{pid_gains}_i = [K_p, K_i, K_d] \\]`
             }
         };
 
