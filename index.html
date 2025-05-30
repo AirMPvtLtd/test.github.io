@@ -119,8 +119,8 @@
             border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 20px;
-            width: 50vw;
-            height: 50vh;
+            width: 70vw;
+            height: 80vh;
             color: var(--primary);
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
             position: relative;
@@ -135,9 +135,6 @@
         .modal-section {
             flex: 1;
             padding: 10px;
-        }
-        .modal-section:first-child {
-            border-right: 1px solid rgba(0, 240, 255, 0.3);
         }
         .modal-section textarea {
             width: 100%;
@@ -169,7 +166,7 @@
         .close-modal:hover {
             color: var(--secondary);
         }
-        #buildButton, #controlsButton, #challengesButton, #connectButton, #tutorialButton {
+        #buildButton, #controlsButton, #connectButton, #tutorialButton, #reverseLearningButton, #licenseButton {
             position: fixed;
             right: 20px;
             background: transparent;
@@ -182,28 +179,34 @@
             cursor: pointer;
             z-index: 200;
             transition: background 0.2s, box-shadow 0.2s;
+            width: 150px;
+            text-align: center;
         }
         #buildButton {
-            top: 50%;
+            top: calc(50% - 150px);
             transform: translateY(-50%);
         }
         #controlsButton {
-            top: calc(50% + 60px);
-            transform: translateY(-50%);
-        }
-        #challengesButton {
-            top: calc(50% + 120px);
+            top: calc(50% - 75px);
             transform: translateY(-50%);
         }
         #connectButton {
-            top: calc(50% + 180px);
+            top: calc(50%);
             transform: translateY(-50%);
         }
         #tutorialButton {
-            top: calc(50% + 240px);
+            top: calc(50% + 75px);
             transform: translateY(-50%);
         }
-        #buildButton:hover, #controlsButton:hover, #challengesButton:hover, #connectButton:hover, #tutorialButton:hover {
+        #reverseLearningButton {
+            top: calc(50% + 150px);
+            transform: translateY(-50%);
+        }
+        #licenseButton {
+            top: calc(50% + 225px);
+            transform: translateY(-50%);
+        }
+        #buildButton:hover, #controlsButton:hover, #connectButton:hover, #tutorialButton:hover, #reverseLearningButton:hover, #licenseButton:hover {
             background: rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
@@ -248,10 +251,270 @@
             background: rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
+        .trajectory-container {
+            width: 100%;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            margin-top: 15px;
+            position: relative;
+        }
+        .trajectory-header {
+            padding: 5px 10px;
+            background: rgba(0, 240, 255, 0.2);
+            border-bottom: 1px solid var(--primary);
+            font-size: 0.875rem;
+        }
+        .trajectory-canvas {
+            width: 100%;
+            height: calc(100% - 30px);
+        }
+        .data-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        .data-tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .data-tab.active {
+            border-bottom: 2px solid var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .data-description {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.875rem;
+        }
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .control-btn {
+            background: rgba(0, 240, 255, 0.1);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .control-btn:hover {
+            background: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+        .control-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .joystick-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin: 20px auto;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+        .joystick {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 62, 127, 0.7);
+            border-radius: 50%;
+            position: absolute;
+            top: 70px;
+            left: 70px;
+            cursor: move;
+            touch-action: none;
+        }
+        .trajectory-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .trajectory-control-group {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .trajectory-control-group h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        .control-slider {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .control-slider label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+        .control-slider input {
+            width: 100%;
+        }
+        .upload-trajectory-btn {
+            background: rgba(0, 240, 255, 0.2);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: block;
+            margin: 20px auto 0;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .upload-trajectory-btn:hover {
+            background: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+        }
+        .glass-effect {
+            background: rgba(0, 240, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+            padding: 20px;
+        }
+        .license-key-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .license-key-form input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .license-key-form button {
+            background: rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            transition: all 0.2s;
+        }
+        .license-key-form button:hover {
+            background: rgba(0, 240, 255, 0.4);
+        }
+        .license-purchase-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .license-purchase-form input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .license-purchase-form button {
+            background: rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            transition: all 0.2s;
+        }
+        .license-purchase-form button:hover {
+            background: rgba(0, 240, 255, 0.4);
+        }
+        .otp-section {
+            display: none;
+        }
+        .payment-section {
+            display: none;
+        }
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .payment-success {
+            display: none;
+            text-align: center;
+        }
+        .license-key-display {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            text-align: center;
+            margin-top: 15px;
+            word-break: break-all;
+        }
+        .otp-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 4px;
+        }
+        .attempts-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            z-index: 200;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://unpkg.com/interactjs@1.10.27/dist/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="header p-4 flex justify-between items-center">
@@ -327,15 +590,25 @@
         </div>
     </div>
     <div style="position: fixed; top: 50%; left: 0; width: 100vw; text-align: center; transform: translateY(-50%); font-family: 'Share Tech Mono', monospace; font-size: 10rem; color: var(--primary); opacity: 0.1; pointer-events: none; z-index: 150;">AIRM</div>
+    
+    <!-- Right-side buttons with consistent width -->
     <button id="buildButton">Build</button>
     <button id="controlsButton">Controls</button>
-    <button id="challengesButton">Challenges</button>
     <button id="connectButton">Connect</button>
     <button id="tutorialButton">Tutorial</button>
+    <button id="reverseLearningButton">Reverse Learning</button>
+    <button id="licenseButton">License Key</button>
+    
     <div id="buildStatus">
         <span id="statusMessage"></span>
         <button id="deepDiveButton">Deep Dive</button>
     </div>
+    
+    <div class="attempts-counter" id="attemptsCounter">
+        Free Attempts Left: <span id="attemptsLeft">5</span>
+    </div>
+    
+    <!-- Modals -->
     <div class="modal" id="blockModal">
         <div class="modal-content">
             <button class="close-modal">×</button>
@@ -349,44 +622,74 @@
             </div>
         </div>
     </div>
+    
     <div class="modal" id="controlsModal">
-        <div class="modal-content">
+        <div class="modal-content glass-effect">
             <button class="close-modal">×</button>
-            <h3>Fly Easy (Grades 6-8)</h3>
-            <div class="flex flex-wrap" style="gap: 10px; margin-bottom: 10px;">
-                <button id="hoverBtn">Hover</button>
-                <button id="forwardBtn">Forward</button>
-                <button id="rotateLeftBtn">Rotate Left</button>
-                <button id="rotateRightBtn">Rotate Right</button>
+            <h3>Drone Control Panel</h3>
+            
+            <div class="control-panel">
+                <div class="control-btn" id="takeoffBtn">
+                    <i class="fas fa-rocket"></i>
+                    Takeoff
+                </div>
+                <div class="control-btn" id="landBtn">
+                    <i class="fas fa-landmark"></i>
+                    Land
+                </div>
+                <div class="control-btn" id="emergencyBtn">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Emergency Stop
+                </div>
+                <div class="control-btn" id="hoverBtn">
+                    <i class="fas fa-pause"></i>
+                    Hover
+                </div>
+                <div class="control-btn" id="forwardBtn">
+                    <i class="fas fa-arrow-up"></i>
+                    Forward
+                </div>
+                <div class="control-btn" id="backwardBtn">
+                    <i class="fas fa-arrow-down"></i>
+                    Backward
+                </div>
+                <div class="control-btn" id="leftBtn">
+                    <i class="fas fa-arrow-left"></i>
+                    Left
+                </div>
+                <div class="control-btn" id="rightBtn">
+                    <i class="fas fa-arrow-right"></i>
+                    Right
+                </div>
+                <div class="control-btn" id="rotateLeftBtn">
+                    <i class="fas fa-undo"></i>
+                    Rotate Left
+                </div>
+                <div class="control-btn" id="rotateRightBtn">
+                    <i class="fas fa-redo"></i>
+                    Rotate Right
+                </div>
+                <div class="control-btn" id="flipBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Flip
+                </div>
+                <div class="control-btn" id="photoBtn">
+                    <i class="fas fa-camera"></i>
+                    Take Photo
+                </div>
             </div>
-            <label class="text-sm">Speed: <span id="throttleValue">0</span>%</label>
-            <input type="range" id="throttleSlider" min="0" max="100" value="0">
+            
+            <div class="joystick-container">
+                <div class="joystick" id="joystick"></div>
+            </div>
+            
+            <div style="text-align: center;">
+                <label class="text-sm">Throttle: <span id="throttleValue">0</span>%</label>
+                <input type="range" id="throttleSlider" min="0" max="100" value="0" style="width: 80%;">
+            </div>
         </div>
     </div>
-    <div class="modal" id="challengesModal">
-        <div class="modal-content">
-            <button class="close-modal">×</button>
-            <h3>Coding Challenges (Grades 8-12)</h3>
-            <div class="modal-section">
-                <h4>Beginner (Grades 8-10): Adjust Motor Speed</h4>
-                <p class="text-xs">Use <code>set_speed(speed)</code> to set all motors to the same speed (0 to 100).</p>
-                <label class="text-sm">Speed (0-100):</label>
-                <input type="number" id="beginnerSpeed" min="0" max="100" value="50" style="width: 100px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px;">
-                <textarea id="beginnerCode" style="height: 100px; margin-top: 10px;">set_speed(speed);</textarea>
-                <button id="runBeginnerChallenge" style="margin-top: 10px;">Run Challenge</button>
-            </div>
-            <div class="modal-section">
-                <h4>Advanced (Grades 11-12): Stabilize Drone</h4>
-                <p class="text-xs">Use <code>adjust_angle(roll, pitch)</code> to stabilize the drone (roll, pitch: -45 to 45).</p>
-                <label class="text-sm">Roll (-45 to 45):</label>
-                <input type="number" id="advancedRoll" min="-45" max="45" value="0" style="width: 100px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px;">
-                <label class="text-sm">Pitch (-45 to 45):</label>
-                <input type="number" id="advancedPitch" min="-45" max="45" value="0" style="width: 100px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--primary); color: var(--primary); padding: 5px;">
-                <textarea id="advancedCode" style="height: 100px; margin-top: 10px;">adjust_angle(roll, pitch);</textarea>
-                <button id="runAdvancedChallenge" style="margin-top: 10px;">Run Challenge</button>
-            </div>
-        </div>
-    </div>
+    
     <div class="modal" id="connectModal">
         <div class="modal-content">
             <button class="close-modal">×</button>
@@ -406,79 +709,272 @@
             </div>
         </div>
     </div>
+    
     <div class="modal" id="tutorialModal">
         <div class="modal-content">
             <button class="close-modal">×</button>
             <h3>Tutorial: How to Use the AiRM Fateh Nano Drone Platform</h3>
             <div class="modal-section" style="padding: 10px;">
-                <h4>Welcome</h4>
-                <p class="text-sm">This platform is designed to teach math and coding through drone programming for grades 6-12. Follow this guide to learn how to use each feature.</p>
+                <p>Welcome to the AiRM Fateh Nano Drone Math Learning Platform. This interactive tool allows you to:</p>
+                <ol>
+                    <li>Explore drone firmware components through visual blocks</li>
+                    <li>Connect to a physical drone (if available)</li>
+                    <li>Control the drone's flight and view real-time data</li>
+                    <li>Analyze flight data with interactive graphs</li>
+                    <li>Plan and visualize flight trajectories</li>
+                </ol>
+                <h4>Getting Started:</h4>
+                <p>1. Click on any block to view its code and mathematical equations</p>
+                <p>2. Use the "Build" button to compile the drone firmware</p>
+                <p>3. Connect to your drone using the "Connect" button</p>
+                <p>4. Use the "Controls" panel to fly the drone</p>
+                <p>5. View flight data and analyze it with the "Reverse Learning" tools</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="reverseLearningModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <h3>Reverse Learning Analysis</h3>
+            
+            <div class="data-tabs">
+                <div class="data-tab active" data-tab="graphs">Graphs</div>
+                <div class="data-tab" data-tab="trajectory">Flight Trajectory</div>
+                <div class="data-tab" data-tab="planning">Trajectory Planning</div>
+            </div>
+            
+            <div class="tab-content active" id="graphs-tab">
+                <div class="modal-section">
+                    <h4>Select Data to Visualize</h4>
+                    <select id="dataType" style="width: 100%; margin-bottom: 15px; background: rgba(0,0,0,0.5); color: var(--primary); border: 1px solid var(--primary); padding: 5px;">
+                        <option value="altitude">Altitude (Physics Grade 8-10)</option>
+                        <option value="velocity">Velocity (Physics Grade 9-11)</option>
+                        <option value="acceleration">Acceleration (Physics Grade 10-12)</option>
+                        <option value="angles">Orientation Angles (Math Grade 9-12)</option>
+                        <option value="motor">Motor Speeds (Physics Grade 8-10)</option>
+                        <option value="battery">Battery Usage (Math Grade 7-9)</option>
+                    </select>
+                    <div class="data-description" id="dataDescription">
+                        <p>Altitude shows the drone's height over time (in meters). Analyze the rate of change to understand velocity and acceleration.</p>
+                    </div>
+                    <button id="generateGraph" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Generate Graph</button>
+                    <div style="margin-top: 15px;">
+                        <h4>Math Concepts</h4>
+                        <ul id="mathConcepts" style="font-size: 0.8rem;">
+                            <li>Linear functions (y = mx + b)</li>
+                            <li>Rate of change (slope)</li>
+                            <li>Area under curve</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h4>Physics Concepts</h4>
+                        <ul id="physicsConcepts" style="font-size: 0.8rem;">
+                            <li>Kinematics</li>
+                            <li>Newton's laws of motion</li>
+                            <li>Energy conservation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-section" style="flex: 2; display: flex; flex-direction: column;">
+                    <div id="graphContainer" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); position: relative;">
+                        <canvas id="dataGraph" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                    <div id="graphControls" style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button id="zoomIn" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Zoom In</button>
+                        <button id="zoomOut" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Zoom Out</button>
+                        <button id="exportData" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Export Data</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="trajectory-tab">
+                <div class="modal-section">
+                    <h4>Flight Trajectory Analysis</h4>
+                    <div class="data-description">
+                        <p>This 2D visualization shows the drone's flight path from the last recorded flight. 
+                        The X and Y axes represent horizontal movement, while altitude (Z) is shown in the tooltip. 
+                        Analyze the path to understand flight patterns and stability.</p>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h4>Math Concepts</h4>
+                        <ul style="font-size: 0.8rem;">
+                            <li>Coordinate geometry</li>
+                            <li>Vector mathematics</li>
+                            <li>Parametric equations</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h4>Physics Concepts</h4>
+                        <ul style="font-size: 0.8rem;">
+                            <li>Projectile motion</li>
+                            <li>Velocity vectors</li>
+                            <li>Trajectory optimization</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <div class="trajectory-container">
+                        <div class="trajectory-header">Flight Path Visualization</div>
+                        <canvas class="trajectory-canvas" id="trajectoryCanvas"></canvas>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button id="exportTrajectory" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Export Trajectory Data</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="planning-tab">
+                <div class="modal-section">
+                    <h4>Trajectory Planning</h4>
+                    <div class="data-description">
+                        <p>Plan your drone's flight path by adjusting the parameters below. The graph will update in real-time to show the planned trajectory. 
+                        Once satisfied, upload the trajectory to the drone's firmware.</p>
+                    </div>
+                    
+                    <div class="trajectory-controls">
+                        <div class="trajectory-control-group">
+                            <h4>Position Parameters</h4>
+                            <div class="control-slider">
+                                <label for="startX">Start X (m): <span id="startXValue">0</span></label>
+                                <input type="range" id="startX" min="-10" max="10" value="0" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="startY">Start Y (m): <span id="startYValue">0</span></label>
+                                <input type="range" id="startY" min="-10" max="10" value="0" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="startZ">Start Z (m): <span id="startZValue">1</span></label>
+                                <input type="range" id="startZ" min="0" max="5" value="1" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <div class="trajectory-control-group">
+                            <h4>Flight Parameters</h4>
+                            <div class="control-slider">
+                                <label for="flightDuration">Duration (s): <span id="flightDurationValue">5</span></label>
+                                <input type="range" id="flightDuration" min="1" max="20" value="5" step="0.5">
+                            </div>
+                            <div class="control-slider">
+                                <label for="maxSpeed">Max Speed (m/s): <span id="maxSpeedValue">2</span></label>
+                                <input type="range" id="maxSpeed" min="0.1" max="5" value="2" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="smoothness">Smoothness: <span id="smoothnessValue">5</span></label>
+                                <input type="range" id="smoothness" min="1" max="10" value="5" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trajectory-controls">
+                        <div class="trajectory-control-group">
+                            <h4>Waypoints</h4>
+                            <div class="control-slider">
+                                <label for="waypointX1">Waypoint 1 X: <span id="waypointX1Value">2</span></label>
+                                <input type="range" id="waypointX1" min="-10" max="10" value="2" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="waypointY1">Waypoint 1 Y: <span id="waypointY1Value">2</span></label>
+                                <input type="range" id="waypointY1" min="-10" max="10" value="2" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="waypointZ1">Waypoint 1 Z: <span id="waypointZ1Value">2</span></label>
+                                <input type="range" id="waypointZ1" min="0" max="5" value="2" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <div class="trajectory-control-group">
+                            <h4>Waypoints</h4>
+                            <div class="control-slider">
+                                <label for="waypointX2">Waypoint 2 X: <span id="waypointX2Value">-2</span></label>
+                                <input type="range" id="waypointX2" min="-10" max="10" value="-2" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="waypointY2">Waypoint 2 Y: <span id="waypointY2Value">-2</span></label>
+                                <input type="range" id="waypointY2" min="-10" max="10" value="-2" step="0.1">
+                            </div>
+                            <div class="control-slider">
+                                <label for="waypointZ2">Waypoint 2 Z: <span id="waypointZ2Value">3</span></label>
+                                <input type="range" id="waypointZ2" min="0" max="5" value="3" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <h4>Planned Trajectory</h4>
+                        <div class="trajectory-container">
+                            <div class="trajectory-header">Planned Flight Path</div>
+                            <canvas class="trajectory-canvas" id="plannedTrajectoryCanvas"></canvas>
+                        </div>
+                    </div>
+                    
+                    <button class="upload-trajectory-btn" id="uploadTrajectoryBtn">
+                        <i class="fas fa-upload"></i> Upload Trajectory to Firmware
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <h4>1. Understanding the Interface</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Canvas:</strong> The main area displays blocks representing drone functions (e.g., Initialize System, Drive Motors).</li>
-                    <li><strong>Header:</strong> Shows the platform title and connection status (green for connected, red for disconnected).</li>
-                    <li><strong>Right-Side Buttons:</strong> Control the workflow: Build, Controls, Challenges, Connect, Tutorial.</li>
-                </ul>
+    <!-- License Key Modal -->
+    <div class="modal" id="licenseModal">
+        <div class="modal-content glass-effect">
+            <button class="close-modal">×</button>
+            <h3>License Key Verification</h3>
+            <div id="licenseForm" class="license-key-form">
+                <p>Please enter your license key to access premium features:</p>
+                <input type="text" id="licenseKeyInput" placeholder="Enter your license key">
+                <button id="verifyLicenseBtn">Verify License</button>
+                <p id="licenseStatus" style="text-align: center; font-size: 0.8rem;"></p>
+                <p style="text-align: center; font-size: 0.8rem;">Don't have a license? <a href="#" id="purchaseLicenseLink" style="color: var(--secondary);">Purchase one now</a></p>
+            </div>
+        </div>
+    </div>
 
-                <h4>2. Interacting with Blocks</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Drag Blocks:</strong> Click and drag blocks to reposition them on the canvas, snapping to a 10x10 grid.</li>
-                    <li><strong>View Details:</strong> Click a block to open a modal showing its code and related math equations.</li>
-                    <li><strong>Select Blocks:</strong> Double-tap (touch) or double-click to select blocks, connecting them with yellow arrows to visualize workflow.</li>
-                </ul>
-
-                <h4>3. Building Code</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Build Button:</strong> Click "Build" to compile code from all blocks into a single program.</li>
-                    <li><strong>Status:</strong> A status bar at the top shows "Successfully Built" or "Build Failed". If it fails, click "Deep Dive" to view error logs in a new window.</li>
-                </ul>
-
-                <h4>4. Controlling the Drone</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Controls Button:</strong> Opens a modal for basic flight controls (Grades 6-8).</li>
-                    <li><strong>Commands:</strong> Use buttons for Hover, Forward, Rotate Left, Rotate Right.</li>
-                    <li><strong>Speed:</strong> Adjust the throttle slider (0-100%) to set motor speed.</li>
-                    <li><strong>Note:</strong> Requires a connected drone to send commands.</li>
-                </ul>
-
-                <h4>5. Completing Coding Challenges</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Challenges Button:</strong> Opens a modal with coding challenges (Grades 8-12).</li>
-                    <li><strong>Beginner Challenge:</strong> Adjust motor speed (0-100) using <code>set_speed(speed)</code>. Enter a speed and click "Run Challenge".</li>
-                    <li><strong>Advanced Challenge:</strong> Stabilize the drone by setting roll and pitch (-45 to 45) using <code>adjust_angle(roll, pitch)</code>.</li>
-                    <li><strong>Output:</strong> Results are shown in the status bar, e.g., motor speeds or stability score.</li>
-                </ul>
-
-                <h4>6. Connecting to the Drone</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Connect Button:</strong> Opens a modal to connect to the drone.</li>
-                    <li><strong>Inputs:</strong> Enter a Drone ID and Password (minimum 8 characters).</li>
-                    <li><strong>Connect:</strong> Click "Connect" to establish a WiFi connection. The status blinks "Connected" or "Disconnected" for 5 seconds.</li>
-                    <li><strong>Header Indicator:</strong> Green dot indicates connected, red indicates disconnected.</li>
-                </ul>
-
-                <h4>7. Uploading Code</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Upload Button:</strong> In the Connect modal, click "Upload" to send compiled code to the drone.</li>
-                    <li><strong>Requirements:</strong> Must have a successful build and be connected.</li>
-                    <li><strong>Progress:</strong> A progress bar shows upload progress (0-100% over 5 seconds).</li>
-                    <li><strong>Status:</strong> Blinks "Upload Complete" or "Upload Failed" for 5 seconds.</li>
-                </ul>
-
-                <h4>8. Using the Tutorial</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li><strong>Tutorial Button:</strong> You’re here! This modal provides a guide to all features.</li>
-                    <li><strong>Navigation:</strong> Scroll to read all sections. Click the "×" to close.</li>
-                </ul>
-
-                <h4>Tips</h4>
-                <ul style="list-style: disc; margin-left: 20px; font-size: 0.875rem;">
-                    <li>Start with the "Build" button to compile code, then connect to the drone.</li>
-                    <li>Use "Controls" for simple flight or "Challenges" for coding practice.</li>
-                    <li>Check the status bar for feedback on actions.</li>
-                    <li>Revisit this tutorial anytime by clicking "Tutorial".</li>
-                </ul>
+    <!-- License Purchase Modal -->
+    <div class="modal" id="purchaseModal">
+        <div class="modal-content glass-effect">
+            <button class="close-modal">×</button>
+            <h3>Purchase License Key</h3>
+            
+            <div id="purchaseForm" class="license-purchase-form">
+                <p>To purchase a license key, please provide your details:</p>
+                <input type="email" id="userEmail" placeholder="Your email address" required>
+                <input type="tel" id="userPhone" placeholder="Your mobile number (with country code)" required>
+                <button id="sendOtpBtn">Send OTP</button>
+                
+                <div id="otpSection" class="otp-section">
+                    <p>We've sent an OTP to your mobile number</p>
+                    <div class="otp-input-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
+                    <button id="verifyOtpBtn">Verify OTP</button>
+                </div>
+                
+                <div id="paymentSection" class="payment-section">
+                    <h4>Complete Payment (₹999)</h4>
+                    <p>Scan the QR code below to complete payment:</p>
+                    <div class="qr-code">
+                        <!-- Placeholder for QR code -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=airm@upi&pn=AiRM%20Fateh&am=999&cu=INR" alt="UPI QR Code">
+                    </div>
+                    <p>Or use UPI ID: <strong>airm@upi</strong></p>
+                    <button id="checkPaymentBtn">I've Completed Payment</button>
+                </div>
+                
+                <div id="paymentSuccess" class="payment-success">
+                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 3rem;"></i>
+                    <h4>Payment Successful!</h4>
+                    <p>Your license key has been generated:</p>
+                    <div class="license-key-display" id="generatedLicenseKey"></div>
+                    <p>This key will be sent to your email as well.</p>
+                    <button id="closePurchaseModalBtn">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -493,352 +989,382 @@
         let isConnected = false;
         let isBuilt = false;
         let mainCpp = '';
+        let dataChart = null;
+        let trajectoryChart = null;
+        let plannedTrajectoryChart = null;
+        let joystickPosition = { x: 70, y: 70 };
+        let hasValidLicense = false;
+        let generatedLicenseKey = '';
+        let freeAttempts = 5;
+        let otp = '';
+        const MASTER_LICENSE_KEY = "AIRM-MASTER-2024-CODE";
 
+        // Sample flight data for visualization
+        const flightData = {
+            altitude: Array.from({length: 100}, (_, i) => Math.sin(i/10) * 5 + 10),
+            velocity: Array.from({length: 100}, (_, i) => Math.cos(i/10) * 2),
+            acceleration: Array.from({length: 100}, (_, i) => -Math.sin(i/10) * 0.5),
+            angles: {
+                roll: Array.from({length: 100}, (_, i) => Math.sin(i/15) * 15),
+                pitch: Array.from({length: 100}, (_, i) => Math.cos(i/12) * 10),
+                yaw: Array.from({length: 100}, (_, i) => i/2)
+            },
+            motor: {
+                m1: Array.from({length: 100}, (_, i) => 50 + Math.sin(i/8) * 20),
+                m2: Array.from({length: 100}, (_, i) => 50 + Math.cos(i/8) * 20),
+                m3: Array.from({length: 100}, (_, i) => 50 - Math.sin(i/8) * 20),
+                m4: Array.from({length: 100}, (_, i) => 50 - Math.cos(i/8) * 20)
+            },
+            battery: Array.from({length: 100}, (_, i) => 100 - i/2)
+        };
+
+        // Sample trajectory data (x, y, z coordinates over time)
+        const trajectoryData = {
+            x: Array.from({length: 50}, (_, i) => Math.sin(i/5) * 2),
+            y: Array.from({length: 50}, (_, i) => Math.cos(i/5) * 2),
+            z: Array.from({length: 50}, (_, i) => i/10),
+            time: Array.from({length: 50}, (_, i) => i/5)
+        };
+
+        const dataDescriptions = {
+            altitude: "Altitude shows the drone's height over time (in meters). Analyze the rate of change to understand velocity and acceleration.",
+            velocity: "Velocity shows the drone's speed over time (in m/s). The slope indicates acceleration.",
+            acceleration: "Acceleration shows how the drone's speed changes over time (in m/s²). Peaks indicate rapid changes in motion.",
+            angles: "Orientation angles show the drone's roll, pitch, and yaw over time (in degrees). These are fundamental for stability analysis.",
+            motor: "Motor speeds show the power output to each motor (0-100%). Compare how different motors work together to maintain stability.",
+            battery: "Battery level shows power consumption over time (0-100%). The slope indicates power draw rate."
+        };
+
+        const mathConcepts = {
+            altitude: ["Linear functions (y = mx + b)", "Rate of change (slope)", "Area under curve"],
+            velocity: ["Derivatives", "Instantaneous rate of change", "Tangent lines"],
+            acceleration: ["Second derivatives", "Concavity", "Maxima/minima"],
+            angles: ["Trigonometric functions", "Angular measurement", "Periodic functions"],
+            motor: ["Proportional relationships", "Averages", "Comparisons"],
+            battery: ["Linear decay", "Slope-intercept form", "Extrapolation"]
+        };
+
+        const physicsConcepts = {
+            altitude: ["Kinematics", "Gravitational potential energy", "Free fall"],
+            velocity: ["Newton's first law", "Inertia", "Terminal velocity"],
+            acceleration: ["Newton's second law (F=ma)", "Force diagrams", "Thrust"],
+            angles: ["Torque", "Rotational motion", "Angular momentum"],
+            motor: ["Electromagnetism", "Power output", "Thrust-to-weight ratio"],
+            battery: ["Energy consumption", "Power calculations", "Efficiency"]
+        };
+
+        // Block data with code and equations
         const blockData = {
             initialize_system: {
-                code: `void DroneSystem::init() {
-    logger.init();
-    sensor.init();
-    motor.init();
-    comm.init();
-    adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN_DB_11);
-    logger.log("System initialized");
-}`,
-                equations: `\\[ \\text{System State} = f(\\text{Hardware Config}, \\text{Software Init}) \\]
-\\[ \\text{ADC Resolution} = 2^{12} = 4096 \\]`
-            },
-            log_data: {
-                code: `void Logger::log(const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    esp_log_write(ESP_LOG_INFO, "Drone", format, args);
-    va_end(args);
-}`,
-                equations: `\\[ \\text{Log Output} = \\text{Format}(\\text{Timestamp}, \\text{Data}) \\]`
-            },
-            read_sensor_data: {
-                code: `void MPU6050Sensor::read_raw(float& ax, float& ay, float& az, float& gx, float& gy, float& gz) {
-    uint8_t buffer[14];
-    i2c_master_write_read_device(I2C_NUM_0, MPU6050_ADDR, (uint8_t[]){0x3B}, 1, buffer, 14, portMAX_DELAY);
-    int16_t accel_x = (buffer[0] << 8) | buffer[1];
-    int16_t accel_y = (buffer[2] << 8) | buffer[3];
-    int16_t accel_z = (buffer[4] << 8) | buffer[5];
-    int16_t gyro_x = (buffer[8] << 8) | buffer[9];
-    int16_t gyro_y = (buffer[10] << 8) | buffer[11];
-    int16_t gyro_z = (buffer[12] << 8) | buffer[13];
-    ax = accel_x / 16384.0 - accel_offsets[0];
-    ay = accel_y / 16384.0 - accel_offsets[1];
-    az = accel_z / 16384.0 - accel_offsets[2];
-    gx = gyro_x / 131.0 - gyro_offsets[0];
-    gy = gyro_y / 131.0 - gyro_offsets[1];
-    gz = gyro_z / 131.0 - gyro_offsets[2];
-}`,
-                equations: `\\[ a_x = \\frac{\\text{Raw Accel}_x}{16384} - a_{x0} \\]
-\\[ g_x = \\frac{\\text{Raw Gyro}_x}{131} - g_{x0} \\]`
-            },
-            calibrate_sensor: {
-                code: `void MPU6050Sensor::calibrate(int samples) {
-    logger->log("Calibrating MPU6050...");
-    float accel_sums[3] = {0}, gyro_sums[3] = {0};
-    for (int i = 0; i < samples; i++) {
-        float ax, ay, az, gx, gy, gz;
-        read_raw(ax, ay, az, gx, gy, gz);
-        accel_sums[0] += ax; accel_sums[1] += ay; accel_sums[2] += az;
-        gyro_sums[0] += gx; gyro_sums[1] += gy; gyro_sums[2] += gz;
-        vTaskDelay(1 / portTICK_PERIOD_MS);
-    }
-    for (int i = 0; i < 3; i++) {
-        accel_offsets[i] = accel_sums[i] / samples;
-        gyro_offsets[i] = gyro_sums[i] / samples;
-    }
-    accel_offsets[2] -= 1.0;
-    logger->log("Calibration done: Accel offsets [%.3f, %.3f, %.3f], Gyro offsets [%.3f, %.3f, %.3f]",
-                accel_offsets[0], accel_offsets[1], accel_offsets[2],
-                gyro_offsets[0], gyro_offsets[1], gyro_offsets[2]);
-}`,
-                equations: `\\[ a_{x0} = \\frac{1}{N} \\sum_{i=1}^N a_{xi} \\]
-\\[ a_{z0} = \\frac{1}{N} \\sum_{i=1}^N a_{zi} - g \\]`
-            },
-            fuse_sensor_data: {
-                code: `void MPU6050Sensor::update(float dt) {
-    float ax, ay, az, gx, gy, gz;
-    read_raw(ax, ay, az, gx, gy, gz);
-    float accel_roll = atan2(ay, sqrt(ax*ax + az*az)) * 180 / M_PI;
-    float accel_pitch = atan2(ax, sqrt(ay*ay + az*az)) * 180 / M_PI;
-    angles[0] = kalman_filter(accel_roll, gy, angles[0], dt);
-    angles[1] = kalman_filter(accel_pitch, gx, angles[1], dt);
-    angles[2] += gz * dt;
-    angles[0] = std::max(std::min(angles[0], 90.0f), -90.0f);
-    angles[1] = std::max(std::min(angles[1], 90.0f), -90.0f);
-    if (fabs(gx) > 250 || fabs(gy) > 250 || fabs(gz) > 250) {
-        logger->log("Gyro saturation detected");
-    }
-}
-float MPU6050Sensor::kalman_filter(float accel_angle, float gyro_rate, float prev_angle, float dt) {
-    float predicted_angle = prev_angle + gyro_rate * dt;
-    float predicted_variance = kalman_q;
-    float kalman_gain = predicted_variance / (predicted_variance + kalman_r);
-    float angle = predicted_angle + kalman_gain * (accel_angle - predicted_angle);
-    return angle;
-}`,
-                equations: `\\[ \\hat{x}_k = \\hat{x}_{k|k-1} + K_k (z_k - \\hat{x}_{k|k-1}) \\]
-\\[ K_k = \\frac{P_{k|k-1}}{P_{k|k-1} + R} \\]`
-            },
-            set_control_targets: {
-                code: `void Control::set_targets(float pitch, float roll, float yaw, float height) {
-    targets[0] = std::max(std::min(pitch, 45.0f), -45.0f);
-    targets[1] = std::max(std::min(roll, 45.0f), -45.0f);
-    targets[2] = yaw;
-    targets[3] = std::max(std::min(height, 2.0f), 0.0f);
-    logger->log("Targets set: P=%.1f, R=%.1f, Y=%.1f, H=%.1f", pitch, roll, yaw, height);
-}`,
-                equations: `\\[ \\theta_{\\text{target}} = \\max(\\min(\\theta, 45), -45) \\]
-\\[ h_{\\text{target}} = \\max(\\min(h, 2), 0) \\]`
-            },
-            compute_pid_control: {
-                code: `float PIDController::update(float target, float current, float gyro_rate, float dt) {
-    float error = target - current;
-    integral += error * dt;
-    integral = std::max(std::min(integral, 100.0f), -100.0f);
-    float derivative = (error - prev_error) / dt;
-    float output = kp * error + ki * integral + kd * derivative;
-    prev_error = error;
-    return std::max(std::min(output, 100.0f), -100.0f);
-}
-void Control::update(MPU6050Sensor& sensor, float dt, float& roll_out, float& pitch_out, float& yaw_out, float& height_out) {
-    float roll, pitch, yaw;
-    sensor.get_angles(roll, pitch, yaw);
-    float ax, ay, az, gx, gy, gz;
-    sensor.read_raw(ax, ay, az, gx, gy, gz);
-    roll_out = roll_pid.update(targets[1], roll, gx, dt);
-    pitch_out = pitch_pid.update(targets[0], pitch, gy, dt);
-    yaw_out = yaw_pid.update(targets[2], yaw, gz, dt);
-    height_out = height_pid.update(targets[3], 0, dt);
-    logger->log("PID: R=%.2f, P=%.2f, Y=%.2f, H=%.2f", roll_out, pitch_out, yaw_out, height_out);
-}`,
-                equations: `\\[ u(t) = K_p e(t) + K_i \\int e(t) dt + K_d \\frac{de(t)}{dt} \\]
-\\[ e(t) = \\text{Target} - \\text{Current} \\]`
-            },
-            auto_tune_pid: {
-                code: `float Control::compute_cost(MPU6050Sensor& sensor, float dt, float duration) {
-    float throttle = 30;
-    float angle_errors[1000];
-    int error_count = 0;
-    float start_time = esp_timer_get_time() / 1000000.0;
-    while ((esp_timer_get_time() / 1000000.0 - start_time) < duration && error_count < 1000) {
-        float roll, pitch, yaw;
-        sensor.get_angles(roll, pitch, yaw);
-        float roll_out, pitch_out, yaw_out, height_out;
-        update(sensor, dt, roll_out, pitch_out, yaw_out, height_out);
-        if (fabs(roll) > 45 || fabs(pitch) > 45) {
-            logger->log("Auto-tune: Extreme angle");
-            return INFINITY;
-        }
-        angle_errors[error_count++] = fabs(roll - targets[1]) + fabs(pitch - targets[0]) + fabs(yaw - targets[2]);
-        vTaskDelay((int)(dt * 1000) / portTICK_PERIOD_MS);
-    }
-    float variance = 0;
-    float mean = 0;
-    for (int i = 0; i < error_count; i++) mean += angle_errors[i];
-    mean /= error_count;
-    for (int i = 0; i < error_count; i++) variance += (angle_errors[i] - mean) * (angle_errors[i] - mean);
-    variance /= error_count;
-    logger->log("Auto-tune cost: %.2f", variance);
-    return variance;
-}
-void Control::auto_tune(MPU6050Sensor& sensor, float dt, int max_iterations) {
-    float best_cost = INFINITY;
-    PIDController best_pids[4] = {roll_pid, pitch_pid, yaw_pid, height_pid};
-    float temp = 10.0, cooling_rate = 0.95;
-    for (int i = 0; i < max_iterations; i++) {
-        logger->log("Auto-tune iteration %d/%d", i + 1, max_iterations);
-        PIDController new_pids[4] = {
-            PIDController(roll_pid), PIDController(pitch_pid),
-            PIDController(yaw_pid), PIDController(height_pid)
-        };
-        new_pids[0].set_gains(roll_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.4, roll_pid.ki, roll_pid.kd);
-        new_pids[1].set_gains(pitch_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.4, pitch_pid.ki, roll_pid.kd);
-        new_pids[2].set_gains(yaw_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.2, yaw_pid.ki, yaw_pid.kd);
-        new_pids[3].set_gains(height_pid.kp + (random() % 1000 / 1000.0 - 0.5) * 0.8, height_pid.ki, height_pid.kd);
-        roll_pid = new_pids[0]; pitch_pid = new_pids[1];
-        yaw_pid = new_pids[2]; height_pid = new_pids[3];
-        float cost = compute_cost(sensor, dt);
-        if (cost < best_cost || (random() % 1000 / 1000.0) < exp(-(cost - best_cost) / temp)) {
-            best_cost = cost;
-            best_pids[0] = roll_pid; best_pids[1] = pitch_pid;
-            best_pids[2] = yaw_pid; best_pids[3] = height_pid;
-            logger->log("Accepted: Cost=%.2f, PID=[(%.2f,%.2f,%.2f), ...]", best_cost,
-                        roll_pid.kp, roll_pid.ki, roll_pid.kd);
-        }
-        temp *= cooling_rate;
-    }
-    roll_pid = best_pids[0]; pitch_pid = best_pids[1];
-    yaw_pid = best_pids[2]; height_pid = best_pids[3];
-}`,
-                equations: `\\[ J = \\frac{1}{N} \\sum_{i=1}^N (\\theta_i - \\theta_{\\text{target}})^2 \\]
-\\[ P(\\text{accept}) = e^{-\\frac{\\Delta J}{T}} \\]`
-            },
-            drive_motors: {
-                code: `void MotorDriver::set_speeds(float m1, float m2, float m3, float m4) {
-    motor_speeds[0] = std::max(std::min(m1 + trim[0], 65535.0f), 0.0f);
-    motor_speeds[1] = std::max(std::min(m2 + trim[1], 65535.0f), 0.0f);
-    motor_speeds[2] = std::max(std::min(m3 + trim[2], 65535.0f), 0.0f);
-    motor_speeds[3] = std::max(std::min(m4 + trim[3], 65535.0f), 0.0f);
-    for (int i = 0; i < 4; i++) {
-        pwm_set_duty(motor_pins[i], (uint16_t)motor_speeds[i]);
-    }
-    logger->log("Motor speeds: [%.0f, %.0f, %.0f, %.0f]", motor_speeds[0], motor_speeds[1], motor_speeds[2], motor_speeds[3]);
-}`,
-                equations: `\\[ m_i = T + u_{\\text{pitch}} + u_{\\text{roll}} + u_{\\text{yaw}} + t_i \\]
-\\[ m_i = \\max(\\min(m_i, 65535), 0) \\]`
-            },
-            calibrate_motor_trim: {
-                code: `void MotorDriver::calibrate_trim(MPU6050Sensor& sensor, float dt, float duration) {
-    logger->log("Calibrating motor trim...");
-    float base_throttle = 65535 * 0.25;
-    set_speeds(base_throttle, base_throttle, base_throttle, base_throttle);
-    float pos_x = 0, pos_y = 0, vel_x = 0, vel_y = 0;
-    float start_time = esp_timer_get_time() / 1000000.0;
-    while (esp_timer_get_time() / 1000000.0 - start_time < duration) {
-        float ax, ay, az, gx, gy, gz;
-        sensor.read_raw(ax, ay, az, gx, gy, gz);
-        vel_x += ax * 9.81 * dt * 0.99;
-        vel_y += ay * 9.81 * dt * 0.99;
-        pos_x += vel_x * dt;
-        pos_y += vel_y * dt;
-        vTaskDelay((int)(dt * 1000) / portTICK_PERIOD_MS);
-    }
-    set_speeds(0, 0, 0, 0);
-    trim[0] = -pos_y * 100;
-    trim[1] = -pos_x * 100;
-    trim[2] = pos_y * 100;
-    trim[3] = pos_x * 100;
-    for (int i = 0; i < 4; i++) trim[i] = std::max(std::min(trim[i], 1000.0f), -1000.0f);
-    logger->log("Trim: [%.0f, %.0f, %.0f, %.0f]", trim[0], trim[1], trim[2], trim[3]);
-}`,
-                equations: `\\[ v_x = v_x + a_x \\cdot g \\cdot \\Delta t \\cdot 0.99 \\]
-\\[ p_x = p_x + v_x \\cdot \\Delta t \\]`
-            },
-            handle_communication: {
-                code: `void Communication::init() {
-    wifi_init_softap();
-    udp = udp_new();
-    udp_bind(udp, IPADDR_ANY, UDP_PORT);
-    udp_recv(udp, udp_callback, this);
-    logger->log("Wi-Fi and UDP initialized");
-}
-void Communication::parse_command(const char* data, struct udp_pcb* upcb, const ip_addr_t* addr, u16_t port) {
-    if (strstr(data, "arm")) {
-        is_armed = true;
-        logger->log("Drone armed");
-    } else if (strstr(data, "disarm")) {
-        is_armed = false;
-        logger->log("Drone disarmed");
-    } else if (strstr(data, "autotune")) {
-        logger->log("Auto-tune requested");
-    } else if (strstr(data, "set_pid:")) {
-        float kp, ki, kd;
-        sscanf(data, "set_pid:%f,%f,%f", &kp, &ki, &kd);
-        logger->log("Set PID: kp=%.2f, ki=%.2f, kd=%.2f", kp, ki, kd);
-    } else if (strstr(data, "hover")) {
-        logger->log("Hover command received");
-    } else if (strstr(data, "forward")) {
-        logger->log("Forward command received");
-    } else if (strstr(data, "rotate_left")) {
-        logger->log("Rotate left command received");
-    } else if (strstr(data, "rotate_right")) {
-        logger->log("Rotate right command received");
-    } else if (strstr(data, "set_throttle:")) {
-        float throttle;
-        sscanf(data, "set_throttle:%f", &throttle);
-        logger->log("Set throttle: %.2f", throttle);
-    }
-    struct pbuf* p = pbuf_alloc(PBUF_TRANSPORT, 64, PBUF_RAM);
-    snprintf((char*)p->payload, 64, "ack:%s\\n", data);
-    udp_sendto(upcb, p, addr, port);
-    pbuf_free(p);
-}
-void Communication::send_telemetry(float roll, float pitch, float yaw, float height, float battery) {
-    struct pbuf* p = pbuf_alloc(PBUF_TRANSPORT, 128, PBUF_RAM);
-    snprintf((char*)p->payload, 128, "R:%.1f,P:%.1f,Y:%.1f,H:%.2f,B:%.0f\\n",
-             roll, pitch, yaw, height, battery);
-    udp_sendto(udp, p, IPADDR_BROADCAST, UDP_PORT + 1);
-    pbuf_free(p);
-}`,
-                equations: `\\[ \\text{Packet Size} = \\sum \\text{Data Fields} \\]
-\\[ \\text{BER} = \\frac{\\text{Errors}}{\\text{Total Bits}} \\]`
-            },
-            monitor_battery: {
-                code: `float DroneSystem::read_battery() {
-    uint32_t adc_reading = 0;
-    for (int i = 0; i < 10; i++) {
-        adc_reading += adc1_get_raw(ADC_CHANNEL);
-        vTaskDelay(1 / portTICK_PERIOD_MS);
-    }
-    adc_reading /= 10;
-    battery_voltage = (adc_reading / 4095.0) * 3.3 * 2;
-    return std::max(std::min((battery_voltage - 3.0) / (4.2 - 3.0) * 100, 100.0f), 0.0f);
-}`,
-                equations: `\\[ V_{\\text{batt}} = \\frac{\\text{ADC}}{4095} \\cdot 3.3 \\cdot 2 \\]
-\\[ \\text{Battery %} = \\frac{V_{\\text{batt}} - 3.0}{4.2 - 3.0} \\cdot 100 \\]`
-            },
-            run_main_loop: {
-                code: `void DroneSystem::update() {
-    sensor.update(DT);
-    float roll, pitch, yaw;
-    sensor.get_angles(roll, pitch, yaw);
-    if (fabs(roll) > 45 || fabs(pitch) > 45 || read_battery() < 20) {
-        is_armed = false;
-        motor.set_speeds(0, 0, 0, 0);
-        logger->log("Failsafe: Extreme angle or low battery");
+                code: `void initializeSystem() {
+    // Initialize all drone components
+    motors.init();
+    sensors.init();
+    radio.init();
+    leds.init();
+    
+    // Check system status
+    if (!motors.ready() || !sensors.ready()) {
+        error("Initialization failed");
         return;
     }
-    if (comm.is_armed_state() && is_armed) {
-        float roll_out, pitch_out, yaw_out, height_out;
-        control.update(sensor, DT, roll_out, pitch_out, yaw_out, height_out);
-        float base = throttle * 65535 / 100 + height_out;
-        float m1 = base - pitch_out + roll_out + yaw_out;
-        float m2 = base + pitch_out - roll_out - yaw_out;
-        float m3 = base - pitch_out - roll_out + yaw_out;
-        float m4 = base + pitch_out + roll_out - yaw_out;
-        motor.set_speeds(m1, m2, m3, m4);
-        comm.send_telemetry(roll, pitch, yaw, height_out, battery_voltage);
-    } else {
-        motor.set_speeds(0, 0, 0, 0);
-    }
-}
-void DroneSystem::main_task(void* arg) {
-    DroneSystem* system = (DroneSystem*)arg;
-    system->init();
-    while (true) {
-        system->update();
-        vTaskDelay((int)(DT * 1000) / portTICK_PERIOD_MS);
-    }
+    
+    log("System initialized successfully");
 }`,
-                equations: `\\[ T_{\\text{loop}} = \\Delta t = 0.01 \\text{s} \\]
-\\[ m_i = T + u_{\\text{pitch}} + u_{\\text{roll}} + u_{\\text{yaw}} \\]`
+                equations: `\\[
+\\text{System Initialization} = \\begin{cases}
+\\text{Motors} \\rightarrow \\text{Ready} \\\\
+\\text{Sensors} \\rightarrow \\text{Calibrated} \\\\
+\\text{Radio} \\rightarrow \\text{Connected}
+\\end{cases}
+\\]`
             },
-            challenges: {
-                set_speed: {
-                    code: `void DroneSystem::set_speed(float speed) {
-    speed = std::max(std::min(speed, 100.0f), 0.0f);
-    float motor_speed = speed * 65535 / 100;
-    motor.set_speeds(motor_speed, motor_speed, motor_speed, motor_speed);
-    logger->log("Set motor speed: %.2f%%", speed);
+            log_data: {
+                code: `void logData() {
+    // Log sensor data
+    float altitude = sensors.getAltitude();
+    float battery = sensors.getBatteryLevel();
+    
+    // Log to SD card
+    sdCard.write("Altitude: " + String(altitude));
+    sdCard.write("Battery: " + String(battery));
+    
+    // Log to serial
+    Serial.print("Altitude: "); Serial.println(altitude);
+    Serial.print("Battery: "); Serial.println(battery);
 }`,
-                    equations: `\\[ m_i = \\frac{\\text{speed} \\cdot 65535}{100} \\]`
-                },
-                adjust_angle: {
-                    code: `void DroneSystem::adjust_angle(float roll, float pitch) {
-    roll = std::max(std::min(roll, 45.0f), -45.0f);
-    pitch = std::max(std::min(pitch, 45.0f), -45.0f);
-    control.set_targets(pitch, roll, 0.0f, 0.5f);
-    logger->log("Adjusted angles: Roll=%.2f, Pitch=%.2f", roll, pitch);
+                equations: `\\[
+\\text{Data Logging} = \\begin{cases}
+\\text{Altitude} = f(\\text{Pressure}) \\\\
+\\text{Battery} = \\frac{V_{\\text{measured}} - V_{\\text{min}}}{V_{\\text{max}} - V_{\\text{min}}} \\times 100\\%
+\\end{cases}
+\\]`
+            },
+            read_sensor_data: {
+                code: `void readSensorData() {
+    // Read IMU data
+    imuData = imu.read();
+    
+    // Read barometer
+    altitude = baro.readAltitude();
+    
+    // Read battery voltage
+    batteryVoltage = analogRead(BATTERY_PIN) * VOLTAGE_DIVIDER_RATIO;
+    
+    // Update sensor fusion
+    updateSensorFusion(imuData, altitude);
 }`,
-                    equations: `\\[ \\theta_{\\text{roll}} = \\max(\\min(\\text{roll}, 45), -45) \\]
-\\[ \\theta_{\\text{pitch}} = \\max(\\min(\\text{pitch}, 45), -45) \\]`
-                }
+                equations: `\\[
+\\begin{aligned}
+\\text{Acceleration} &= \\sqrt{a_x^2 + a_y^2 + a_z^2} \\\\
+\\text{Gyro Rate} &= \\sqrt{g_x^2 + g_y^2 + g_z^2} \\\\
+\\text{Altitude} &= \\frac{T_0}{L_0} \\left[ \\left( \\frac{P}{P_0} \\right)^{-\\frac{R L_0}{g M}} - 1 \\right]
+\\end{aligned}
+\\]`
+            },
+            calibrate_sensor: {
+                code: `void calibrateSensors() {
+    // Calibrate IMU
+    imu.calibrateGyro();
+    imu.calibrateAccel();
+    
+    // Calibrate barometer
+    baro.calibrate();
+    
+    // Check calibration status
+    if (!imu.isCalibrated() || !baro.isCalibrated()) {
+        error("Calibration failed");
+        return;
+    }
+    
+    log("Sensors calibrated successfully");
+}`,
+                equations: `\\[
+\\begin{aligned}
+\\text{Gyro Bias} &= \\frac{1}{N} \\sum_{i=1}^{N} g_i \\\\
+\\text{Accel Bias} &= \\frac{1}{N} \\sum_{i=1}^{N} a_i - g \\\\
+\\text{Baro Offset} &= P_{\\text{reference}} - P_{\\text{measured}}
+\\end{aligned}
+\\]`
+            },
+            fuse_sensor_data: {
+                code: `void fuseSensorData() {
+    // Get sensor data
+    imuData = imu.read();
+    gpsData = gps.read();
+    baroData = baro.read();
+    
+    // Sensor fusion algorithm
+    fusedData = kalmanFilter.update(
+        imuData, gpsData, baroData
+    );
+    
+    // Update state estimate
+    updateStateEstimate(fusedData);
+}`,
+                equations: `\\[
+\\begin{aligned}
+\\text{Kalman Filter} &= \\begin{cases}
+\\text{Prediction: } \\hat{x}_k^- &= F_k \\hat{x}_{k-1} + B_k u_k \\\\
+\\text{Update: } K_k &= P_k^- H_k^T (H_k P_k^- H_k^T + R_k)^{-1} \\\\
+\\hat{x}_k &= \\hat{x}_k^- + K_k(z_k - H_k \\hat{x}_k^-) \\\\
+P_k &= (I - K_k H_k) P_k^-
+\\end{cases}
+\\end{aligned}
+\\]`
+            },
+            set_control_targets: {
+                code: `void setControlTargets() {
+    // Get current state
+    state = getCurrentState();
+    
+    // Calculate desired state based on input
+    if (flightMode == HOVER) {
+        target.altitude = hoverAltitude;
+        target.velocity = {0, 0, 0};
+    } else if (flightMode == WAYPOINT) {
+        target.position = getNextWaypoint();
+        target.velocity = calculateApproachVelocity();
+    }
+    
+    // Update controller targets
+    controller.setTarget(target);
+}`,
+                equations: `\\[
+\\begin{aligned}
+\\text{Waypoint Navigation} &= \\begin{cases}
+\\vec{v}_{desired} &= k_p (\\vec{p}_{target} - \\vec{p}_{current}) \\\\
+\\vec{a}_{desired} &= k_v (\\vec{v}_{target} - \\vec{v}_{current})
+\\end{cases}
+\\end{aligned}
+\\]`
+            },
+            compute_pid_control: {
+                code: `void computePIDControl() {
+    // Get current state and target
+    state = getCurrentState();
+    target = controller.getTarget();
+    
+    // Calculate errors
+    error.position = target.position - state.position;
+    error.velocity = target.velocity - state.velocity;
+    error.angle = target.angle - state.angle;
+    
+    // Compute PID outputs
+    output.position = positionPID.compute(error.position);
+    output.velocity = velocityPID.compute(error.velocity);
+    output.angle = anglePID.compute(error.angle);
+    
+    // Send outputs to motors
+    applyMotorOutputs(output);
+}`,
+                equations: `\\[
+\\text{PID Control} = k_p e(t) + k_i \\int_0^t e(\\tau) d\\tau + k_d \\frac{de(t)}{dt}
+\\]`
+            },
+            auto_tune_pid: {
+                code: `void autoTunePID() {
+    // Check if tuning is needed
+    if (!pidNeedsTuning) return;
+    
+    // Start auto-tuning process
+    pidTuner.start();
+    
+    // Apply test signals
+    while (!pidTuner.isComplete()) {
+        testSignal = pidTuner.getTestSignal();
+        applyTestSignal(testSignal);
+        delay(10);
+    }
+    
+    // Get tuned parameters
+    tunedParams = pidTuner.getParameters();
+    
+    // Update PID controllers
+    positionPID.setParameters(tunedParams.position);
+    velocityPID.setParameters(tunedParams.velocity);
+    anglePID.setParameters(tunedParams.angle);
+}`,
+                equations: `\\[
+\\text{Ziegler-Nichols Tuning} = \\begin{cases}
+k_p &= 0.6 k_u \\\\
+T_i &= 0.5 T_u \\\\
+T_d &= 0.125 T_u
+\\end{cases}
+\\]`
+            },
+            drive_motors: {
+                code: `void driveMotors() {
+    // Get motor outputs from controller
+    motorOutputs = controller.getMotorOutputs();
+    
+    // Apply outputs with safety checks
+    for (int i = 0; i < 4; i++) {
+        motorOutputs[i] = constrain(motorOutputs[i], 0, MAX_THROTTLE);
+        motors[i].setSpeed(motorOutputs[i]);
+    }
+}`,
+                equations: `\\[
+\\begin{aligned}
+\\text{Motor Mixing} &= \\begin{cases}
+m_1 &= T + R + P - Y \\\\
+m_2 &= T - R + P + Y \\\\
+m_3 &= T + R - P + Y \\\\
+m_4 &= T - R - P - Y
+\\end{cases}
+\\end{aligned}
+\\]`
+            },
+            calibrate_motor_trim: {
+                code: `void calibrateMotorTrim() {
+    // Start calibration
+    motorCalibrator.start();
+    
+    // Find minimum throttle for each motor
+    for (int i = 0; i < 4; i++) {
+        minThrottle[i] = motorCalibrator.findMinThrottle(i);
+    }
+    
+    // Find balanced throttle for hover
+    hoverThrottle = motorCalibrator.findHoverThrottle();
+    
+    // Save calibration
+    saveMotorCalibration(minThrottle, hoverThrottle);
+}`,
+                equations: `\\[
+\\text{Motor Thrust} = k_T \\omega^2
+\\]`
+            },
+            handle_communication: {
+                code: `void handleCommunication() {
+    // Check for incoming radio messages
+    if (radio.available()) {
+        message = radio.read();
+        processMessage(message);
+    }
+    
+    // Send telemetry data
+    if (millis() - lastTelemetryTime > TELEMETRY_INTERVAL) {
+        telemetry = gatherTelemetry();
+        radio.send(telemetry);
+        lastTelemetryTime = millis();
+    }
+}`,
+                equations: `\\[
+\\text{Communication Protocol} = \\begin{cases}
+\\text{Baud Rate} &= 115200 \\\\
+\\text{Packet Size} &= 32 \\text{ bytes} \\\\
+\\text{Checksum} &= \\sum_{i=1}^{N} data_i \\mod 256
+\\end{cases}
+\\]`
+            },
+            monitor_battery: {
+                code: `void monitorBattery() {
+    // Read battery voltage
+    batteryVoltage = analogRead(BATTERY_PIN) * VOLTAGE_DIVIDER_RATIO;
+    
+    // Calculate remaining capacity
+    batteryPercentage = map(batteryVoltage, MIN_VOLTAGE, MAX_VOLTAGE, 0, 100);
+    batteryPercentage = constrain(batteryPercentage, 0, 100);
+    
+    // Check for low battery
+    if (batteryPercentage < LOW_BATTERY_THRESHOLD) {
+        triggerLowBatteryWarning();
+    }
+}`,
+                equations: `\\[
+\\text{Battery Capacity} = \\frac{V_{\\text{measured}} - V_{\\text{min}}}{V_{\\text{max}} - V_{\\text{min}}} \\times 100\\%
+\\]`
+            },
+            run_main_loop: {
+                code: `void runMainLoop() {
+    // Main control loop
+    while (true) {
+        // Read sensors
+        readSensorData();
+        
+        // Update state estimate
+        updateStateEstimate();
+        
+        // Compute control outputs
+        computeControlOutputs();
+        
+        // Drive motors
+        driveMotors();
+        
+        // Handle communication
+        handleCommunication();
+        
+        // Monitor battery
+        monitorBattery();
+        
+        // Maintain loop rate
+        delay(LOOP_PERIOD_MS);
+    }
+}`,
+                equations: `\\[
+\\text{Control Frequency} = \\frac{1}{\\Delta t} \\geq 100 \\text{ Hz}
+\\]`
             }
         };
 
@@ -917,6 +1443,11 @@ void DroneSystem::main_task(void* arg) {
         }
 
         function showModal(block) {
+            if (!hasValidLicense && freeAttempts <= 0) {
+                showLicenseModal();
+                return;
+            }
+
             const modal = document.getElementById('blockModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalCode = document.getElementById('modalCode');
@@ -930,6 +1461,12 @@ void DroneSystem::main_task(void* arg) {
             modal.style.display = 'flex';
 
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, modalEquations]);
+            
+            // Decrement free attempts if not premium
+            if (!hasValidLicense) {
+                freeAttempts--;
+                updateAttemptsCounter();
+            }
         }
 
         function closeModal(modalId) {
@@ -942,11 +1479,6 @@ void DroneSystem::main_task(void* arg) {
             modal.style.display = 'flex';
         }
 
-        function showChallengesModal() {
-            const modal = document.getElementById('challengesModal');
-            modal.style.display = 'flex';
-        }
-
         function showConnectModal() {
             const modal = document.getElementById('connectModal');
             modal.style.display = 'flex';
@@ -955,6 +1487,688 @@ void DroneSystem::main_task(void* arg) {
         function showTutorialModal() {
             const modal = document.getElementById('tutorialModal');
             modal.style.display = 'flex';
+        }
+
+        function showReverseLearningModal() {
+            if (!hasValidLicense && freeAttempts <= 0) {
+                showLicenseModal();
+                return;
+            }
+
+            const modal = document.getElementById('reverseLearningModal');
+            modal.style.display = 'flex';
+            updateDataDescription();
+            
+            // Initialize charts if they don't exist
+            if (!trajectoryChart) {
+                initTrajectoryChart();
+            }
+            if (!plannedTrajectoryChart && document.getElementById('planning-tab').classList.contains('active')) {
+                initPlannedTrajectoryChart();
+            }
+            
+            // Decrement free attempts if not premium
+            if (!hasValidLicense) {
+                freeAttempts--;
+                updateAttemptsCounter();
+            }
+        }
+
+        function showLicenseModal() {
+            const modal = document.getElementById('licenseModal');
+            modal.style.display = 'flex';
+        }
+
+        function showPurchaseModal() {
+            const modal = document.getElementById('purchaseModal');
+            modal.style.display = 'flex';
+            // Reset form
+            document.getElementById('purchaseForm').style.display = 'block';
+            document.getElementById('otpSection').style.display = 'none';
+            document.getElementById('paymentSection').style.display = 'none';
+            document.getElementById('paymentSuccess').style.display = 'none';
+        }
+
+        function updateDataDescription() {
+            const dataType = document.getElementById('dataType').value;
+            document.getElementById('dataDescription').innerHTML = `<p>${dataDescriptions[dataType]}</p>`;
+            
+            // Update math concepts
+            const mathList = document.getElementById('mathConcepts');
+            mathList.innerHTML = '';
+            mathConcepts[dataType].forEach(concept => {
+                const li = document.createElement('li');
+                li.textContent = concept;
+                mathList.appendChild(li);
+            });
+            
+            // Update physics concepts
+            const physicsList = document.getElementById('physicsConcepts');
+            physicsList.innerHTML = '';
+            physicsConcepts[dataType].forEach(concept => {
+                const li = document.createElement('li');
+                li.textContent = concept;
+                physicsList.appendChild(li);
+            });
+        }
+
+        function generateGraph() {
+            const dataType = document.getElementById('dataType').value;
+            const ctx = document.getElementById('dataGraph').getContext('2d');
+            
+            // Destroy previous chart if it exists
+            if (dataChart) {
+                dataChart.destroy();
+            }
+            
+            // Create new chart based on selected data type
+            switch(dataType) {
+                case 'altitude':
+                case 'velocity':
+                case 'acceleration':
+                case 'battery':
+                    dataChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Array.from({length: 100}, (_, i) => i/10),
+                            datasets: [{
+                                label: dataType.charAt(0).toUpperCase() + dataType.slice(1),
+                                data: flightData[dataType],
+                                borderColor: '#00f0ff',
+                                backgroundColor: 'rgba(0, 240, 255, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: dataType !== 'acceleration',
+                                    title: {
+                                        display: true,
+                                        text: dataType === 'altitude' ? 'Meters' : 
+                                              dataType === 'velocity' ? 'm/s' : 
+                                              dataType === 'acceleration' ? 'm/s²' : '%',
+                                        color: '#00f0ff'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 240, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#00f0ff'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Time (seconds)',
+                                        color: '#00f0ff'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 240, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#00f0ff'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#00f0ff'
+                                    }
+                                },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false
+                                }
+                            },
+                            interaction: {
+                                mode: 'nearest',
+                                axis: 'x',
+                                intersect: false
+                            }
+                        }
+                    });
+                    break;
+                
+                case 'angles':
+                    dataChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Array.from({length: 100}, (_, i) => i/10),
+                            datasets: [
+                                {
+                                    label: 'Roll',
+                                    data: flightData.angles.roll,
+                                    borderColor: '#ff3e7f',
+                                    backgroundColor: 'rgba(255, 62, 127, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Pitch',
+                                    data: flightData.angles.pitch,
+                                    borderColor: '#00f0ff',
+                                    backgroundColor: 'rgba(0, 240, 255, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Yaw',
+                                    data: flightData.angles.yaw,
+                                    borderColor: '#ffff00',
+                                    backgroundColor: 'rgba(255, 255, 0, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Degrees',
+                                        color: '#00f0ff'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 240, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#00f0ff'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Time (seconds)',
+                                        color: '#00f0ff'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 240, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#00f0ff'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#00f0ff'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    break;
+                
+                case 'motor':
+                    dataChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Array.from({length: 100}, (_, i) => i/10),
+                            datasets: [
+                                {
+                                    label: 'Motor 1',
+                                    data: flightData.motor.m1,
+                                    borderColor: '#ff3e7f',
+                                    backgroundColor: 'rgba(255, 62, 127, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Motor 2',
+                                    data: flightData.motor.m2,
+                                    borderColor: '#00f0ff',
+                                    backgroundColor: 'rgba(0, 240, 255, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Motor 3',
+                                    data: flightData.motor.m3,
+                                    borderColor: '#ffff00',
+                                    backgroundColor: 'rgba(255, 255, 0, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                },
+                                {
+                                    label: 'Motor 4',
+                                    data: flightData.motor.m4,
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Speed (%)',
+                                        color: '#00f0ff'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 240, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#00f0ff'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Time (seconds)',
+                                        color: '#00f0ff'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 240, 255, 0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#00f0ff'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: '#00f0ff'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    break;
+            }
+        }
+
+        function initTrajectoryChart() {
+            const ctx = document.getElementById('trajectoryCanvas').getContext('2d');
+            
+            // Create a 3D-like trajectory visualization
+            trajectoryChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Flight Path',
+                        data: trajectoryData.x.map((x, i) => ({x: x, y: trajectoryData.y[i]})),
+                        borderColor: '#00f0ff',
+                        backgroundColor: 'rgba(0, 240, 255, 0.5)',
+                        borderWidth: 1,
+                        pointRadius: 3,
+                        showLine: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Y Position (m)',
+                                color: '#00f0ff'
+                            },
+                            grid: {
+                                color: 'rgba(0, 240, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#00f0ff'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'X Position (m)',
+                                color: '#00f0ff'
+                            },
+                            grid: {
+                                color: 'rgba(0, 240, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#00f0ff'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const index = context.dataIndex;
+                                    return [
+                                        `X: ${context.parsed.x.toFixed(2)}m`,
+                                        `Y: ${context.parsed.y.toFixed(2)}m`,
+                                        `Z: ${trajectoryData.z[index].toFixed(2)}m`,
+                                        `Time: ${trajectoryData.time[index].toFixed(2)}s`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initPlannedTrajectoryChart() {
+            const ctx = document.getElementById('plannedTrajectoryCanvas').getContext('2d');
+            
+            // Generate initial planned trajectory
+            const plannedTrajectory = generatePlannedTrajectory();
+            
+            // Create a 3D-like trajectory visualization
+            plannedTrajectoryChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Planned Path',
+                        data: plannedTrajectory.x.map((x, i) => ({x: x, y: plannedTrajectory.y[i]})),
+                        borderColor: '#ff3e7f',
+                        backgroundColor: 'rgba(255, 62, 127, 0.5)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        showLine: true
+                    },
+                    {
+                        label: 'Waypoints',
+                        data: [
+                            {x: parseFloat(document.getElementById('startX').value), 
+                             y: parseFloat(document.getElementById('startY').value)},
+                            {x: parseFloat(document.getElementById('waypointX1').value), 
+                             y: parseFloat(document.getElementById('waypointY1').value)},
+                            {x: parseFloat(document.getElementById('waypointX2').value), 
+                             y: parseFloat(document.getElementById('waypointY2').value)}
+                        ],
+                        backgroundColor: '#ffff00',
+                        borderColor: '#ffff00',
+                        pointRadius: 6,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Y Position (m)',
+                                color: '#00f0ff'
+                            },
+                            grid: {
+                                color: 'rgba(0, 240, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#00f0ff'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'X Position (m)',
+                                color: '#00f0ff'
+                            },
+                            grid: {
+                                color: 'rgba(0, 240, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#00f0ff'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const index = context.dataIndex;
+                                    let zValue = 0;
+                                    if (context.datasetIndex === 0) {
+                                        zValue = plannedTrajectory.z[index];
+                                        return [
+                                            `X: ${context.parsed.x.toFixed(2)}m`,
+                                            `Y: ${context.parsed.y.toFixed(2)}m`,
+                                            `Z: ${zValue.toFixed(2)}m`,
+                                            `Time: ${plannedTrajectory.time[index].toFixed(2)}s`
+                                        ];
+                                    } else {
+                                        // For waypoints
+                                        const wpIndex = index;
+                                        if (wpIndex === 0) {
+                                            zValue = parseFloat(document.getElementById('startZ').value);
+                                        } else if (wpIndex === 1) {
+                                            zValue = parseFloat(document.getElementById('waypointZ1').value);
+                                        } else {
+                                            zValue = parseFloat(document.getElementById('waypointZ2').value);
+                                        }
+                                        return [
+                                            `Waypoint ${wpIndex + 1}`,
+                                            `X: ${context.parsed.x.toFixed(2)}m`,
+                                            `Y: ${context.parsed.y.toFixed(2)}m`,
+                                            `Z: ${zValue.toFixed(2)}m`
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generatePlannedTrajectory() {
+            const startX = parseFloat(document.getElementById('startX').value);
+            const startY = parseFloat(document.getElementById('startY').value);
+            const startZ = parseFloat(document.getElementById('startZ').value);
+            const duration = parseFloat(document.getElementById('flightDuration').value);
+            const maxSpeed = parseFloat(document.getElementById('maxSpeed').value);
+            const smoothness = parseFloat(document.getElementById('smoothness').value);
+            
+            const wp1X = parseFloat(document.getElementById('waypointX1').value);
+            const wp1Y = parseFloat(document.getElementById('waypointY1').value);
+            const wp1Z = parseFloat(document.getElementById('waypointZ1').value);
+            
+            const wp2X = parseFloat(document.getElementById('waypointX2').value);
+            const wp2Y = parseFloat(document.getElementById('waypointY2').value);
+            const wp2Z = parseFloat(document.getElementById('waypointZ2').value);
+            
+            // Generate smooth trajectory using Bézier curves
+            const numPoints = Math.floor(duration * 10 * smoothness);
+            const trajectory = {
+                x: [],
+                y: [],
+                z: [],
+                time: []
+            };
+            
+            for (let i = 0; i <= numPoints; i++) {
+                const t = i / numPoints;
+                const t2 = t * t;
+                const t3 = t2 * t;
+                
+                // Cubic Bézier curve
+                const mt = 1 - t;
+                const mt2 = mt * mt;
+                const mt3 = mt2 * mt;
+                
+                // Control points for smooth transition
+                const c1x = startX + (wp1X - startX) * 0.3;
+                const c1y = startY + (wp1Y - startY) * 0.3;
+                const c2x = wp1X + (wp2X - wp1X) * 0.3;
+                const c2y = wp1Y + (wp2Y - wp1Y) * 0.3;
+                
+                // Calculate position
+                trajectory.x.push(
+                    mt3 * startX + 
+                    3 * mt2 * t * c1x + 
+                    3 * mt * t2 * c2x + 
+                    t3 * wp2X
+                );
+                
+                trajectory.y.push(
+                    mt3 * startY + 
+                    3 * mt2 * t * c1y + 
+                    3 * mt * t2 * c2y + 
+                    t3 * wp2Y
+                );
+                
+                // Linear interpolation for Z (altitude)
+                if (t < 0.5) {
+                    trajectory.z.push(startZ + (wp1Z - startZ) * (t * 2));
+                } else {
+                    trajectory.z.push(wp1Z + (wp2Z - wp1Z) * ((t - 0.5) * 2));
+                }
+                
+                // Time calculation based on distance and max speed
+                trajectory.time.push(t * duration);
+            }
+            
+            return trajectory;
+        }
+
+        function updatePlannedTrajectory() {
+            if (!plannedTrajectoryChart) return;
+            
+            const plannedTrajectory = generatePlannedTrajectory();
+            
+            // Update chart data
+            plannedTrajectoryChart.data.datasets[0].data = plannedTrajectory.x.map((x, i) => ({x: x, y: plannedTrajectory.y[i]}));
+            plannedTrajectoryChart.data.datasets[1].data = [
+                {x: parseFloat(document.getElementById('startX').value), 
+                 y: parseFloat(document.getElementById('startY').value)},
+                {x: parseFloat(document.getElementById('waypointX1').value), 
+                 y: parseFloat(document.getElementById('waypointY1').value)},
+                {x: parseFloat(document.getElementById('waypointX2').value), 
+                 y: parseFloat(document.getElementById('waypointY2').value)}
+            ];
+            
+            plannedTrajectoryChart.update();
+        }
+
+        function zoomIn() {
+            if (dataChart) {
+                dataChart.options.scales.x.min = dataChart.options.scales.x.min || 0;
+                dataChart.options.scales.x.max = (dataChart.options.scales.x.max || 10) / 2;
+                dataChart.update();
+            }
+        }
+
+        function zoomOut() {
+            if (dataChart) {
+                dataChart.options.scales.x.min = 0;
+                dataChart.options.scales.x.max = 10;
+                dataChart.update();
+            }
+        }
+
+        function exportData() {
+            const dataType = document.getElementById('dataType').value;
+            let csvContent = "Time (s),Value\n";
+            
+            if (dataType === 'angles') {
+                csvContent = "Time (s),Roll,Pitch,Yaw\n";
+                for (let i = 0; i < 100; i++) {
+                    csvContent += `${i/10},${flightData.angles.roll[i]},${flightData.angles.pitch[i]},${flightData.angles.yaw[i]}\n`;
+                }
+            } else if (dataType === 'motor') {
+                csvContent = "Time (s),Motor 1,Motor 2,Motor 3,Motor 4\n";
+                for (let i = 0; i < 100; i++) {
+                    csvContent += `${i/10},${flightData.motor.m1[i]},${flightData.motor.m2[i]},${flightData.motor.m3[i]},${flightData.motor.m4[i]}\n`;
+                }
+            } else {
+                for (let i = 0; i < 100; i++) {
+                    csvContent += `${i/10},${flightData[dataType][i]}\n`;
+                }
+            }
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `drone_${dataType}_data.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportTrajectoryData() {
+            let csvContent = "Time (s),X Position (m),Y Position (m),Z Position (m)\n";
+            
+            for (let i = 0; i < trajectoryData.time.length; i++) {
+                csvContent += `${trajectoryData.time[i].toFixed(2)},${trajectoryData.x[i].toFixed(2)},${trajectoryData.y[i].toFixed(2)},${trajectoryData.z[i].toFixed(2)}\n`;
+            }
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'drone_trajectory_data.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function uploadTrajectory() {
+            if (!isConnected) {
+                showBuildStatus('Drone not connected', true);
+                return;
+            }
+            
+            const plannedTrajectory = generatePlannedTrajectory();
+            
+            // Simulate trajectory upload
+            showBuildStatus('Uploading trajectory to drone firmware...');
+            
+            setTimeout(() => {
+                const isSuccess = Math.random() < 0.8;
+                if (isSuccess) {
+                    showBuildStatus('Trajectory successfully uploaded to drone firmware!');
+                    
+                    // Generate firmware code with the trajectory
+                    const firmwareCode = generateTrajectoryFirmware(plannedTrajectory);
+                    mainCpp += firmwareCode;
+                    isBuilt = false; // Need to rebuild after firmware update
+                } else {
+                    showBuildStatus('Trajectory upload failed', true);
+                }
+            }, 2000);
+        }
+
+        function generateTrajectoryFirmware(trajectory) {
+            return `
+// Auto-generated trajectory following code
+void followTrajectory() {
+    // Trajectory parameters
+    const float trajectoryX[] = {${trajectory.x.map(x => x.toFixed(2)).join(', ')}};
+    const float trajectoryY[] = {${trajectory.y.map(y => y.toFixed(2)).join(', ')}};
+    const float trajectoryZ[] = {${trajectory.z.map(z => z.toFixed(2)).join(', ')}};
+    const float trajectoryTime[] = {${trajectory.time.map(t => t.toFixed(2)).join(', ')}};
+    const int numPoints = ${trajectory.x.length};
+    
+    // Follow trajectory
+    for (int i = 0; i < numPoints; i++) {
+        setTargetPosition(trajectoryX[i], trajectoryY[i], trajectoryZ[i]);
+        delay(100); // Adjust based on time differences
+    }
+}`;
         }
 
         function showBuildStatus(message, isError = false) {
@@ -978,13 +2192,7 @@ void DroneSystem::main_task(void* arg) {
         function handleBuild() {
             mainCpp = '#include <Arduino.h>\n#include <esp_log.h>\n\n';
             for (const [blockId, data] of Object.entries(blockData)) {
-                if (blockId !== 'challenges') {
-                    mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
-                } else {
-                    for (const [challengeId, challengeData] of Object.entries(data)) {
-                        mainCpp += `// Challenge: ${challengeId}\n${challengeData.code}\n\n`;
-                    }
-                }
+                mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
             }
 
             const isSuccess = Math.random() < 0.7;
@@ -1049,41 +2257,6 @@ void DroneSystem::main_task(void* arg) {
             }
             console.log(`Sending command: ${command}`);
             showBuildStatus(`Command: ${command}`);
-        }
-
-        function runBeginnerChallenge() {
-            const speedInput = document.getElementById('beginnerSpeed').value;
-            const code = document.getElementById('beginnerCode').value;
-            const speed = parseFloat(speedInput);
-
-            if (isNaN(speed) || speed < 0 || speed > 100) {
-                showBuildStatus('Invalid speed value (0-100 required)', true);
-                return;
-            }
-
-            const simulatedResponse = `Drone set to speed: ${speed}%\n` +
-                                     `Motor speeds: [${speed * 65535 / 100}, ${speed * 65535 / 100}, ${speed * 65535 / 100}, ${speed * 65535 / 100}]`;
-            showBuildStatus('Beginner Challenge: ' + simulatedResponse);
-            sendCommand(`set_speed:${speed}`);
-        }
-
-        function runAdvancedChallenge() {
-            const rollInput = document.getElementById('advancedRoll').value;
-            const pitchInput = document.getElementById('advancedPitch').value;
-            const code = document.getElementById('advancedCode').value;
-            const roll = parseFloat(rollInput);
-            const pitch = parseFloat(pitchInput);
-
-            if (isNaN(roll) || roll < -45 || roll > 45 || isNaN(pitch) || pitch < -45 || pitch > 45) {
-                showBuildStatus('Invalid roll/pitch values (-45 to 45 required)', true);
-                return;
-            }
-
-            const stabilityScore = Math.abs(roll) + Math.abs(pitch);
-            const simulatedResponse = `Drone stabilized: Roll=${roll}, Pitch=${pitch}\n` +
-                                     `Stability Score: ${stabilityScore.toFixed(2)} (lower is better)`;
-            showBuildStatus('Advanced Challenge: ' + simulatedResponse);
-            sendCommand(`adjust_angle:${roll},${pitch}`);
         }
 
         function handleConnect() {
@@ -1179,26 +2352,312 @@ void DroneSystem::main_task(void* arg) {
         }
 
         function setupControlListeners() {
+            // Basic control buttons
+            document.getElementById('takeoffBtn').addEventListener('click', () => sendCommand('takeoff'));
+            document.getElementById('landBtn').addEventListener('click', () => sendCommand('land'));
+            document.getElementById('emergencyBtn').addEventListener('click', () => sendCommand('emergency_stop'));
             document.getElementById('hoverBtn').addEventListener('click', () => sendCommand('hover'));
             document.getElementById('forwardBtn').addEventListener('click', () => sendCommand('forward'));
+            document.getElementById('backwardBtn').addEventListener('click', () => sendCommand('backward'));
+            document.getElementById('leftBtn').addEventListener('click', () => sendCommand('left'));
+            document.getElementById('rightBtn').addEventListener('click', () => sendCommand('right'));
             document.getElementById('rotateLeftBtn').addEventListener('click', () => sendCommand('rotate_left'));
             document.getElementById('rotateRightBtn').addEventListener('click', () => sendCommand('rotate_right'));
+            document.getElementById('flipBtn').addEventListener('click', () => sendCommand('flip'));
+            document.getElementById('photoBtn').addEventListener('click', () => sendCommand('take_photo'));
+
+            // Throttle slider
             const throttleSlider = document.getElementById('throttleSlider');
             const throttleValue = document.getElementById('throttleValue');
             throttleSlider.addEventListener('input', () => {
                 throttleValue.textContent = throttleSlider.value;
                 sendCommand(`set_throttle:${throttleSlider.value / 100}`);
             });
+
+            // Joystick setup
+            const joystick = document.getElementById('joystick');
+            const joystickContainer = document.getElementById('joystick').parentElement;
+            const containerRect = joystickContainer.getBoundingClientRect();
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+            const maxDistance = 70;
+
+            interact(joystick).draggable({
+                restrict: {
+                    restriction: joystickContainer,
+                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
+                    endOnly: true
+                },
+                onmove: (event) => {
+                    let x = joystickPosition.x + event.dx;
+                    let y = joystickPosition.y + event.dy;
+                    
+                    // Calculate distance from center
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Limit to max distance
+                    if (distance > maxDistance) {
+                        x = centerX + dx * maxDistance / distance;
+                        y = centerY + dy * maxDistance / distance;
+                    }
+                    
+                    joystickPosition = { x, y };
+                    joystick.style.transform = `translate(${x - 30}px, ${y - 30}px)`;
+                    
+                    // Calculate normalized values (-1 to 1)
+                    const normX = (x - centerX) / maxDistance;
+                    const normY = (centerY - y) / maxDistance; // Invert Y axis
+                    
+                    // Send command
+                    sendCommand(`joystick:${normX.toFixed(2)},${normY.toFixed(2)}`);
+                },
+                onend: () => {
+                    // Return to center
+                    joystickPosition = { x: centerX, y: centerY };
+                    joystick.style.transform = `translate(${centerX - 30}px, ${centerY - 30}px)`;
+                    sendCommand('joystick:0,0');
+                }
+            });
         }
 
-        function setupChallengeListeners() {
-            document.getElementById('runBeginnerChallenge').addEventListener('click', runBeginnerChallenge);
-            document.getElementById('runAdvancedChallenge').addEventListener('click', runAdvancedChallenge);
+        function setupTrajectoryControlListeners() {
+            // Add event listeners to all trajectory control sliders
+            const sliders = [
+                'startX', 'startY', 'startZ',
+                'flightDuration', 'maxSpeed', 'smoothness',
+                'waypointX1', 'waypointY1', 'waypointZ1',
+                'waypointX2', 'waypointY2', 'waypointZ2'
+            ];
+            
+            sliders.forEach(sliderId => {
+                const slider = document.getElementById(sliderId);
+                const valueSpan = document.getElementById(`${sliderId}Value`);
+                
+                // Update value display
+                slider.addEventListener('input', () => {
+                    valueSpan.textContent = slider.value;
+                    updatePlannedTrajectory();
+                });
+            });
+            
+            // Upload trajectory button
+            document.getElementById('uploadTrajectoryBtn').addEventListener('click', uploadTrajectory);
+        }
+
+        function setupDataListeners() {
+            document.getElementById('reverseLearningButton').addEventListener('click', showReverseLearningModal);
+            document.getElementById('dataType').addEventListener('change', updateDataDescription);
+            document.getElementById('generateGraph').addEventListener('click', generateGraph);
+            document.getElementById('zoomIn').addEventListener('click', zoomIn);
+            document.getElementById('zoomOut').addEventListener('click', zoomOut);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('exportTrajectory').addEventListener('click', exportTrajectoryData);
+            
+            // Tab switching functionality
+            document.querySelectorAll('.data-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.data-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Initialize planned trajectory chart when planning tab is opened
+                    if (tabId === 'planning' && !plannedTrajectoryChart) {
+                        initPlannedTrajectoryChart();
+                    }
+                });
+            });
         }
 
         function setupConnectListeners() {
             document.getElementById('connectDroneButton').addEventListener('click', handleConnect);
             document.getElementById('uploadCodeButton').addEventListener('click', handleUpload);
+        }
+
+        function setupLicenseListeners() {
+            // License verification
+            document.getElementById('verifyLicenseBtn').addEventListener('click', () => {
+                const licenseKey = document.getElementById('licenseKeyInput').value.trim();
+                const licenseStatus = document.getElementById('licenseStatus');
+                
+                if (licenseKey === '') {
+                    licenseStatus.textContent = 'Please enter a license key';
+                    licenseStatus.style.color = '#ff3e7f';
+                    return;
+                }
+                
+                // Check for master license key
+                if (licenseKey === MASTER_LICENSE_KEY) {
+                    hasValidLicense = true;
+                    licenseStatus.textContent = 'Master license verified! Full access granted.';
+                    licenseStatus.style.color = '#10b981';
+                    localStorage.setItem('droneLicenseKey', MASTER_LICENSE_KEY);
+                    setTimeout(() => {
+                        closeModal('licenseModal');
+                    }, 1500);
+                    return;
+                }
+                
+                // Simulate license verification
+                const isValid = verifyLicenseKey(licenseKey);
+                
+                if (isValid) {
+                    hasValidLicense = true;
+                    licenseStatus.textContent = 'License verified successfully!';
+                    licenseStatus.style.color = '#10b981';
+                    setTimeout(() => {
+                        closeModal('licenseModal');
+                    }, 1500);
+                } else {
+                    licenseStatus.textContent = 'Invalid license key. Please try again or purchase a license.';
+                    licenseStatus.style.color = '#ff3e7f';
+                }
+            });
+            
+            // Purchase license link
+            document.getElementById('purchaseLicenseLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal('licenseModal');
+                showPurchaseModal();
+            });
+            
+            // Purchase license flow
+            document.getElementById('sendOtpBtn').addEventListener('click', () => {
+                const email = document.getElementById('userEmail').value.trim();
+                const phone = document.getElementById('userPhone').value.trim();
+                
+                if (!email || !phone) {
+                    alert('Please enter both email and mobile number');
+                    return;
+                }
+                
+                // Generate a random 6-digit OTP
+                otp = Math.floor(100000 + Math.random() * 900000).toString();
+                console.log(`Generated OTP: ${otp}`); // For demo purposes only
+                
+                // Show OTP section
+                document.getElementById('purchaseForm').style.display = 'none';
+                document.getElementById('otpSection').style.display = 'block';
+                
+                // Focus first OTP input
+                document.querySelector('.otp-input').focus();
+            });
+            
+            // OTP input handling
+            document.querySelectorAll('.otp-input').forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1) {
+                        if (index < 5) {
+                            document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
+                        }
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                        document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
+                    }
+                });
+            });
+            
+            document.getElementById('verifyOtpBtn').addEventListener('click', () => {
+                // Get entered OTP
+                let enteredOtp = '';
+                document.querySelectorAll('.otp-input').forEach(input => {
+                    enteredOtp += input.value;
+                });
+                
+                if (enteredOtp.length !== 6) {
+                    alert('Please enter a valid 6-digit OTP');
+                    return;
+                }
+                
+                if (enteredOtp === otp) {
+                    // Show payment section
+                    document.getElementById('otpSection').style.display = 'none';
+                    document.getElementById('paymentSection').style.display = 'block';
+                } else {
+                    alert('Invalid OTP. Please try again.');
+                }
+            });
+            
+            document.getElementById('checkPaymentBtn').addEventListener('click', () => {
+                // Simulate payment verification
+                const isPaymentSuccessful = Math.random() < 0.9; // 90% success rate for demo
+                
+                if (isPaymentSuccessful) {
+                    document.getElementById('paymentSection').style.display = 'none';
+                    document.getElementById('paymentSuccess').style.display = 'block';
+                    
+                    // Generate a license key
+                    generatedLicenseKey = generateLicenseKey();
+                    document.getElementById('generatedLicenseKey').textContent = generatedLicenseKey;
+                    
+                    // Store the license key in localStorage
+                    localStorage.setItem('droneLicenseKey', generatedLicenseKey);
+                    
+                    // In a real app, you would send the key to the user's email
+                    const email = document.getElementById('userEmail').value;
+                    console.log(`License key sent to ${email}: ${generatedLicenseKey}`);
+                } else {
+                    alert('Payment verification failed. Please try again.');
+                }
+            });
+            
+            document.getElementById('closePurchaseModalBtn').addEventListener('click', () => {
+                closeModal('purchaseModal');
+                // Automatically verify the newly generated license key
+                hasValidLicense = true;
+                document.getElementById('licenseKeyInput').value = generatedLicenseKey;
+                document.getElementById('verifyLicenseBtn').click();
+            });
+            
+            // License button to show purchase modal
+            document.getElementById('licenseButton').addEventListener('click', () => {
+                showPurchaseModal();
+            });
+        }
+
+        function verifyLicenseKey(key) {
+            // In a real application, this would verify against a database
+            // For demo purposes, we'll check against localStorage and a simple pattern
+            const storedKey = localStorage.getItem('droneLicenseKey');
+            return key === storedKey || /^AIRM-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(key);
+        }
+
+        function generateLicenseKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let key = 'AIRM-';
+            
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 4; j++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                if (i < 2) key += '-';
+            }
+            
+            return key;
+        }
+
+        function updateAttemptsCounter() {
+            document.getElementById('attemptsLeft').textContent = freeAttempts;
+            
+            if (freeAttempts <= 0 && !hasValidLicense) {
+                document.getElementById('attemptsCounter').style.color = '#ff3e7f';
+                document.getElementById('attemptsCounter').innerHTML = 
+                    'Free attempts exhausted. <a href="#" id="getLicenseLink" style="color: var(--primary);">Get license</a>';
+                
+                document.getElementById('getLicenseLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showLicenseModal();
+                });
+            }
         }
 
         function setupBlockListeners() {
@@ -1229,10 +2688,6 @@ void DroneSystem::main_task(void* arg) {
                 if (event.target === event.currentTarget) closeModal('controlsModal');
             });
 
-            document.getElementById('challengesModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('challengesModal');
-            });
-
             document.getElementById('connectModal').addEventListener('click', (event) => {
                 if (event.target === event.currentTarget) closeModal('connectModal');
             });
@@ -1241,11 +2696,24 @@ void DroneSystem::main_task(void* arg) {
                 if (event.target === event.currentTarget) closeModal('tutorialModal');
             });
 
+            document.getElementById('reverseLearningModal').addEventListener('click', (event) => {
+                if (event.target === event.currentTarget) closeModal('reverseLearningModal');
+            });
+
+            document.getElementById('licenseModal').addEventListener('click', (event) => {
+                if (event.target === event.currentTarget) closeModal('licenseModal');
+            });
+
+            document.getElementById('purchaseModal').addEventListener('click', (event) => {
+                if (event.target === event.currentTarget) closeModal('purchaseModal');
+            });
+
             document.getElementById('buildButton').addEventListener('click', handleBuild);
             document.getElementById('controlsButton').addEventListener('click', showControlsModal);
-            document.getElementById('challengesButton').addEventListener('click', showChallengesModal);
             document.getElementById('connectButton').addEventListener('click', showConnectModal);
             document.getElementById('tutorialButton').addEventListener('click', showTutorialModal);
+            document.getElementById('reverseLearningButton').addEventListener('click', showReverseLearningModal);
+            document.getElementById('licenseButton').addEventListener('click', showPurchaseModal);
             document.getElementById('deepDiveButton').addEventListener('click', showDeepDive);
         }
 
@@ -1286,8 +2754,20 @@ void DroneSystem::main_task(void* arg) {
                 setupInteract();
                 setupBlockListeners();
                 setupControlListeners();
-                setupChallengeListeners();
                 setupConnectListeners();
+                setupDataListeners();
+                setupTrajectoryControlListeners();
+                setupLicenseListeners();
+                
+                // Initialize charts when the page loads
+                initTrajectoryChart();
+                updateAttemptsCounter();
+
+                // Check for existing license key in localStorage
+                const savedLicense = localStorage.getItem('droneLicenseKey');
+                if (savedLicense && verifyLicenseKey(savedLicense)) {
+                    hasValidLicense = true;
+                }
 
                 const styleSheet = document.createElement('style');
                 styleSheet.textContent = `
@@ -1307,6 +2787,31 @@ void DroneSystem::main_task(void* arg) {
                     progress::-moz-progress-bar {
                         background: var(--primary);
                         border-radius: 4px;
+                    }
+                    .control-btn i {
+                        font-size: 1.5rem;
+                        margin-bottom: 5px;
+                    }
+                    input[type="range"] {
+                        -webkit-appearance: none;
+                        height: 5px;
+                        background: rgba(0, 240, 255, 0.2);
+                        border-radius: 5px;
+                    }
+                    input[type="range"]::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        width: 15px;
+                        height: 15px;
+                        background: var(--primary);
+                        border-radius: 50%;
+                        cursor: pointer;
+                    }
+                    a {
+                        color: var(--secondary);
+                        text-decoration: none;
+                    }
+                    a:hover {
+                        text-decoration: underline;
                     }
                 `;
                 document.head.appendChild(styleSheet);
