@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AiRM Fateh Nano Drone: Math Learning Platform</title>
+    <title>AIRM Fateh Nano Drone: Reverse Learning Platform</title>
     <style>
         *, ::before, ::after { box-sizing: border-box; }
         body { margin: 0; }
@@ -30,6 +30,9 @@
             --primary: #00f0ff;
             --secondary: #ff3e7f;
             --dark: #0a0a1a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
         }
         body {
             background: #000;
@@ -427,32 +430,6 @@
         .license-key-form button:hover {
             background: rgba(0, 240, 255, 0.4);
         }
-        .license-purchase-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .license-purchase-form input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 10px;
-            border-radius: 4px;
-            font-family: 'Share Tech Mono', monospace;
-        }
-        .license-purchase-form button {
-            background: rgba(0, 240, 255, 0.2);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Share Tech Mono', monospace;
-            transition: all 0.2s;
-        }
-        .license-purchase-form button:hover {
-            background: rgba(0, 240, 255, 0.4);
-        }
         .otp-section {
             display: none;
         }
@@ -509,6 +486,605 @@
             font-size: 0.8rem;
             z-index: 200;
         }
+
+        /* New Purchase Flow Styles */
+        .purchase-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(10, 10, 26, 0.8);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .purchase-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse 8s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .purchase-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .purchase-header h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .purchase-header p {
+            color: rgba(224, 224, 255, 0.8);
+            font-size: 1rem;
+        }
+        
+        .purchase-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .step.active .step-number {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+        }
+        
+        .step.completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+        
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .step.completed .step-label {
+            color: var(--success);
+        }
+        
+        .progress-bar {
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background: rgba(0, 240, 255, 0.1);
+            z-index: 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+        
+        .purchase-form {
+            margin-top: 2rem;
+        }
+        
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.4);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(0, 240, 255, 0.1);
+        }
+        
+        .otp-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+        
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .otp-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            outline: none;
+        }
+        
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .payment-option {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .payment-option:hover {
+            border-color: var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+        }
+        
+        .payment-option.selected {
+            border-color: var(--primary);
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+        
+        .payment-option i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .qr-code-container {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .success-message i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        
+        .license-key {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            text-align: center;
+            margin: 1.5rem 0;
+            word-break: break-all;
+            font-size: 1.2rem;
+            color: var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .license-key::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            100% { left: 100%; }
+        }
+        
+        .price-tag {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .price-tag::before {
+            content: '₹';
+            font-size: 1.5rem;
+            vertical-align: super;
+            margin-right: 5px;
+        }
+        
+        .features-list {
+            margin: 1.5rem 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(0, 240, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .feature-item i {
+            margin-right: 1rem;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .timer {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        
+        .discount-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(15deg);
+            box-shadow: 0 2px 10px rgba(255, 62, 127, 0.5);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            opacity: 0;
+        }
+
+        /* STEM Curriculum Styles */
+        .stem-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .stem-tab.active {
+            border-bottom: 2px solid var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+        }
+        
+        .stem-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        
+        .stem-content {
+            display: none;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .stem-content.active {
+            display: block;
+        }
+        
+        .grade-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .grade-section h4 {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding-bottom: 5px;
+        }
+        
+        .concept-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .concept-list li {
+            padding: 5px 0;
+            border-bottom: 1px dotted rgba(0, 240, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .concept-list li:before {
+            content: '•';
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .lesson-plan {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        
+        .lesson-phase {
+            margin-bottom: 15px;
+        }
+        
+        .lesson-phase h5 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .lesson-phase h5 i {
+            margin-right: 8px;
+        }
+        
+        .activity-item {
+            background: rgba(0, 240, 255, 0.05);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        
+        .activity-item:hover {
+            background: rgba(0, 240, 255, 0.1);
+            transform: translateX(3px);
+        }
+        
+        .assessment-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        
+        .resource-card {
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        
+        .resource-card:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+        
+        .resource-card h5 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .resource-card ul {
+            padding-left: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .purchase-container {
+                padding: 1rem;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+            
+            .purchase-steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .step {
+                margin-bottom: 1rem;
+            }
+            
+            .progress-bar {
+                display: none;
+            }
+            
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .otp-inputs {
+                justify-content: center;
+            }
+            
+            .otp-input {
+                width: 40px;
+                height: 50px;
+                margin: 0 3px;
+            }
+            
+            .stem-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .stem-tab {
+                flex: 1 0 auto;
+                text-align: center;
+                padding: 8px 5px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Confetti animation */
+        @keyframes confetti-fall {
+            0% { 
+                opacity: 1;
+                top: -10px;
+            }
+            100% { 
+                opacity: 0;
+                top: 100vh;
+            }
+        }
+        @keyframes confetti-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -519,8 +1095,8 @@
 <body>
     <div class="header p-4 flex justify-between items-center">
         <div>
-            <h1 class="text-2xl" style="color: var(--primary);">AiRM FATEH NANO DRONE</h1>
-            <h2 class="text-lg" style="color: var(--secondary);">MATH LEARNING PLATFORM</h2>
+            <h1 class="text-2xl" style="color: var(--primary);">AIRM FATEH NANO DRONE</h1>
+            <h2 class="text-lg" style="color: var(--secondary);">REVERSE LEARNING PLATFORM</h2>
         </div>
         <div class="flex items-center">
             <div id="connectionIndicator" class="w-3 h-3 rounded-full mr-2 bg-red-500"></div>
@@ -713,9 +1289,9 @@
     <div class="modal" id="tutorialModal">
         <div class="modal-content">
             <button class="close-modal">×</button>
-            <h3>Tutorial: How to Use the AiRM Fateh Nano Drone Platform</h3>
+            <h3>Tutorial: How to Use the AIRM Fateh Nano Drone Platform</h3>
             <div class="modal-section" style="padding: 10px;">
-                <p>Welcome to the AiRM Fateh Nano Drone Math Learning Platform. This interactive tool allows you to:</p>
+                <p>Welcome to the AIRM Fateh Nano Drone Reverse Learning Platform. This interactive tool allows you to:</p>
                 <ol>
                     <li>Explore drone firmware components through visual blocks</li>
                     <li>Connect to a physical drone (if available)</li>
@@ -738,242 +1314,614 @@
             <button class="close-modal">×</button>
             <h3>Reverse Learning Analysis</h3>
             
-            <div class="data-tabs">
-                <div class="data-tab active" data-tab="graphs">Graphs</div>
-                <div class="data-tab" data-tab="trajectory">Flight Trajectory</div>
-                <div class="data-tab" data-tab="planning">Trajectory Planning</div>
+            <div class="stem-tabs">
+                <div class="stem-tab active" data-tab="data">Flight Data</div>
+                <div class="stem-tab" data-tab="stem">STEM Curriculum</div>
+                <div class="stem-tab" data-tab="lessons">Lesson Plans</div>
+                <div class="stem-tab" data-tab="resources">Resources</div>
             </div>
             
-            <div class="tab-content active" id="graphs-tab">
-                <div class="modal-section">
-                    <h4>Select Data to Visualize</h4>
-                    <select id="dataType" style="width: 100%; margin-bottom: 15px; background: rgba(0,0,0,0.5); color: var(--primary); border: 1px solid var(--primary); padding: 5px;">
-                        <option value="altitude">Altitude (Physics Grade 8-10)</option>
-                        <option value="velocity">Velocity (Physics Grade 9-11)</option>
-                        <option value="acceleration">Acceleration (Physics Grade 10-12)</option>
-                        <option value="angles">Orientation Angles (Math Grade 9-12)</option>
-                        <option value="motor">Motor Speeds (Physics Grade 8-10)</option>
-                        <option value="battery">Battery Usage (Math Grade 7-9)</option>
-                    </select>
-                    <div class="data-description" id="dataDescription">
-                        <p>Altitude shows the drone's height over time (in meters). Analyze the rate of change to understand velocity and acceleration.</p>
-                    </div>
-                    <button id="generateGraph" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Generate Graph</button>
-                    <div style="margin-top: 15px;">
-                        <h4>Math Concepts</h4>
-                        <ul id="mathConcepts" style="font-size: 0.8rem;">
-                            <li>Linear functions (y = mx + b)</li>
-                            <li>Rate of change (slope)</li>
-                            <li>Area under curve</li>
-                        </ul>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <h4>Physics Concepts</h4>
-                        <ul id="physicsConcepts" style="font-size: 0.8rem;">
-                            <li>Kinematics</li>
-                            <li>Newton's laws of motion</li>
-                            <li>Energy conservation</li>
-                        </ul>
-                    </div>
+            <div class="stem-content active" id="data-tab">
+                <div class="data-tabs">
+                    <div class="data-tab active" data-tab="graphs">Graphs</div>
+                    <div class="data-tab" data-tab="trajectory">Flight Trajectory</div>
+                    <div class="data-tab" data-tab="planning">Trajectory Planning</div>
                 </div>
-                <div class="modal-section" style="flex: 2; display: flex; flex-direction: column;">
-                    <div id="graphContainer" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); position: relative;">
-                        <canvas id="dataGraph" style="width: 100%; height: 100%;"></canvas>
-                    </div>
-                    <div id="graphControls" style="margin-top: 10px; display: flex; gap: 10px;">
-                        <button id="zoomIn" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Zoom In</button>
-                        <button id="zoomOut" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Zoom Out</button>
-                        <button id="exportData" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Export Data</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="trajectory-tab">
-                <div class="modal-section">
-                    <h4>Flight Trajectory Analysis</h4>
-                    <div class="data-description">
-                        <p>This 2D visualization shows the drone's flight path from the last recorded flight. 
-                        The X and Y axes represent horizontal movement, while altitude (Z) is shown in the tooltip. 
-                        Analyze the path to understand flight patterns and stability.</p>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <h4>Math Concepts</h4>
-                        <ul style="font-size: 0.8rem;">
-                            <li>Coordinate geometry</li>
-                            <li>Vector mathematics</li>
-                            <li>Parametric equations</li>
-                        </ul>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <h4>Physics Concepts</h4>
-                        <ul style="font-size: 0.8rem;">
-                            <li>Projectile motion</li>
-                            <li>Velocity vectors</li>
-                            <li>Trajectory optimization</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="modal-section">
-                    <div class="trajectory-container">
-                        <div class="trajectory-header">Flight Path Visualization</div>
-                        <canvas class="trajectory-canvas" id="trajectoryCanvas"></canvas>
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <button id="exportTrajectory" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Export Trajectory Data</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="planning-tab">
-                <div class="modal-section">
-                    <h4>Trajectory Planning</h4>
-                    <div class="data-description">
-                        <p>Plan your drone's flight path by adjusting the parameters below. The graph will update in real-time to show the planned trajectory. 
-                        Once satisfied, upload the trajectory to the drone's firmware.</p>
-                    </div>
-                    
-                    <div class="trajectory-controls">
-                        <div class="trajectory-control-group">
-                            <h4>Position Parameters</h4>
-                            <div class="control-slider">
-                                <label for="startX">Start X (m): <span id="startXValue">0</span></label>
-                                <input type="range" id="startX" min="-10" max="10" value="0" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="startY">Start Y (m): <span id="startYValue">0</span></label>
-                                <input type="range" id="startY" min="-10" max="10" value="0" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="startZ">Start Z (m): <span id="startZValue">1</span></label>
-                                <input type="range" id="startZ" min="0" max="5" value="1" step="0.1">
-                            </div>
+                
+                <div class="tab-content active" id="graphs-tab">
+                    <div class="modal-section">
+                        <h4>Select Data to Visualize</h4>
+                        <select id="dataType" style="width: 100%; margin-bottom: 15px; background: rgba(0,0,0,0.5); color: var(--primary); border: 1px solid var(--primary); padding: 5px;">
+                            <option value="altitude">Altitude (Physics Grade 8-10)</option>
+                            <option value="velocity">Velocity (Physics Grade 9-11)</option>
+                            <option value="acceleration">Acceleration (Physics Grade 10-12)</option>
+                            <option value="angles">Orientation Angles (Math Grade 9-12)</option>
+                            <option value="motor">Motor Speeds (Physics Grade 8-10)</option>
+                            <option value="battery">Battery Usage (Math Grade 7-9)</option>
+                        </select>
+                        <div class="data-description" id="dataDescription">
+                            <p>Altitude shows the drone's height over time (in meters). Analyze the rate of change to understand velocity and acceleration.</p>
                         </div>
-                        
-                        <div class="trajectory-control-group">
-                            <h4>Flight Parameters</h4>
-                            <div class="control-slider">
-                                <label for="flightDuration">Duration (s): <span id="flightDurationValue">5</span></label>
-                                <input type="range" id="flightDuration" min="1" max="20" value="5" step="0.5">
-                            </div>
-                            <div class="control-slider">
-                                <label for="maxSpeed">Max Speed (m/s): <span id="maxSpeedValue">2</span></label>
-                                <input type="range" id="maxSpeed" min="0.1" max="5" value="2" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="smoothness">Smoothness: <span id="smoothnessValue">5</span></label>
-                                <input type="range" id="smoothness" min="1" max="10" value="5" step="1">
-                            </div>
+                        <button id="generateGraph" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Generate Graph</button>
+                        <div style="margin-top: 15px;">
+                            <h4>Math Concepts</h4>
+                            <ul id="mathConcepts" style="font-size: 0.8rem;">
+                                <li>Linear functions (y = mx + b)</li>
+                                <li>Rate of change (slope)</li>
+                                <li>Area under curve</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <h4>Physics Concepts</h4>
+                            <ul id="physicsConcepts" style="font-size: 0.8rem;">
+                                <li>Kinematics</li>
+                                <li>Newton's laws of motion</li>
+                                <li>Energy conservation</li>
+                            </ul>
                         </div>
                     </div>
-                    
-                    <div class="trajectory-controls">
-                        <div class="trajectory-control-group">
-                            <h4>Waypoints</h4>
-                            <div class="control-slider">
-                                <label for="waypointX1">Waypoint 1 X: <span id="waypointX1Value">2</span></label>
-                                <input type="range" id="waypointX1" min="-10" max="10" value="2" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="waypointY1">Waypoint 1 Y: <span id="waypointY1Value">2</span></label>
-                                <input type="range" id="waypointY1" min="-10" max="10" value="2" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="waypointZ1">Waypoint 1 Z: <span id="waypointZ1Value">2</span></label>
-                                <input type="range" id="waypointZ1" min="0" max="5" value="2" step="0.1">
-                            </div>
+                    <div class="modal-section" style="flex: 2; display: flex; flex-direction: column;">
+                        <div id="graphContainer" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); position: relative;">
+                            <canvas id="dataGraph" style="width: 100%; height: 100%;"></canvas>
                         </div>
-                        
-                        <div class="trajectory-control-group">
-                            <h4>Waypoints</h4>
-                            <div class="control-slider">
-                                <label for="waypointX2">Waypoint 2 X: <span id="waypointX2Value">-2</span></label>
-                                <input type="range" id="waypointX2" min="-10" max="10" value="-2" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="waypointY2">Waypoint 2 Y: <span id="waypointY2Value">-2</span></label>
-                                <input type="range" id="waypointY2" min="-10" max="10" value="-2" step="0.1">
-                            </div>
-                            <div class="control-slider">
-                                <label for="waypointZ2">Waypoint 2 Z: <span id="waypointZ2Value">3</span></label>
-                                <input type="range" id="waypointZ2" min="0" max="5" value="3" step="0.1">
-                            </div>
+                        <div id="graphControls" style="margin-top: 10px; display: flex; gap: 10px;">
+                            <button id="zoomIn" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Zoom In</button>
+                            <button id="zoomOut" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Zoom Out</button>
+                            <button id="exportData" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 4px; cursor: pointer;">Export Data</button>
                         </div>
                     </div>
-                    
-                    <div style="margin-top: 15px;">
-                        <h4>Planned Trajectory</h4>
+                </div>
+                
+                <div class="tab-content" id="trajectory-tab">
+                    <div class="modal-section">
+                        <h4>Flight Trajectory Analysis</h4>
+                        <div class="data-description">
+                            <p>This 2D visualization shows the drone's flight path from the last recorded flight. 
+                            The X and Y axes represent horizontal movement, while altitude (Z) is shown in the tooltip. 
+                            Analyze the path to understand flight patterns and stability.</p>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <h4>Math Concepts</h4>
+                            <ul style="font-size: 0.8rem;">
+                                <li>Coordinate geometry</li>
+                                <li>Vector mathematics</li>
+                                <li>Parametric equations</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <h4>Physics Concepts</h4>
+                            <ul style="font-size: 0.8rem;">
+                                <li>Projectile motion</li>
+                                <li>Velocity vectors</li>
+                                <li>Trajectory optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-section">
                         <div class="trajectory-container">
-                            <div class="trajectory-header">Planned Flight Path</div>
-                            <canvas class="trajectory-canvas" id="plannedTrajectoryCanvas"></canvas>
+                            <div class="trajectory-header">Flight Path Visualization</div>
+                            <canvas class="trajectory-canvas" id="trajectoryCanvas"></canvas>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button id="exportTrajectory" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 4px; cursor: pointer;">Export Trajectory Data</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="planning-tab">
+                    <div class="modal-section">
+                        <h4>Trajectory Planning</h4>
+                        <div class="data-description">
+                            <p>Plan your drone's flight path by adjusting the parameters below. The graph will update in real-time to show the planned trajectory. 
+                            Once satisfied, upload the trajectory to the drone's firmware.</p>
+                        </div>
+                        
+                        <div class="trajectory-controls">
+                            <div class="trajectory-control-group">
+                                <h4>Position Parameters</h4>
+                                <div class="control-slider">
+                                    <label for="startX">Start X (m): <span id="startXValue">0</span></label>
+                                    <input type="range" id="startX" min="-10" max="10" value="0" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="startY">Start Y (m): <span id="startYValue">0</span></label>
+                                    <input type="range" id="startY" min="-10" max="10" value="0" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="startZ">Start Z (m): <span id="startZValue">1</span></label>
+                                    <input type="range" id="startZ" min="0" max="5" value="1" step="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="trajectory-control-group">
+                                <h4>Flight Parameters</h4>
+                                <div class="control-slider">
+                                    <label for="flightDuration">Duration (s): <span id="flightDurationValue">5</span></label>
+                                    <input type="range" id="flightDuration" min="1" max="20" value="5" step="0.5">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="maxSpeed">Max Speed (m/s): <span id="maxSpeedValue">2</span></label>
+                                    <input type="range" id="maxSpeed" min="0.1" max="5" value="2" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="smoothness">Smoothness: <span id="smoothnessValue">5</span></label>
+                                    <input type="range" id="smoothness" min="1" max="10" value="5" step="1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="trajectory-controls">
+                            <div class="trajectory-control-group">
+                                <h4>Waypoints</h4>
+                                <div class="control-slider">
+                                    <label for="waypointX1">Waypoint 1 X: <span id="waypointX1Value">2</span></label>
+                                    <input type="range" id="waypointX1" min="-10" max="10" value="2" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="waypointY1">Waypoint 1 Y: <span id="waypointY1Value">2</span></label>
+                                    <input type="range" id="waypointY1" min="-10" max="10" value="2" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="waypointZ1">Waypoint 1 Z: <span id="waypointZ1Value">2</span></label>
+                                    <input type="range" id="waypointZ1" min="0" max="5" value="2" step="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="trajectory-control-group">
+                                <h4>Waypoints</h4>
+                                <div class="control-slider">
+                                    <label for="waypointX2">Waypoint 2 X: <span id="waypointX2Value">-2</span></label>
+                                    <input type="range" id="waypointX2" min="-10" max="10" value="-2" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="waypointY2">Waypoint 2 Y: <span id="waypointY2Value">-2</span></label>
+                                    <input type="range" id="waypointY2" min="-10" max="10" value="-2" step="0.1">
+                                </div>
+                                <div class="control-slider">
+                                    <label for="waypointZ2">Waypoint 2 Z: <span id="waypointZ2Value">3</span></label>
+                                    <input type="range" id="waypointZ2" min="0" max="5" value="3" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <h4>Planned Trajectory</h4>
+                            <div class="trajectory-container">
+                                <div class="trajectory-header">Planned Flight Path</div>
+                                <canvas class="trajectory-canvas" id="plannedTrajectoryCanvas"></canvas>
+                            </div>
+                        </div>
+                        
+                        <button class="upload-trajectory-btn" id="uploadTrajectoryBtn">
+                            <i class="fas fa-upload"></i> Upload Trajectory to Firmware
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stem-content" id="stem-tab">
+                <div class="modal-section">
+                    <h3>STEM Curriculum Integration</h3>
+                    
+                    <div class="grade-section">
+                        <h4><i class="fas fa-square-root-alt"></i> Mathematics Integration</h4>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 6-8:</h5>
+                            <ul class="concept-list">
+                                <li>Coordinate Geometry: Plotting drone flight paths on XY axes</li>
+                                <li>Linear Equations: Calculating speed, distance, and time relationships</li>
+                                <li>Angles: Understanding roll, pitch, and yaw measurements</li>
+                                <li>Data Analysis: Interpreting flight data graphs and statistics</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 9-10:</h5>
+                            <ul class="concept-list">
+                                <li>Trigonometry: Analyzing drone orientation angles</li>
+                                <li>Quadratic Equations: Modeling projectile motion and trajectories</li>
+                                <li>Vectors: Understanding force vectors in drone movement</li>
+                                <li>Statistics: Analyzing flight performance data sets</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 11-12:</h5>
+                            <ul class="concept-list">
+                                <li>Calculus: Derivatives for velocity/acceleration, integrals for distance</li>
+                                <li>3D Geometry: Spatial analysis of flight paths</li>
+                                <li>Matrices: Transformation matrices for drone orientation</li>
+                                <li>Numerical Methods: PID controller tuning calculations</li>
+                            </ul>
                         </div>
                     </div>
                     
-                    <button class="upload-trajectory-btn" id="uploadTrajectoryBtn">
-                        <i class="fas fa-upload"></i> Upload Trajectory to Firmware
-                    </button>
+                    <div class="grade-section">
+                        <h4><i class="fas fa-atom"></i> Physics Integration</h4>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 9-10:</h5>
+                            <ul class="concept-list">
+                                <li>Motion: Understanding velocity, acceleration, and forces</li>
+                                <li>Energy: Battery power and energy consumption calculations</li>
+                                <li>Waves: Radio communication principles</li>
+                                <li>Simple Circuits: Basic electronics of drone components</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 11-12:</h5>
+                            <ul class="concept-list">
+                                <li>Rotational Dynamics: Torque and angular momentum</li>
+                                <li>Fluid Mechanics: Air resistance and propeller aerodynamics</li>
+                                <li>Electromagnetism: Motor operation principles</li>
+                                <li>Control Systems: Feedback loops and PID controllers</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="grade-section">
+                        <h4><i class="fas fa-laptop-code"></i> Computer Science Integration</h4>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 6-8:</h5>
+                            <ul class="concept-list">
+                                <li>Basic Programming: Simple drone command sequences</li>
+                                <li>Algorithm Design: Flight path planning</li>
+                                <li>Logical Thinking: Troubleshooting flight issues</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="grade-subsection">
+                            <h5>Grades 9-12:</h5>
+                            <ul class="concept-list">
+                                <li>Advanced Programming: Custom flight control algorithms</li>
+                                <li>Data Structures: Storing and processing flight data</li>
+                                <li>AI Concepts: Machine learning for autonomous flight</li>
+                                <li>Embedded Systems: Firmware development concepts</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- License Key Modal -->
-    <div class="modal" id="licenseModal">
-        <div class="modal-content glass-effect">
-            <button class="close-modal">×</button>
-            <h3>License Key Verification</h3>
-            <div id="licenseForm" class="license-key-form">
-                <p>Please enter your license key to access premium features:</p>
-                <input type="text" id="licenseKeyInput" placeholder="Enter your license key">
-                <button id="verifyLicenseBtn">Verify License</button>
-                <p id="licenseStatus" style="text-align: center; font-size: 0.8rem;"></p>
-                <p style="text-align: center; font-size: 0.8rem;">Don't have a license? <a href="#" id="purchaseLicenseLink" style="color: var(--secondary);">Purchase one now</a></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- License Purchase Modal -->
-    <div class="modal" id="purchaseModal">
-        <div class="modal-content glass-effect">
-            <button class="close-modal">×</button>
-            <h3>Purchase License Key</h3>
             
-            <div id="purchaseForm" class="license-purchase-form">
-                <p>To purchase a license key, please provide your details:</p>
-                <input type="email" id="userEmail" placeholder="Your email address" required>
-                <input type="tel" id="userPhone" placeholder="Your mobile number (with country code)" required>
-                <button id="sendOtpBtn">Send OTP</button>
-                
-                <div id="otpSection" class="otp-section">
-                    <p>We've sent an OTP to your mobile number</p>
-                    <div class="otp-input-container">
-                        <input type="text" class="otp-input" maxlength="1" data-index="0">
-                        <input type="text" class="otp-input" maxlength="1" data-index="1">
-                        <input type="text" class="otp-input" maxlength="1" data-index="2">
-                        <input type="text" class="otp-input" maxlength="1" data-index="3">
-                        <input type="text" class="otp-input" maxlength="1" data-index="4">
-                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+            <div class="stem-content" id="lessons-tab">
+                <div class="modal-section">
+                    <h3>Lesson Plan Structure</h3>
+                    
+                    <div class="lesson-plan">
+                        <div class="lesson-phase">
+                            <h5><i class="fas fa-book-open"></i> Pre-Flight Theory (30-40 minutes)</h5>
+                            <div class="activity-item">
+                                Introduce relevant mathematical concepts through interactive examples
+                            </div>
+                            <div class="activity-item">
+                                Demonstrate physical principles with drone components
+                            </div>
+                            <div class="activity-item">
+                                Provide technical background for the day's mission
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-phase">
+                            <h5><i class="fas fa-hands-helping"></i> Hands-On Activity (40-60 minutes)</h5>
+                            <div class="activity-item">
+                                Flight mission with specific objectives tied to curriculum
+                            </div>
+                            <div class="activity-item">
+                                Data collection requirements for post-flight analysis
+                            </div>
+                            <div class="activity-item">
+                                Problem-solving challenges that require STEM application
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-phase">
+                            <h5><i class="fas fa-chart-line"></i> Post-Flight Analysis (30-40 minutes)</h5>
+                            <div class="activity-item">
+                                Data interpretation and visualization
+                            </div>
+                            <div class="activity-item">
+                                Mathematical modeling of flight characteristics
+                            </div>
+                            <div class="activity-item">
+                                Group discussion of results and improvements
+                            </div>
+                        </div>
+                        
+                        <div class="assessment-section">
+                            <h5><i class="fas fa-clipboard-check"></i> Assessment Framework</h5>
+                            <div class="activity-item">
+                                <strong>Formative Assessments:</strong> Flight logs, code reviews, problem-solving during challenges
+                            </div>
+                            <div class="activity-item">
+                                <strong>Summative Assessments:</strong> Capstone projects, technical reports, design portfolios
+                            </div>
+                        </div>
                     </div>
-                    <button id="verifyOtpBtn">Verify OTP</button>
+                    
+                    <div class="lesson-phase">
+                        <h5><i class="fas fa-graduation-cap"></i> Teacher Training Program</h5>
+                        <div class="activity-item">
+                            <strong>Basic Certification (2 days):</strong> Platform operation, safety protocols, basic curriculum integration
+                        </div>
+                        <div class="activity-item">
+                            <strong>Advanced Certification (3 days):</strong> Advanced programming, data analysis techniques, project-based learning
+                        </div>
+                        <div class="activity-item">
+                            <strong>Ongoing Support:</strong> Online portal, educator community, monthly webinars
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stem-content" id="resources-tab">
+                <div class="modal-section">
+                    <h3>Educational Resources</h3>
+                    
+                    <div class="resource-card">
+                        <h5><i class="fas fa-user-graduate"></i> Student Materials</h5>
+                        <ul>
+                            <li>Workbooks with guided activities</li>
+                            <li>Online coding tutorials</li>
+                            <li>Flight mission templates</li>
+                            <li>Data analysis worksheets</li>
+                            <li>STEM career connections</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <h5><i class="fas fa-chalkboard-teacher"></i> Teacher Resources</h5>
+                        <ul>
+                            <li>Complete lesson plans with timing guides</li>
+                            <li>Assessment rubrics and evaluation tools</li>
+                            <li>Solution guides for all activities</li>
+                            <li>Alignment with standards (NGSS, Common Core, etc.)</li>
+                            <li>Differentiation strategies for varied learners</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <h5><i class="fas fa-book"></i> Technical Documentation</h5>
+                        <ul>
+                            <li>API references for programming extensions</li>
+                            <li>Sensor specifications and data formats</li>
+                            <li>Troubleshooting guides for common issues</li>
+                            <li>Safety protocols and best practices</li>
+                            <li>Maintenance and calibration procedures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New License Purchase Modal -->
+    <div class="modal" id="licenseModal">
+        <div class="modal-content" style="max-width: 800px; height: auto;">
+            <button class="close-modal">×</button>
+            <div class="purchase-container">
+                <div class="purchase-header">
+                    <h2>Unlock Premium Features</h2>
+                    <p>Get full access to the AIRM Fateh Nano Drone Platform</p>
                 </div>
                 
-                <div id="paymentSection" class="payment-section">
-                    <h4>Complete Payment (₹999)</h4>
-                    <p>Scan the QR code below to complete payment:</p>
-                    <div class="qr-code">
-                        <!-- Placeholder for QR code -->
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=airm@upi&pn=AiRM%20Fateh&am=999&cu=INR" alt="UPI QR Code">
+                <div class="purchase-steps">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
                     </div>
-                    <p>Or use UPI ID: <strong>airm@upi</strong></p>
-                    <button id="checkPaymentBtn">I've Completed Payment</button>
+                    
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Details</div>
+                    </div>
+                    
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Verification</div>
+                    </div>
+                    
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Payment</div>
+                    </div>
+                    
+                    <div class="step" id="step4">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Complete</div>
+                    </div>
                 </div>
                 
-                <div id="paymentSuccess" class="payment-success">
-                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 3rem;"></i>
-                    <h4>Payment Successful!</h4>
-                    <p>Your license key has been generated:</p>
-                    <div class="license-key-display" id="generatedLicenseKey"></div>
-                    <p>This key will be sent to your email as well.</p>
-                    <button id="closePurchaseModalBtn">Close</button>
+                <div class="purchase-form">
+                    <!-- Step 1: Personal Details -->
+                    <div class="form-section active" id="formStep1">
+                        <div class="price-tag">
+                            999
+                            <div class="discount-badge">50% OFF</div>
+                        </div>
+                        
+                        <div class="timer" id="discountTimer">
+                            Limited time offer: <span id="countdown">05:00</span>
+                        </div>
+                        
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Full access to all drone control features</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Advanced flight trajectory planning</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Unlimited data analysis and exports</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Priority technical support</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Future updates included</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-control" placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Mobile Number</label>
+                            <input type="tel" id="phone" class="form-control" placeholder="Enter your mobile number with country code">
+                        </div>
+                        
+                        <button class="btn btn-block" id="nextBtn1">Continue to Verification</button>
+                    </div>
+                    
+                    <!-- Step 2: OTP Verification -->
+                    <div class="form-section" id="formStep2">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 1rem;">Verify Your Mobile Number</h3>
+                        <p style="text-align: center; margin-bottom: 1.5rem;">We've sent a 6-digit code to your mobile number</p>
+                        
+                        <div class="otp-inputs">
+                            <input type="text" class="otp-input" maxlength="1" data-index="0">
+                            <input type="text" class="otp-input" maxlength="1" data-index="1">
+                            <input type="text" class="otp-input" maxlength="1" data-index="2">
+                            <input type="text" class="otp-input" maxlength="1" data-index="3">
+                            <input type="text" class="otp-input" maxlength="1" data-index="4">
+                            <input type="text" class="otp-input" maxlength="1" data-index="5">
+                        </div>
+                        
+                        <p style="text-align: center; margin: 1rem 0;">
+                            Didn't receive code? <a href="#" id="resendOtp" style="color: var(--primary);">Resend</a>
+                            <span id="resendTimer" style="display: none;"> in <span id="resendCountdown">30</span>s</span>
+                        </p>
+                        
+                        <div class="nav-buttons">
+                            <button class="btn btn-outline" id="backBtn2">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button class="btn" id="nextBtn2">Verify & Continue</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Payment -->
+                    <div class="form-section" id="formStep3">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 1rem;">Select Payment Method</h3>
+                        
+                        <div class="payment-options">
+                            <div class="payment-option selected" data-method="upi">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>UPI Payment</div>
+                            </div>
+                            <div class="payment-option" data-method="card">
+                                <i class="far fa-credit-card"></i>
+                                <div>Credit/Debit Card</div>
+                            </div>
+                            <div class="payment-option" data-method="netbanking">
+                                <i class="fas fa-university"></i>
+                                <div>Net Banking</div>
+                            </div>
+                            <div class="payment-option" data-method="wallet">
+                                <i class="fas fa-wallet"></i>
+                                <div>Wallet</div>
+                            </div>
+                        </div>
+                        
+                        <div id="upiPayment" class="payment-method">
+                            <div class="qr-code-container">
+                                <p>Scan this QR code with any UPI app to pay</p>
+                                <div class="qr-code">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=airm@upi&pn=AiRM%20Fateh&am=999&cu=INR" alt="UPI QR Code">
+                                </div>
+                                <p>Or use UPI ID: <strong>airm@upi</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div id="cardPayment" class="payment-method" style="display: none;">
+                            <div class="form-group">
+                                <label for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456">
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="expiryDate">Expiry Date</label>
+                                    <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY">
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="cvv">CVV</label>
+                                    <input type="text" id="cvv" class="form-control" placeholder="123">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cardName">Name on Card</label>
+                                <input type="text" id="cardName" class="form-control" placeholder="Name as on card">
+                            </div>
+                        </div>
+                        
+                        <div id="netbankingPayment" class="payment-method" style="display: none;">
+                            <div class="form-group">
+                                <label for="bankSelect">Select Bank</label>
+                                <select id="bankSelect" class="form-control">
+                                    <option value="">Select your bank</option>
+                                    <option value="sbi">State Bank of India</option>
+                                    <option value="hdfc">HDFC Bank</option>
+                                    <option value="icici">ICICI Bank</option>
+                                    <option value="axis">Axis Bank</option>
+                                    <option value="kotak">Kotak Mahindra Bank</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="walletPayment" class="payment-method" style="display: none;">
+                            <div class="form-group">
+                                <label for="walletSelect">Select Wallet</label>
+                                <select id="walletSelect" class="form-control">
+                                    <option value="">Select your wallet</option>
+                                    <option value="paytm">Paytm</option>
+                                    <option value="phonepe">PhonePe</option>
+                                    <option value="amazonpay">Amazon Pay</option>
+                                    <option value="mobikwik">MobiKwik</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="nav-buttons">
+                            <button class="btn btn-outline" id="backBtn3">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button class="btn" id="nextBtn3">Complete Payment</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Success -->
+                    <div class="form-section" id="formStep4">
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <h3 style="color: var(--success); margin-bottom: 1rem;">Payment Successful!</h3>
+                            <p>Thank you for your purchase. Your license key has been generated and sent to your email.</p>
+                            
+                            <div class="license-key" id="licenseKeyDisplay">
+                                AIRM-XXXX-XXXX-XXXX
+                            </div>
+                            
+                            <p>This license key provides lifetime access to all premium features of the AiRM Fateh Nano Drone Platform.</p>
+                            
+                            <button class="btn" id="finishBtn" style="margin-top: 1.5rem;">
+                                <i class="fas fa-rocket"></i> Start Using Premium Features
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -998,6 +1946,10 @@
         let freeAttempts = 5;
         let otp = '';
         const MASTER_LICENSE_KEY = "AIRM-MASTER-2024-CODE";
+        let currentPurchaseStep = 1;
+        let paymentMethod = 'upi';
+        let discountTimer = 300; // 5 minutes in seconds
+        let resendTimer = 30; // 30 seconds
 
         // Sample flight data for visualization
         const flightData = {
@@ -1517,16 +2469,36 @@ m_4 &= T - R - P - Y
         function showLicenseModal() {
             const modal = document.getElementById('licenseModal');
             modal.style.display = 'flex';
+            resetPurchaseFlow();
         }
 
-        function showPurchaseModal() {
-            const modal = document.getElementById('purchaseModal');
-            modal.style.display = 'flex';
-            // Reset form
-            document.getElementById('purchaseForm').style.display = 'block';
-            document.getElementById('otpSection').style.display = 'none';
-            document.getElementById('paymentSection').style.display = 'none';
-            document.getElementById('paymentSuccess').style.display = 'none';
+        function resetPurchaseFlow() {
+            // Reset all steps
+            currentPurchaseStep = 1;
+            updatePurchaseProgress();
+            
+            // Reset all form fields
+            document.getElementById('fullName').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            
+            // Clear OTP inputs
+            document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+            
+            // Reset payment method
+            paymentMethod = 'upi';
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('.payment-option[data-method="upi"]').classList.add('selected');
+            document.querySelectorAll('.payment-method').forEach(method => method.style.display = 'none');
+            document.getElementById('upiPayment').style.display = 'block';
+            
+            // Reset timers
+            discountTimer = 300;
+            resendTimer = 30;
+            
+            // Hide all form sections except first
+            document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
+            document.getElementById('formStep1').classList.add('active');
         }
 
         function updateDataDescription() {
@@ -2126,513 +3098,251 @@ m_4 &= T - R - P - Y
             document.body.removeChild(link);
         }
 
-        function uploadTrajectory() {
-            if (!isConnected) {
-                showBuildStatus('Drone not connected', true);
+        // Initialize the joystick functionality
+        function initJoystick() {
+            const joystick = document.getElementById('joystick');
+            const container = document.querySelector('.joystick-container');
+            const containerRect = container.getBoundingClientRect();
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+            const radius = containerRect.width / 2 - 30;
+            
+            interact(joystick).draggable({
+                restrict: {
+                    restriction: container,
+                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
+                    endOnly: true
+                },
+                onmove: function(event) {
+                    const x = event.clientX - containerRect.left - centerX;
+                    const y = event.clientY - containerRect.top - centerY;
+                    const distance = Math.sqrt(x*x + y*y);
+                    
+                    if (distance < radius) {
+                        joystick.style.transform = `translate(${x}px, ${y}px)`;
+                        joystickPosition = { x: x + centerX, y: y + centerY };
+                    } else {
+                        const angle = Math.atan2(y, x);
+                        const limitedX = Math.cos(angle) * radius;
+                        const limitedY = Math.sin(angle) * radius;
+                        joystick.style.transform = `translate(${limitedX}px, ${limitedY}px)`;
+                        joystickPosition = { x: limitedX + centerX, y: limitedY + centerY };
+                    }
+                    
+                    // Calculate joystick position as percentage (-100 to 100)
+                    const xPercent = Math.round((joystickPosition.x - centerX) / radius * 100);
+                    const yPercent = Math.round((centerY - joystickPosition.y) / radius * 100);
+                    
+                    // Send control commands based on joystick position
+                    if (isConnected) {
+                        // This would be replaced with actual drone control commands
+                        console.log(`Joystick position - X: ${xPercent}%, Y: ${yPercent}%`);
+                    }
+                },
+                onend: function() {
+                    // Return joystick to center when released
+                    joystick.style.transform = 'translate(0, 0)';
+                    joystickPosition = { x: centerX, y: centerY };
+                    
+                    // Send stop command when joystick is released
+                    if (isConnected) {
+                        console.log('Joystick centered - Stopping movement');
+                    }
+                }
+            });
+        }
+
+        // Update slider value displays
+        function updateSliderValues() {
+            document.getElementById('startXValue').textContent = document.getElementById('startX').value;
+            document.getElementById('startYValue').textContent = document.getElementById('startY').value;
+            document.getElementById('startZValue').textContent = document.getElementById('startZ').value;
+            document.getElementById('flightDurationValue').textContent = document.getElementById('flightDuration').value;
+            document.getElementById('maxSpeedValue').textContent = document.getElementById('maxSpeed').value;
+            document.getElementById('smoothnessValue').textContent = document.getElementById('smoothness').value;
+            document.getElementById('waypointX1Value').textContent = document.getElementById('waypointX1').value;
+            document.getElementById('waypointY1Value').textContent = document.getElementById('waypointY1').value;
+            document.getElementById('waypointZ1Value').textContent = document.getElementById('waypointZ1').value;
+            document.getElementById('waypointX2Value').textContent = document.getElementById('waypointX2').value;
+            document.getElementById('waypointY2Value').textContent = document.getElementById('waypointY2').value;
+            document.getElementById('waypointZ2Value').textContent = document.getElementById('waypointZ2').value;
+        }
+
+        // Update attempts counter display
+        function updateAttemptsCounter() {
+            document.getElementById('attemptsLeft').textContent = freeAttempts;
+            if (freeAttempts <= 0 && !hasValidLicense) {
+                document.getElementById('attemptsCounter').style.borderColor = 'var(--error)';
+            }
+        }
+
+        // Build the drone firmware from selected blocks
+        function buildFirmware() {
+            if (!hasValidLicense && freeAttempts <= 0) {
+                showLicenseModal();
                 return;
             }
             
-            const plannedTrajectory = generatePlannedTrajectory();
+            // Check if at least the main loop is selected
+            const hasMainLoop = selectedBlocks.some(block => block.getAttribute('data-id') === 'run_main_loop');
+            if (!hasMainLoop) {
+                showStatusMessage('Error: Must include "Run Main Loop" block', true);
+                return;
+            }
             
-            // Simulate trajectory upload
-            showBuildStatus('Uploading trajectory to drone firmware...');
+            showStatusMessage('Building firmware...', false);
             
+            // Generate main.cpp content from selected blocks
+            mainCpp = `// AIRM Fateh Nano Drone Firmware\n// Auto-generated by Reverse Learning Platform\n\n`;
+            
+            // Add includes and global variables
+            mainCpp += `#include <Arduino.h>\n#include "drone.h"\n\n`;
+            mainCpp += `// Global variables\nDrone drone;\nbool systemActive = true;\n\n`;
+            
+            // Add functions from selected blocks
+            selectedBlocks.forEach(block => {
+                const blockId = block.getAttribute('data-id');
+                mainCpp += blockData[blockId].code + '\n\n';
+            });
+            
+            // Add setup and loop functions
+            mainCpp += `void setup() {\n  Serial.begin(115200);\n  initializeSystem();\n}\n\n`;
+            mainCpp += `void loop() {\n  runMainLoop();\n}\n`;
+            
+            // Simulate build process
             setTimeout(() => {
-                const isSuccess = Math.random() < 0.8;
-                if (isSuccess) {
-                    showBuildStatus('Trajectory successfully uploaded to drone firmware!');
-                    
-                    // Generate firmware code with the trajectory
-                    const firmwareCode = generateTrajectoryFirmware(plannedTrajectory);
-                    mainCpp += firmwareCode;
-                    isBuilt = false; // Need to rebuild after firmware update
-                } else {
-                    showBuildStatus('Trajectory upload failed', true);
+                isBuilt = true;
+                showStatusMessage('Build successful! Ready to upload', false);
+                
+                // Decrement free attempts if not premium
+                if (!hasValidLicense) {
+                    freeAttempts--;
+                    updateAttemptsCounter();
                 }
             }, 2000);
         }
 
-        function generateTrajectoryFirmware(trajectory) {
-            return `
-// Auto-generated trajectory following code
-void followTrajectory() {
-    // Trajectory parameters
-    const float trajectoryX[] = {${trajectory.x.map(x => x.toFixed(2)).join(', ')}};
-    const float trajectoryY[] = {${trajectory.y.map(y => y.toFixed(2)).join(', ')}};
-    const float trajectoryZ[] = {${trajectory.z.map(z => z.toFixed(2)).join(', ')}};
-    const float trajectoryTime[] = {${trajectory.time.map(t => t.toFixed(2)).join(', ')}};
-    const int numPoints = ${trajectory.x.length};
-    
-    // Follow trajectory
-    for (int i = 0; i < numPoints; i++) {
-        setTargetPosition(trajectoryX[i], trajectoryY[i], trajectoryZ[i]);
-        delay(100); // Adjust based on time differences
-    }
-}`;
-        }
-
-        function showBuildStatus(message, isError = false) {
-            const buildStatus = document.getElementById('buildStatus');
-            const statusMessage = document.getElementById('statusMessage');
-            const deepDiveButton = document.getElementById('deepDiveButton');
-
-            statusMessage.textContent = message;
-            buildStatus.classList.toggle('error', isError);
-            deepDiveButton.style.display = isError ? 'block' : 'none';
-            buildStatus.classList.add('show');
-
+        // Show status message with optional error styling
+        function showStatusMessage(message, isError) {
+            const statusElement = document.getElementById('buildStatus');
+            const messageElement = document.getElementById('statusMessage');
+            
+            messageElement.textContent = message;
+            statusElement.className = isError ? 'error' : '';
+            
+            statusElement.classList.add('show');
             setTimeout(() => {
-                buildStatus.classList.add('fade-out');
+                statusElement.classList.add('fade-out');
                 setTimeout(() => {
-                    buildStatus.classList.remove('show', 'fade-out');
+                    statusElement.classList.remove('show', 'fade-out');
                 }, 500);
             }, 3000);
         }
 
-        function handleBuild() {
-            mainCpp = '#include <Arduino.h>\n#include <esp_log.h>\n\n';
-            for (const [blockId, data] of Object.entries(blockData)) {
-                mainCpp += `// Block: ${blockId}\n${data.code}\n\n`;
-            }
-
-            const isSuccess = Math.random() < 0.7;
-            if (isSuccess) {
-                isBuilt = true;
-                errorLog = '';
-                showBuildStatus('Successfully Built');
-            } else {
-                isBuilt = false;
-                errorLog = `Build Error Log:\n` +
-                           `Error: Syntax error in block 'Compute PID Control'\n` +
-                           `Line 5: Undefined reference to 'roll_pid'\n` +
-                           `Suggestion: Ensure PIDController is properly initialized\n` +
-                           `Timestamp: ${new Date().toISOString()}`;
-                showBuildStatus('Build Failed', true);
-            }
-        }
-
-        function showDeepDive() {
-            const errorWindow = window.open('', '_blank');
-            errorWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Build Error Details</title>
-                    <style>
-                        body {
-                            background: #000;
-                            font-family: 'Share Tech Mono', monospace;
-                            color: #00f0ff;
-                            margin: 20px;
-                        }
-                        h1 {
-                            font-size: 1.5rem;
-                            color: #00f0ff;
-                        }
-                        pre {
-                            background: rgba(0, 240, 255, 0.1);
-                            border: 1px solid #00f0ff;
-                            padding: 15px;
-                            border-radius: 8px;
-                            white-space: pre-wrap;
-                            font-size: 0.875rem;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Build Error Details</h1>
-                    <pre>${errorLog}</pre>
-                </body>
-                </html>
-            `);
-            errorWindow.document.close();
-        }
-
-        function sendCommand(command) {
-            if (!isConnected) {
-                showBuildStatus('Drone not connected', true);
-                return;
-            }
-            console.log(`Sending command: ${command}`);
-            showBuildStatus(`Command: ${command}`);
-        }
-
-        function handleConnect() {
-            const droneId = document.getElementById('droneId').value.trim();
+        // Connect to drone
+        function connectToDrone() {
+            const droneId = document.getElementById('droneId').value;
             const password = document.getElementById('dronePassword').value;
-            const droneStatus = document.getElementById('droneStatus');
-            const connectionIndicator = document.getElementById('connectionIndicator');
-            const connectionStatus = document.getElementById('connectionStatus');
-
-            if (droneId === '' || password.length < 8) {
-                showBuildStatus('Invalid Drone ID or Password (minimum 8 characters)', true);
-                droneStatus.textContent = 'Status: Invalid Credentials';
-                droneStatus.style.animation = 'blink 1s infinite';
-                setTimeout(() => {
-                    droneStatus.style.animation = 'none';
-                }, 5000);
+            
+            if (!droneId || !password) {
+                document.getElementById('droneStatus').textContent = 'Status: ID and password required';
                 return;
             }
-
-            const isSuccess = Math.random() < 0.7;
-            if (isSuccess) {
-                isConnected = true;
-                droneStatus.textContent = 'Status: Connected';
-                droneStatus.style.animation = 'blink 1s infinite';
-                connectionIndicator.classList.remove('bg-red-500');
-                connectionIndicator.classList.add('bg-green-500');
-                connectionStatus.textContent = 'Connected';
-                showBuildStatus(`Connected to Drone ${droneId}`);
-            } else {
-                isConnected = false;
-                droneStatus.textContent = 'Status: Disconnected';
-                droneStatus.style.animation = 'blink 1s infinite';
-                connectionIndicator.classList.remove('bg-green-500');
-                connectionIndicator.classList.add('bg-red-500');
-                connectionStatus.textContent = 'Disconnected';
-                showBuildStatus('Connection Failed', true);
-            }
-
+            
+            document.getElementById('droneStatus').textContent = 'Status: Connecting...';
+            
+            // Simulate connection process
             setTimeout(() => {
-                droneStatus.style.animation = 'none';
-            }, 5000);
+                isConnected = true;
+                document.getElementById('connectionIndicator').classList.remove('bg-red-500');
+                document.getElementById('connectionIndicator').classList.add('bg-green-500');
+                document.getElementById('connectionStatus').textContent = 'Connected';
+                document.getElementById('droneStatus').textContent = 'Status: Connected';
+            }, 1500);
         }
 
-        function handleUpload() {
-            const uploadProgress = document.getElementById('uploadProgress');
-            const uploadStatus = document.getElementById('uploadStatus');
-            const droneId = document.getElementById('droneId').value.trim();
-
+        // Upload code to drone
+        function uploadCode() {
             if (!isConnected) {
-                showBuildStatus('Drone not connected', true);
-                uploadStatus.textContent = 'Upload Status: Not Connected';
-                uploadStatus.style.animation = 'blink 1s infinite';
-                setTimeout(() => {
-                    uploadStatus.style.animation = 'none';
-                }, 5000);
+                document.getElementById('uploadStatus').textContent = 'Upload Status: Not connected';
                 return;
             }
-
+            
             if (!isBuilt) {
-                showBuildStatus('No successful build available', true);
-                uploadStatus.textContent = 'Upload Status: No Build';
-                uploadStatus.style.animation = 'blink 1s infinite';
-                setTimeout(() => {
-                    uploadStatus.style.animation = 'none';
-                }, 5000);
+                document.getElementById('uploadStatus').textContent = 'Upload Status: Build firmware first';
                 return;
             }
-
-            uploadProgress.value = 0;
-            uploadStatus.textContent = 'Upload Status: Uploading';
-            uploadStatus.style.animation = 'blink 1s infinite';
-
+            
+            document.getElementById('uploadStatus').textContent = 'Upload Status: Uploading...';
+            const progressBar = document.getElementById('uploadProgress');
+            
+            // Simulate upload process
             let progress = 0;
-            const interval = setInterval(() => {
-                progress += 2;
-                uploadProgress.value = progress;
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    const isSuccess = Math.random() < 0.7;
-                    if (isSuccess) {
-                        uploadStatus.textContent = 'Upload Status: Upload Complete';
-                        showBuildStatus(`Code uploaded to Drone ${droneId}`);
-                    } else {
-                        uploadStatus.textContent = 'Upload Status: Upload Failed';
-                        showBuildStatus('Upload Failed', true);
-                    }
-                    uploadStatus.style.animation = 'blink 1s infinite';
-                    setTimeout(() => {
-                        uploadStatus.style.animation = 'none';
-                    }, 5000);
-                }
-            }, 100);
-        }
-
-        function setupControlListeners() {
-            // Basic control buttons
-            document.getElementById('takeoffBtn').addEventListener('click', () => sendCommand('takeoff'));
-            document.getElementById('landBtn').addEventListener('click', () => sendCommand('land'));
-            document.getElementById('emergencyBtn').addEventListener('click', () => sendCommand('emergency_stop'));
-            document.getElementById('hoverBtn').addEventListener('click', () => sendCommand('hover'));
-            document.getElementById('forwardBtn').addEventListener('click', () => sendCommand('forward'));
-            document.getElementById('backwardBtn').addEventListener('click', () => sendCommand('backward'));
-            document.getElementById('leftBtn').addEventListener('click', () => sendCommand('left'));
-            document.getElementById('rightBtn').addEventListener('click', () => sendCommand('right'));
-            document.getElementById('rotateLeftBtn').addEventListener('click', () => sendCommand('rotate_left'));
-            document.getElementById('rotateRightBtn').addEventListener('click', () => sendCommand('rotate_right'));
-            document.getElementById('flipBtn').addEventListener('click', () => sendCommand('flip'));
-            document.getElementById('photoBtn').addEventListener('click', () => sendCommand('take_photo'));
-
-            // Throttle slider
-            const throttleSlider = document.getElementById('throttleSlider');
-            const throttleValue = document.getElementById('throttleValue');
-            throttleSlider.addEventListener('input', () => {
-                throttleValue.textContent = throttleSlider.value;
-                sendCommand(`set_throttle:${throttleSlider.value / 100}`);
-            });
-
-            // Joystick setup
-            const joystick = document.getElementById('joystick');
-            const joystickContainer = document.getElementById('joystick').parentElement;
-            const containerRect = joystickContainer.getBoundingClientRect();
-            const centerX = containerRect.width / 2;
-            const centerY = containerRect.height / 2;
-            const maxDistance = 70;
-
-            interact(joystick).draggable({
-                restrict: {
-                    restriction: joystickContainer,
-                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
-                    endOnly: true
-                },
-                onmove: (event) => {
-                    let x = joystickPosition.x + event.dx;
-                    let y = joystickPosition.y + event.dy;
-                    
-                    // Calculate distance from center
-                    const dx = x - centerX;
-                    const dy = y - centerY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    // Limit to max distance
-                    if (distance > maxDistance) {
-                        x = centerX + dx * maxDistance / distance;
-                        y = centerY + dy * maxDistance / distance;
-                    }
-                    
-                    joystickPosition = { x, y };
-                    joystick.style.transform = `translate(${x - 30}px, ${y - 30}px)`;
-                    
-                    // Calculate normalized values (-1 to 1)
-                    const normX = (x - centerX) / maxDistance;
-                    const normY = (centerY - y) / maxDistance; // Invert Y axis
-                    
-                    // Send command
-                    sendCommand(`joystick:${normX.toFixed(2)},${normY.toFixed(2)}`);
-                },
-                onend: () => {
-                    // Return to center
-                    joystickPosition = { x: centerX, y: centerY };
-                    joystick.style.transform = `translate(${centerX - 30}px, ${centerY - 30}px)`;
-                    sendCommand('joystick:0,0');
-                }
-            });
-        }
-
-        function setupTrajectoryControlListeners() {
-            // Add event listeners to all trajectory control sliders
-            const sliders = [
-                'startX', 'startY', 'startZ',
-                'flightDuration', 'maxSpeed', 'smoothness',
-                'waypointX1', 'waypointY1', 'waypointZ1',
-                'waypointX2', 'waypointY2', 'waypointZ2'
-            ];
-            
-            sliders.forEach(sliderId => {
-                const slider = document.getElementById(sliderId);
-                const valueSpan = document.getElementById(`${sliderId}Value`);
+            const uploadInterval = setInterval(() => {
+                progress += 5;
+                progressBar.value = progress;
                 
-                // Update value display
-                slider.addEventListener('input', () => {
-                    valueSpan.textContent = slider.value;
-                    updatePlannedTrajectory();
-                });
-            });
-            
-            // Upload trajectory button
-            document.getElementById('uploadTrajectoryBtn').addEventListener('click', uploadTrajectory);
+                if (progress >= 100) {
+                    clearInterval(uploadInterval);
+                    document.getElementById('uploadStatus').textContent = 'Upload Status: Upload complete!';
+                    
+                    // Decrement free attempts if not premium
+                    if (!hasValidLicense) {
+                        freeAttempts--;
+                        updateAttemptsCounter();
+                    }
+                }
+            }, 200);
         }
 
-        function setupDataListeners() {
-            document.getElementById('reverseLearningButton').addEventListener('click', showReverseLearningModal);
-            document.getElementById('dataType').addEventListener('change', updateDataDescription);
-            document.getElementById('generateGraph').addEventListener('click', generateGraph);
-            document.getElementById('zoomIn').addEventListener('click', zoomIn);
-            document.getElementById('zoomOut').addEventListener('click', zoomOut);
-            document.getElementById('exportData').addEventListener('click', exportData);
-            document.getElementById('exportTrajectory').addEventListener('click', exportTrajectoryData);
-            
-            // Tab switching functionality
-            document.querySelectorAll('.data-tab').forEach(tab => {
+        // Handle tab switching in reverse learning modal
+        function setupDataTabs() {
+            const tabs = document.querySelectorAll('.data-tab');
+            tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     // Remove active class from all tabs and content
                     document.querySelectorAll('.data-tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     
-                    // Add active class to clicked tab and corresponding content
+                    // Add active class to clicked tab
                     tab.classList.add('active');
+                    
+                    // Show corresponding content
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(`${tabId}-tab`).classList.add('active');
                     
-                    // Initialize planned trajectory chart when planning tab is opened
-                    if (tabId === 'planning' && !plannedTrajectoryChart) {
+                    // Initialize charts if needed
+                    if (tabId === 'trajectory' && !trajectoryChart) {
+                        initTrajectoryChart();
+                    } else if (tabId === 'planning' && !plannedTrajectoryChart) {
                         initPlannedTrajectoryChart();
                     }
                 });
             });
         }
 
-        function setupConnectListeners() {
-            document.getElementById('connectDroneButton').addEventListener('click', handleConnect);
-            document.getElementById('uploadCodeButton').addEventListener('click', handleUpload);
-        }
-
-        function setupLicenseListeners() {
-            // License verification
-            document.getElementById('verifyLicenseBtn').addEventListener('click', () => {
-                const licenseKey = document.getElementById('licenseKeyInput').value.trim();
-                const licenseStatus = document.getElementById('licenseStatus');
-                
-                if (licenseKey === '') {
-                    licenseStatus.textContent = 'Please enter a license key';
-                    licenseStatus.style.color = '#ff3e7f';
-                    return;
-                }
-                
-                // Check for master license key
-                if (licenseKey === MASTER_LICENSE_KEY) {
-                    hasValidLicense = true;
-                    licenseStatus.textContent = 'Master license verified! Full access granted.';
-                    licenseStatus.style.color = '#10b981';
-                    localStorage.setItem('droneLicenseKey', MASTER_LICENSE_KEY);
-                    setTimeout(() => {
-                        closeModal('licenseModal');
-                    }, 1500);
-                    return;
-                }
-                
-                // Simulate license verification
-                const isValid = verifyLicenseKey(licenseKey);
-                
-                if (isValid) {
-                    hasValidLicense = true;
-                    licenseStatus.textContent = 'License verified successfully!';
-                    licenseStatus.style.color = '#10b981';
-                    setTimeout(() => {
-                        closeModal('licenseModal');
-                    }, 1500);
-                } else {
-                    licenseStatus.textContent = 'Invalid license key. Please try again or purchase a license.';
-                    licenseStatus.style.color = '#ff3e7f';
-                }
-            });
-            
-            // Purchase license link
-            document.getElementById('purchaseLicenseLink').addEventListener('click', (e) => {
-                e.preventDefault();
-                closeModal('licenseModal');
-                showPurchaseModal();
-            });
-            
-            // Purchase license flow
-            document.getElementById('sendOtpBtn').addEventListener('click', () => {
-                const email = document.getElementById('userEmail').value.trim();
-                const phone = document.getElementById('userPhone').value.trim();
-                
-                if (!email || !phone) {
-                    alert('Please enter both email and mobile number');
-                    return;
-                }
-                
-                // Generate a random 6-digit OTP
-                otp = Math.floor(100000 + Math.random() * 900000).toString();
-                console.log(`Generated OTP: ${otp}`); // For demo purposes only
-                
-                // Show OTP section
-                document.getElementById('purchaseForm').style.display = 'none';
-                document.getElementById('otpSection').style.display = 'block';
-                
-                // Focus first OTP input
-                document.querySelector('.otp-input').focus();
-            });
-            
-            // OTP input handling
-            document.querySelectorAll('.otp-input').forEach((input, index) => {
-                input.addEventListener('input', (e) => {
-                    if (e.target.value.length === 1) {
-                        if (index < 5) {
-                            document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
-                        }
-                    }
-                });
-                
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
-                        document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
-                    }
-                });
-            });
-            
-            document.getElementById('verifyOtpBtn').addEventListener('click', () => {
-                // Get entered OTP
-                let enteredOtp = '';
-                document.querySelectorAll('.otp-input').forEach(input => {
-                    enteredOtp += input.value;
-                });
-                
-                if (enteredOtp.length !== 6) {
-                    alert('Please enter a valid 6-digit OTP');
-                    return;
-                }
-                
-                if (enteredOtp === otp) {
-                    // Show payment section
-                    document.getElementById('otpSection').style.display = 'none';
-                    document.getElementById('paymentSection').style.display = 'block';
-                } else {
-                    alert('Invalid OTP. Please try again.');
-                }
-            });
-            
-            document.getElementById('checkPaymentBtn').addEventListener('click', () => {
-                // Simulate payment verification
-                const isPaymentSuccessful = Math.random() < 0.9; // 90% success rate for demo
-                
-                if (isPaymentSuccessful) {
-                    document.getElementById('paymentSection').style.display = 'none';
-                    document.getElementById('paymentSuccess').style.display = 'block';
+        // Handle STEM curriculum tabs
+        function setupStemTabs() {
+            const tabs = document.querySelectorAll('.stem-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.stem-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.stem-content').forEach(c => c.classList.remove('active'));
                     
-                    // Generate a license key
-                    generatedLicenseKey = generateLicenseKey();
-                    document.getElementById('generatedLicenseKey').textContent = generatedLicenseKey;
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
                     
-                    // Store the license key in localStorage
-                    localStorage.setItem('droneLicenseKey', generatedLicenseKey);
-                    
-                    // In a real app, you would send the key to the user's email
-                    const email = document.getElementById('userEmail').value;
-                    console.log(`License key sent to ${email}: ${generatedLicenseKey}`);
-                } else {
-                    alert('Payment verification failed. Please try again.');
-                }
-            });
-            
-            document.getElementById('closePurchaseModalBtn').addEventListener('click', () => {
-                closeModal('purchaseModal');
-                // Automatically verify the newly generated license key
-                hasValidLicense = true;
-                document.getElementById('licenseKeyInput').value = generatedLicenseKey;
-                document.getElementById('verifyLicenseBtn').click();
-            });
-            
-            // License button to show purchase modal
-            document.getElementById('licenseButton').addEventListener('click', () => {
-                showPurchaseModal();
+                    // Show corresponding content
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
             });
         }
 
-        function verifyLicenseKey(key) {
-            // In a real application, this would verify against a database
-            // For demo purposes, we'll check against localStorage and a simple pattern
-            const storedKey = localStorage.getItem('droneLicenseKey');
-            return key === storedKey || /^AIRM-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(key);
-        }
-
+        // Generate a random license key
         function generateLicenseKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let key = 'AIRM-';
             
             for (let i = 0; i < 3; i++) {
@@ -2645,177 +3355,322 @@ void followTrajectory() {
             return key;
         }
 
-        function updateAttemptsCounter() {
-            document.getElementById('attemptsLeft').textContent = freeAttempts;
+        function updatePurchaseProgress() {
+            // Update step indicators
+            for (let i = 1; i <= 4; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (i < currentPurchaseStep) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                } else if (i === currentPurchaseStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            }
             
-            if (freeAttempts <= 0 && !hasValidLicense) {
-                document.getElementById('attemptsCounter').style.color = '#ff3e7f';
-                document.getElementById('attemptsCounter').innerHTML = 
-                    'Free attempts exhausted. <a href="#" id="getLicenseLink" style="color: var(--primary);">Get license</a>';
+            // Update progress bar
+            const progress = ((currentPurchaseStep - 1) / 3) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // Show/hide form sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`formStep${currentPurchaseStep}`).classList.add('active');
+        }
+
+        function startDiscountTimer() {
+            const timerElement = document.getElementById('countdown');
+            
+            const timer = setInterval(() => {
+                const minutes = Math.floor(discountTimer / 60);
+                const seconds = discountTimer % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 
-                document.getElementById('getLicenseLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showLicenseModal();
-                });
+                if (discountTimer <= 0) {
+                    clearInterval(timer);
+                    document.querySelector('.price-tag').textContent = '1998';
+                    document.querySelector('.discount-badge').style.display = 'none';
+                    document.getElementById('discountTimer').textContent = 'Offer expired';
+                } else {
+                    discountTimer--;
+                }
+            }, 1000);
+        }
+
+        function startResendTimer() {
+            const timerElement = document.getElementById('resendCountdown');
+            document.getElementById('resendTimer').style.display = 'inline';
+            document.getElementById('resendOtp').style.display = 'none';
+            
+            const timer = setInterval(() => {
+                timerElement.textContent = resendTimer;
+                
+                if (resendTimer <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('resendTimer').style.display = 'none';
+                    document.getElementById('resendOtp').style.display = 'inline';
+                    resendTimer = 30;
+                } else {
+                    resendTimer--;
+                }
+            }, 1000);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^\+?\d{10,15}$/;
+            return re.test(phone);
+        }
+
+        function createConfetti() {
+            const container = document.querySelector('.purchase-container');
+            const colors = ['#00f0ff', '#ff3e7f', '#ffff00', '#10b981'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Random size
+                const size = Math.random() * 10 + 5;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                // Animation
+                confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards, confetti-rotate ${Math.random() * 5 + 3}s linear infinite`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                container.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
             }
         }
 
-        function setupBlockListeners() {
+        // Initialize all event listeners
+        function setupEventListeners() {
+            // Block selection
             document.querySelectorAll('.block').forEach(block => {
-                block.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    handleInteraction(block, false);
-                });
-
-                block.addEventListener('touchstart', (event) => {
-                    event.preventDefault();
-                    handleInteraction(block, true);
+                block.addEventListener('click', function(e) {
+                    if (isDragging) return;
+                    
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTapTime;
+                    
+                    if (lastTappedBlock === this && tapLength < 300) {
+                        // Double tap - toggle selection
+                        if (this.classList.contains('selected')) {
+                            this.classList.remove('selected');
+                            selectedBlocks = selectedBlocks.filter(b => b !== this);
+                        } else {
+                            this.classList.add('selected');
+                            selectedBlocks.push(this);
+                        }
+                        updateArrows();
+                        lastTapTime = 0;
+                        lastTappedBlock = null;
+                        clearTimeout(tapTimeout);
+                    } else {
+                        // Single tap - show modal after delay
+                        lastTapTime = currentTime;
+                        lastTappedBlock = this;
+                        tapTimeout = setTimeout(() => {
+                            showModal(this);
+                            lastTapTime = 0;
+                            lastTappedBlock = null;
+                        }, 300);
+                    }
                 });
             });
-
+            
+            // Modal close buttons
             document.querySelectorAll('.close-modal').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const modal = event.target.closest('.modal').id;
-                    closeModal(modal);
+                button.addEventListener('click', function() {
+                    closeModal(this.closest('.modal').id);
                 });
             });
-
-            document.getElementById('blockModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('blockModal');
-            });
-
-            document.getElementById('controlsModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('controlsModal');
-            });
-
-            document.getElementById('connectModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('connectModal');
-            });
-
-            document.getElementById('tutorialModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('tutorialModal');
-            });
-
-            document.getElementById('reverseLearningModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('reverseLearningModal');
-            });
-
-            document.getElementById('licenseModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('licenseModal');
-            });
-
-            document.getElementById('purchaseModal').addEventListener('click', (event) => {
-                if (event.target === event.currentTarget) closeModal('purchaseModal');
-            });
-
-            document.getElementById('buildButton').addEventListener('click', handleBuild);
+            
+            // Right-side buttons
+            document.getElementById('buildButton').addEventListener('click', buildFirmware);
             document.getElementById('controlsButton').addEventListener('click', showControlsModal);
             document.getElementById('connectButton').addEventListener('click', showConnectModal);
             document.getElementById('tutorialButton').addEventListener('click', showTutorialModal);
             document.getElementById('reverseLearningButton').addEventListener('click', showReverseLearningModal);
-            document.getElementById('licenseButton').addEventListener('click', showPurchaseModal);
-            document.getElementById('deepDiveButton').addEventListener('click', showDeepDive);
-        }
-
-        function handleInteraction(block, isTouch) {
-            if (isDragging) return;
-
-            const currentTime = new Date().getTime();
-            if (isTouch) {
-                if (currentTime - lastTapTime < 300 && lastTappedBlock === block) {
-                    clearTimeout(tapTimeout);
-                    toggleBlockSelection(block);
-                } else {
-                    tapTimeout = setTimeout(() => {
-                        if (!isDragging) showModal(block);
-                    }, 300);
-                }
-                lastTapTime = currentTime;
-                lastTappedBlock = block;
-            } else {
-                showModal(block);
-            }
-        }
-
-        function toggleBlockSelection(block) {
-            const index = selectedBlocks.indexOf(block);
-            if (index !== -1) {
-                selectedBlocks.splice(index, 1);
-                block.classList.remove('selected');
-            } else {
-                selectedBlocks.push(block);
-                block.classList.add('selected');
-            }
-            updateArrows();
-        }
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                setupInteract();
-                setupBlockListeners();
-                setupControlListeners();
-                setupConnectListeners();
-                setupDataListeners();
-                setupTrajectoryControlListeners();
-                setupLicenseListeners();
+            document.getElementById('licenseButton').addEventListener('click', showLicenseModal);
+            
+            // Connect modal buttons
+            document.getElementById('connectDroneButton').addEventListener('click', connectToDrone);
+            document.getElementById('uploadCodeButton').addEventListener('click', uploadCode);
+            
+            // Reverse learning modal elements
+            document.getElementById('dataType').addEventListener('change', updateDataDescription);
+            document.getElementById('generateGraph').addEventListener('click', generateGraph);
+            document.getElementById('zoomIn').addEventListener('click', zoomIn);
+            document.getElementById('zoomOut').addEventListener('click', zoomOut);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('exportTrajectory').addEventListener('click', exportTrajectoryData);
+            document.getElementById('uploadTrajectoryBtn').addEventListener('click', () => {
+                showStatusMessage('Trajectory uploaded to firmware', false);
+            });
+            
+            // Trajectory planning sliders
+            document.querySelectorAll('.control-slider input').forEach(slider => {
+                slider.addEventListener('input', function() {
+                    const valueSpan = document.getElementById(`${this.id}Value`);
+                    if (valueSpan) valueSpan.textContent = this.value;
+                    updatePlannedTrajectory();
+                });
+            });
+            
+            // Purchase flow buttons
+            document.getElementById('nextBtn1').addEventListener('click', () => {
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
                 
-                // Initialize charts when the page loads
-                initTrajectoryChart();
-                updateAttemptsCounter();
-
-                // Check for existing license key in localStorage
-                const savedLicense = localStorage.getItem('droneLicenseKey');
-                if (savedLicense && verifyLicenseKey(savedLicense)) {
-                    hasValidLicense = true;
+                if (!fullName || !email || !phone) {
+                    alert('Please fill in all fields');
+                    return;
                 }
+                
+                if (!validateEmail(email)) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+                
+                if (!validatePhone(phone)) {
+                    alert('Please enter a valid phone number');
+                    return;
+                }
+                
+                // Generate and send OTP (simulated)
+                otp = Math.floor(100000 + Math.random() * 900000).toString();
+                console.log(`OTP for ${phone}: ${otp}`); // In real app, this would send via SMS
+                
+                currentPurchaseStep = 2;
+                updatePurchaseProgress();
+                startResendTimer();
+            });
+            
+            document.getElementById('backBtn2').addEventListener('click', () => {
+                currentPurchaseStep = 1;
+                updatePurchaseProgress();
+            });
+            
+            document.getElementById('nextBtn2').addEventListener('click', () => {
+                // Verify OTP
+                const enteredOtp = Array.from(document.querySelectorAll('.otp-input'))
+                    .map(input => input.value)
+                    .join('');
+                
+                if (enteredOtp.length !== 6) {
+                    alert('Please enter the full 6-digit code');
+                    return;
+                }
+                
+                if (enteredOtp !== otp) {
+                    alert('Incorrect verification code');
+                    return;
+                }
+                
+                currentPurchaseStep = 3;
+                updatePurchaseProgress();
+            });
+            
+            document.getElementById('resendOtp').addEventListener('click', (e) => {
+                e.preventDefault();
+                // Resend OTP
+                otp = Math.floor(100000 + Math.random() * 900000).toString();
+                console.log(`New OTP for ${document.getElementById('phone').value}: ${otp}`);
+                startResendTimer();
+            });
+            
+            document.getElementById('backBtn3').addEventListener('click', () => {
+                currentPurchaseStep = 2;
+                updatePurchaseProgress();
+            });
+            
+            document.getElementById('nextBtn3').addEventListener('click', () => {
+                // Process payment (simulated)
+                setTimeout(() => {
+                    generatedLicenseKey = generateLicenseKey();
+                    document.getElementById('licenseKeyDisplay').textContent = generatedLicenseKey;
+                    
+                    currentPurchaseStep = 4;
+                    updatePurchaseProgress();
+                    createConfetti();
+                    
+                    // Activate premium features
+                    hasValidLicense = true;
+                    document.getElementById('connectionIndicator').classList.remove('bg-red-500');
+                    document.getElementById('connectionIndicator').classList.add('bg-green-500');
+                    document.getElementById('connectionStatus').textContent = 'Premium Active';
+                    document.getElementById('attemptsCounter').style.display = 'none';
+                }, 1500);
+            });
+            
+            document.getElementById('finishBtn').addEventListener('click', () => {
+                closeModal('licenseModal');
+            });
+            
+            // Payment method selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    paymentMethod = option.getAttribute('data-method');
+                    
+                    document.querySelectorAll('.payment-method').forEach(method => method.style.display = 'none');
+                    document.getElementById(`${paymentMethod}Payment`).style.display = 'block';
+                });
+            });
+            
+            // OTP input auto-focus
+            document.querySelectorAll('.otp-input').forEach((input, index) => {
+                input.addEventListener('input', () => {
+                    if (input.value.length === 1 && index < 5) {
+                        document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                        document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
+                    }
+                });
+            });
+        }
 
-                const styleSheet = document.createElement('style');
-                styleSheet.textContent = `
-                    @keyframes blink {
-                        0% { opacity: 1; }
-                        50% { opacity: 0; }
-                        100% { opacity: 1; }
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            setupInteract();
+            setupEventListeners();
+            setupDataTabs();
+            setupStemTabs();
+            initJoystick();
+            updateSliderValues();
+            updateAttemptsCounter();
+            startDiscountTimer();
+            
+            // Close modals when clicking outside content
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal(modal.id);
                     }
-                    progress::-webkit-progress-bar {
-                        background: rgba(0, 0, 0, 0.5);
-                        border-radius: 4px;
-                    }
-                    progress::-webkit-progress-value {
-                        background: var(--primary);
-                        border-radius: 4px;
-                    }
-                    progress::-moz-progress-bar {
-                        background: var(--primary);
-                        border-radius: 4px;
-                    }
-                    .control-btn i {
-                        font-size: 1.5rem;
-                        margin-bottom: 5px;
-                    }
-                    input[type="range"] {
-                        -webkit-appearance: none;
-                        height: 5px;
-                        background: rgba(0, 240, 255, 0.2);
-                        border-radius: 5px;
-                    }
-                    input[type="range"]::-webkit-slider-thumb {
-                        -webkit-appearance: none;
-                        width: 15px;
-                        height: 15px;
-                        background: var(--primary);
-                        border-radius: 50%;
-                        cursor: pointer;
-                    }
-                    a {
-                        color: var(--secondary);
-                        text-decoration: none;
-                    }
-                    a:hover {
-                        text-decoration: underline;
-                    }
-                `;
-                document.head.appendChild(styleSheet);
-            }, 1000);
+                });
+            });
         });
     </script>
 </body>
